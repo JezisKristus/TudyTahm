@@ -1,1 +1,2 @@
 # tahiti
+Programko skupinovy projekt
