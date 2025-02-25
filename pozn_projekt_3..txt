@@ -1,0 +1,83 @@
+Skupiny 2-4 do støedy
+2 - server a frontend
+3 - + 3 aplikace nìjaká prostì tam navaø, nevim, problém budoucího delty lololo
+4 - + mobilní aplikace, není zakázaná ani pro menší skupiny
+kolik èlenù, tolik aplikací
+
+databázi - "Rozumnì velká" 8+ tabulek cca, záleží na potøebì
+serverová èást/backend - v C# 
+Klient webový
+angular
+javascript 
+singlepage
+
+vymyslet databázitvoøit plán / myš. mapu
+jednot
+vylivý klíèový èásti
+(donutit patejdla pøipojit se na discord (nejtìžší na celým projektu tvl, pako to je a má špatný priority))
+??
+
+do konce týdne skupiny + myšlenku (respektive zadání), nechat si ho schválit
+prezentace týmu a zadání protože já nevim bráško
+start up jako v bance ??
+
+mùže to bejt i nìco existujícího 
+
+pokud se nepovede zadání - zálohovaè (co je to zálohovaè??????)
+
+Tahiti?
+(mùžeme dávat funny funkce apod?)
+
+jsme uvaøeni, nemám nápady
+
+vyhnout se formsùm
+scss
+
+budou checkpointy
+
+mimo checkpointy bude možnost konzultace
+
+do pøístího týdne pøedstavu co dìlat
+
+brain storming
+cyberpunk tinder???
+discord ale ne mid (bylo by potøeba hodnì featur takže pain)
+e-shop - jednoduchý relativnì, dá se
+brain rot generátor (nechce se mi prezentovat)
+hex shop
+Wikipedie type shit (možná moc jednoduchý)
+mapy - kurva tìžký shánìt data ale jsou open source, dá se 
+kde je deltova renata? delta už jí našel
+
+fiktivní mapa nebo eshop?
+
+API pro ASP.NET Core
+NuGet a context, jsme v .net
+Kontroler API - *Controller.cs
+Swagger (švagr) - testování - posílání http requestù
+/api/[controller] - vypíše to co zachytí API v Jason
+fungovat s json - univerzální komunikace mezi aplikacema, pole objektù
+
+
+httpGet
+httpPost - potøeba klient
+httpPut - pro update
+
+Postman pro API
+
+
+Interaktivní fiktivní mapa
+
+
+Git povinný
+checkpoint - funkènost, kód, "výkaz práce" (????) toggll/clockify
+
+
+200 ok 
+
+
+
+
+
+
+
