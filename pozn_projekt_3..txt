@@ -76,6 +76,15 @@ checkpoint - funkènost, kód, "výkaz práce" (????) toggll/clockify
 200 ok 
 
 
+Sharing
+Mobilní aplikace ?
+GPS tracking ??
+Vlastní mapa s points of interests
+
+fiktivní mapa i reálná
+
+DBS - brzo na návrh databáze - dbdiagram.io
+
 
 
 
