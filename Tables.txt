@@ -1,0 +1,180 @@
+Sektory/regiony
+-RegionID
+-MapID
+
+Users
+-UserID
+
+Mesta
+-CityID
+-RegionID
+
+Markers
+-MarkerID
+-RegionID
+-WikiID
+-CharacterID
+
+CustomMarkers
+-CMarkerID
+-RegionID
+-UserID
+-WikiID
+-CharacterID
+
+Characters
+-CharacterID
+
+Wiki/Lore
+-WikiID
+
+Mapy
+-MapID
+-UserID
+
+Overlay
+-OverlayID
+-MapID
+
+
+
+
+
+Table Regions {
+  RegionID integer [primary key]
+  RegionName varchar
+  RegionIcon bitmap
+  MapID integer
+}
+
+Table Maps {
+  MapID integer [primary key]
+  UserID integer
+  MapName varchar
+  Map bitmap
+}
+
+Table Users {
+  UserID integer [primary key]
+  UserName varchar
+  UserPassword varchar
+  UserEmail varchar
+  UserIcon bitmap
+}
+
+Table Cities {
+  CityID integer [primary key]
+  CityName varchar
+  RegionID integer
+  WikiID integer
+}
+
+Table Markers {
+  MarkerID integer [primary key]
+  MarkerName varchar
+  MarkerIcon bitmap
+  RegionID integer
+  WikiID integer
+  CharacterID integer
+  UserID integer
+}
+
+Table Wiki {
+  WikiID integer [primary key]
+  WikiName varchar
+}
+
+Table Characters {
+  CharacterID integer [primary key]
+  CharacterName varchar
+  CharacterImg bitmap
+  WikiID integer
+}
+
+Table Overlays {
+  OverlayID integer [primary key]
+  MapID integer
+  Overlay bitmap
+}
+
+Ref: Maps.UserID > Users.UserID
+Ref: Regions.MapID > Maps.MapID
+Ref: Cities.RegionID > Regions.RegionID
+Ref: Markers.RegionID > Regions.RegionID
+Ref: Markers.UserID > Users.UserID
+Ref: Wiki.WikiID > Markers.WikiID
+Ref: Wiki.WikiID > Cities.WikiID
+Ref: Wiki.WikiID > Characters.WikiID
+Ref: Characters.CharacterID > Markers.CharacterID
+Ref: Overlays.MapID > Maps.MapID
+
+http://mysqlstudenti.litv.sssvt.cz/phpmyadmin/
+BITMAP = BLOB(64MB) / MEDIUMBLOB(16GB)
+
+Kudy Tahm
+
+
+
+
+MYSQLPHP
+
+
+
+
+create Table Regions (
+  RegionID integer PRIMARY,
+  RegionName varchar,
+  RegionIcon BLOB,
+  MapID integer
+)
+
+create Table Maps (
+  MapID integer PRIMARY,
+  UserID integer,
+  MapName varchar,
+  Map MEDIUMBLOB
+)
+
+create Table Users (
+  UserID integer PRIMARY,
+  UserName varchar,
+  UserPassword varchar,
+  UserEmail varchar,
+  UserIcon BLOB
+)
+
+create Table Cities (
+  CityID integer PRIMARY,
+  CityName varchar,
+  CityIcon BLOB,
+  RegionID integer,
+  WikiID integer
+)
+
+create Table Markers (
+  MarkerID integer PRIMARY,
+  MarkerName varchar,
+  MarkerIcon BLOB,
+  RegionID integer,
+  WikiID integer,
+  CharacterID integer,
+  UserID integer
+)
+
+create Table Wiki (
+  WikiID integer PRIMARY,
+  WikiName varchar
+)
+
+create Table Characters (
+  CharacterID integer PRIMARY,
+  CharacterName varchar,
+  CharacterImg BLOB,
+  WikiID integer
+)
+
+create Table Overlays (
+  OverlayID integer PRIMARY,
+  MapID integer,
+  Overlay MEDIUMBLOB
+)
