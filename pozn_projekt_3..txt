@@ -84,7 +84,7 @@ Vlastní mapa s points of interests
 fiktivní mapa i reálná
 
 DBS - brzo na návrh databáze - dbdiagram.io
-
+grafika - Figma
 
 
 
