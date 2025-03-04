@@ -87,6 +87,7 @@ fiktivní mapa i reálná
 DBS - brzo na návrh databáze - dbdiagram.io
 grafika - Figma
 
+Angular - scss
 
 
 
