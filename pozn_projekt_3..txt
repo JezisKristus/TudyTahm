@@ -88,6 +88,14 @@ DBS - brzo na návrh databáze - dbdiagram.io
 grafika - Figma
 
 Angular - scss
+http://lcalhost:4200/
+může běžet neustále, s každým přepisem aktivně reaguje (poggers, to zní poggers - ŠVP)
+ng generate - generuje cokoliv, advances ahh
+
+Komponenty, no mě jebne
+
+mc Onyx reference (oni nevidí)
+
 
 
 
