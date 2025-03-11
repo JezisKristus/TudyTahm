@@ -36,22 +36,12 @@ Overlay
 -OverlayID
 -MapID
 
-
-
-
-
-Table Regions {
-  RegionID integer [primary key]
-  RegionName varchar
-  RegionIcon bitmap
-  MapID integer
-}
-
+----------------------------------------------------------------------------------------------------
 Table Maps {
   MapID integer [primary key]
-  UserID integer
+  IdUser integer
   MapName varchar
-  Map bitmap
+  MapPath varchar
 }
 
 Table Users {
@@ -62,21 +52,13 @@ Table Users {
   UserIcon bitmap
 }
 
-Table Cities {
-  CityID integer [primary key]
-  CityName varchar
-  RegionID integer
-  WikiID integer
-}
-
 Table Markers {
   MarkerID integer [primary key]
+  IdWiki integer
+  IdUser integer
+  IdPoint int 
   MarkerName varchar
-  MarkerIcon bitmap
-  RegionID integer
-  WikiID integer
-  CharacterID integer
-  UserID integer
+  MarkerIconPath varchar
 }
 
 Table Wiki {
@@ -84,29 +66,69 @@ Table Wiki {
   WikiName varchar
 }
 
-Table Characters {
-  CharacterID integer [primary key]
-  CharacterName varchar
-  CharacterImg bitmap
-  WikiID integer
-}
 
 Table Overlays {
   OverlayID integer [primary key]
-  MapID integer
+  IdMap integer
   Overlay bitmap
 }
 
-Ref: Maps.UserID > Users.UserID
-Ref: Regions.MapID > Maps.MapID
-Ref: Cities.RegionID > Regions.RegionID
-Ref: Markers.RegionID > Regions.RegionID
-Ref: Markers.UserID > Users.UserID
-Ref: Wiki.WikiID > Markers.WikiID
-Ref: Wiki.WikiID > Cities.WikiID
-Ref: Wiki.WikiID > Characters.WikiID
-Ref: Characters.CharacterID > Markers.CharacterID
-Ref: Overlays.MapID > Maps.MapID
+Table JourneyUsers {
+  IdJourney int
+  IdUser int
+}
+
+Table Journey {
+  JourneyID integer [pk]
+  Description varchar
+}
+
+Table GPSPoint {
+  PointID int [pk]
+  Latitude decimal
+  Longitude decimal
+}
+
+Table UserGroup {
+  GroupID int [pk]
+}
+
+Table GroupUsers {
+  IdUser int
+  IdGroup int
+}
+
+Table Permissions {
+  PermissionID int [pk]
+  Read bit
+  Write bit
+  Edit bit
+  Delete bit
+}
+
+
+
+
+Ref: Users.UserID < JourneyUsers.IdUser
+Ref: Journey.JourneyID < JourneyUsers.IdJourney
+Ref: GPSPoint.PointID > Journey.JourneyID
+Ref: Maps.IdUser > Users.UserID
+Ref: Markers.IdUser > Users.UserID
+Ref: Wiki.WikiID > Markers.IdWiki
+Ref: Overlays.IdMap > Maps.MapID
+
+
+
+Ref: "Markers"."IdPoint" < "GPSPoint"."PointID"
+
+
+
+Ref: "Users"."UserID" < "GroupUsers"."IdUser"
+
+Ref: "UserGroup"."GroupID" < "GroupUsers"."IdGroup"
+
+
+----------------------------------------------------------------------------------------------------
 
 http://mysqlstudenti.litv.sssvt.cz/phpmyadmin/
 BITMAP = BLOB(64MB) / MEDIUMBLOB(16GB)
