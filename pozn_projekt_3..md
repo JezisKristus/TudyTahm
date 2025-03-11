@@ -114,9 +114,9 @@ FK budou mit specifickou syntaxi, např "IdMap" misto "MapID", s tim e MapID je 
 v databazi nejsou primo obrazky, nybrz odkazy na obrazky tam jsou. Obrazky budou probably ve slozce
 
 Struktura tabulky:
--PK
--FK(+)
--zbytek
+- PK
+- FK(+)
+- zbytek
 
 
 
