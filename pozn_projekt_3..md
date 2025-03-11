@@ -1,3 +1,4 @@
+## Brainstorm
 Skupiny 2-4 do středy
 2 - server a frontend
 3 - + 3 aplikace nějaká prostě tam navař, nevim, problém budoucího delty lololo
@@ -97,6 +98,25 @@ Komponenty, no mě jebne
 mc Onyx reference (oni nevidí)
 
 
+## Checkpoint 1: (Pozn. by Páťa)
+Mapa ma jen jednoho usera user ma vic map, musi se to nejak jinak poresit pokud chceme sdileni
+soubory nedavat do databaze, je to napicu
+overlay nefunguje na markery
+markery seskupovat pouze graficky, jako v alzabox/zasilkovna
+nedava nam to smysl
+
+Co jsme zmenili:
+
+Journey: cesta, sklada se z gps pointů
+
+City a region gone
+FK budou mit specifickou syntaxi, např "IdMap" misto "MapID", s tim e MapID je PK  IdMap je FK
+v databazi nejsou primo obrazky, nybrz odkazy na obrazky tam jsou. Obrazky budou probably ve slozce
+
+Struktura tabulky:
+-PK
+-FK(+)
+-zbytek
 
 
 
