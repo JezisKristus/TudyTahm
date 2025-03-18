@@ -1,2 +1,2 @@
-# tahiti
+# TudyTahm
 Programko skupinovy projekt
