@@ -1,5 +1,4 @@
 # TudyTahm
-Programko skupinovy projekt
 Buďte připraveni na spoustu úžasných funkcí!
 - Custom mapy
 - User profily
