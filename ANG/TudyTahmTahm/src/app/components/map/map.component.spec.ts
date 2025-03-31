@@ -1,23 +1,31 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, AfterViewInit } from '@angular/core';
+import * as L from 'leaflet';
 
-import { MapComponent } from './map.component';
+@Component({
+  selector: 'app-map',
+  template: '<div id="map"></div>',
+  styles: [`
+    #map {
+      height: 600px;
+      width: 100%;
+    }
+  `]
+})
+export class MapComponent implements AfterViewInit {
+  private map: L.Map;
 
-describe('MapComponent', () => {
-  let component: MapComponent;
-  let fixture: ComponentFixture<MapComponent>;
+  ngAfterViewInit(): void {
+    this.initMap();
+  }
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [MapComponent]
-    })
-    .compileComponents();
+  private initMap(): void {
+    this.map = L.map('map').setView([49.8, 15.5], 7);  // Centrum ČR
 
-    fixture = TestBed.createComponent(MapComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19,
+      minZoom: 3
+    }).addTo(this.map);
+  }
+}
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
