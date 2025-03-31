@@ -1,33 +1,26 @@
-import { Component } from '@angular/core';
-import {}
+import { Component, OnInit } from '@angular/core';
+import * as L from 'leaflet';  // Correct import
+
 @Component({
   selector: 'app-map',
-  imports: [],
   templateUrl: './map.component.html',
-  styleUrl: './map.component.scss'
+  styleUrls: ['./map.component.scss']
 })
-
-export class MapComponent {
-  private mapOptions: L.MapOptions = {
-    center: [51.958, 9.141],
-    zoom: 10
-  };
-
+export class MapComponent implements OnInit {
   private map: L.Map;
   private layer: L.TileLayer;
   private marker: L.Marker;
 
-  constructor() {
-    // Inicializace mapy
-    this.map = L.map('map', this.mapOptions);
+  ngOnInit(): void {
+    this.map = L.map('map', {
+      center: [51.958, 9.141],
+      zoom: 10
+    });
 
-    // Přidání vrstevnice
     this.layer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     this.layer.addTo(this.map);
 
-    // Přidání markeru
     this.marker = L.marker([51.958, 9.141]);
     this.marker.addTo(this.map);
   }
 }
-
