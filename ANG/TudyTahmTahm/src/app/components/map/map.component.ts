@@ -4,13 +4,14 @@ import * as L from 'leaflet';  // This imports the entire Leaflet library, inclu
 
 @Component({
   selector: 'app-map',
+  standalone: true,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, OnDestroy {
-  public map: L.Map;  // Correct type for Leaflet Map
-  private layer: L.TileLayer;  // Tile layer type
-  private marker: L.Marker;  // Marker type
+  map : any;
+  layer : any;
+  marker : any;
 
   ngOnInit(): void {
     this.map = L.map('map').setView([51.505, -0.09], 13); // Initialize map with a view
