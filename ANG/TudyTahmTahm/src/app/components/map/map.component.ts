@@ -14,15 +14,14 @@ export class MapComponent implements OnInit, OnDestroy {
   marker : any;
 
   ngOnInit(): void {
-    this.map = L.map('map').setView([51.505, -0.09], 13); // Initialize map with a view
-
+    this.map = L.map('map').setView([49.8022514,15.6252330], 8); // Initialize map with a view
     // Add OpenStreetMap tile layer
     this.layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
 
     // Add a marker to the map
-    this.marker = L.marker([51.505, -0.09]).addTo(this.map)
+    this.marker = L.marker([50.1192600, 14.4918975]).addTo(this.map)
       .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
       .openPopup();
   }
