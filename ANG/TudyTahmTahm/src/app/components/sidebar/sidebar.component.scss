@@ -1,4 +1,97 @@
-.material-icons {
-  font-size: 20px;
-  color: gold;
+// Barvy podle předlohy
+$sidebar-bg: #1f3b1d; // Tmavě zelená
+$sidebar-text: #d4af37; // Zlatá
+$sidebar-hover: #2e4d29; // Zelená hover
+
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background-color: $sidebar-bg;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: $sidebar-text;
+  padding: 10px;
+
+  // Horní část sidebaru
+  .user-section {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #ccc;
+      border-radius: 50%;
+    }
+
+    .username {
+      margin-left: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+
+  .search-box {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    background-color: #3a5a40;
+    color: white;
+    outline: none;
+
+    &::placeholder {
+      color: #ddd;
+    }
+  }
+
+  // Navigační menu
+  .nav-links {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      &:hover {
+        background-color: $sidebar-hover;
+      }
+
+      .icon {
+        width: 20px;
+        margin-right: 10px;
+      }
+
+      .text {
+        font-size: 16px;
+      }
+    }
+  }
+
+  // Spodní část s ikonou a textem
+  .bottom-section {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    .logo {
+      width: 40px;
+      height: 40px;
+    }
+
+    .brand {
+      margin-left: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      color: $sidebar-text;
+    }
+  }
 }

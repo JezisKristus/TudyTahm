@@ -1,41 +1,36 @@
-<div class="w-60 h-screen bg-green-900 text-yellow-300 flex flex-col justify-between">
-  <!-- Horní část -->
+<div class="sidebar">
+  <!-- Uživatelská sekce -->
   <div>
-    <div class="flex items-center p-4">
-      <div class="w-8 h-8 bg-gray-400 rounded-full"></div>
-      <span class="ml-2 text-lg font-semibold">USERNAME</span>
+    <div class="user-section">
+      <div class="user-avatar"></div>
+      <span class="username">USERNAME</span>
     </div>
-    <div class="p-2">
-      <input
-        type="text"
-        placeholder="Search"
-        class="w-full p-2 rounded bg-gray-700 text-white"
-      />
-    </div>
-    <ul class="mt-4 space-y-2">
-      <li class="flex items-center px-4 py-2 hover:bg-green-800 cursor-pointer">
-        <span class="material-icons">share</span>
-        <span class="ml-2">Shared</span>
+
+    <input type="text" class="search-box" placeholder="Search" />
+
+    <ul class="nav-links">
+      <li class="nav-item">
+        <span class="icon">🔗</span>
+        <span class="text">Shared</span>
       </li>
-      <li class="flex items-center px-4 py-2 hover:bg-green-800 cursor-pointer">
-        <span class="material-icons">history</span>
-        <span class="ml-2">Memories</span>
+      <li class="nav-item">
+        <span class="icon">🕒</span>
+        <span class="text">Memories</span>
       </li>
-      <li class="flex items-center px-4 py-2 hover:bg-green-800 cursor-pointer">
-        <span class="material-icons">map</span>
-        <span class="ml-2">My maps</span>
+      <li class="nav-item">
+        <span class="icon">🗺️</span>
+        <span class="text">My maps</span>
       </li>
-      <li class="flex items-center px-4 py-2 hover:bg-green-800 cursor-pointer">
-        <span class="material-icons">settings</span>
-        <span class="ml-2">Settings</span>
+      <li class="nav-item">
+        <span class="icon">⚙️</span>
+        <span class="text">Settings</span>
       </li>
     </ul>
   </div>
 
   <!-- Spodní část -->
-  <div class="p-4 flex items-center">
-    <img src="assets/tahm_icon.png" alt="Tahm" class="w-10 h-10" />
-    <span class="ml-2 font-bold text-yellow-400">TUDY TAHM</span>
+  <div class="bottom-section">
+    <img src="assets/tahm_icon.png" alt="Tahm" class="logo" />
+    <span class="brand">TUDY TAHM</span>
   </div>
 </div>
-
