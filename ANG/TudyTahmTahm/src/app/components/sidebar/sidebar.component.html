@@ -2,8 +2,12 @@
   <!-- Uživatelská sekce -->
   <div>
     <div class="user-section">
-      <div class="user-avatar"></div>
-      <span class="username">USERNAME</span>
+      <a routerLink="/sign-in" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <div class="user-avatar"></div>
+      </a>
+      <a routerLink="/sign-in">
+        <span class="username">USERNAME</span>
+      </a>
     </div>
 
     <input type="text" class="search-box" placeholder="Search" />
@@ -30,7 +34,7 @@
 
   <!-- Spodní část -->
   <div class="bottom-section">
-    <img src="bench.png" height="69" width="69" alt="Tahm" class="logo"/>
+    <img ngSrc="bench.png" height="69" width="69" alt="Tahm" class="logo"/>
     <span class="brand">TUDY TAHM</span>
   </div>
 </div>
