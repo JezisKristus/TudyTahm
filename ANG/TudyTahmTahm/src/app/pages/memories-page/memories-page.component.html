@@ -1,1 +1,22 @@
-<p>memories-page works!</p>
+<div class="memories-container">
+  <app-sidebar></app-sidebar>
+
+  <div class="main-content">
+    <div class="header">
+      <div class="refresh-icon">
+        <i class="fas fa-sync-alt"></i>
+      </div>
+      <h1 class="page-title">Memories</h1>
+    </div>
+
+    <div class="journeys-grid">
+      <div class="journey-card" *ngFor="let journey of journeys">
+        <div class="journey-title">{{journey.title}}</div>
+      </div>
+    </div>
+
+    <div class="add-button" (click)="addNewJourney()">
+      <i class="fas fa-plus"></i>
+    </div>
+  </div>
+</div>

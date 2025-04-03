@@ -1,3 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import '../node_modules/leaflet/dist/leaflet.css';
-
+/* styles/_variables.scss */
+:root {
+  --primary-green: #4A724A;
+  --dark-green: #3A5A3A;
+  --light-green: #5C8B5C;
+  --white: #FFFFFF;
+  --gray: #F0F0F0;
+  --text-color: #FFFFFF;
+}

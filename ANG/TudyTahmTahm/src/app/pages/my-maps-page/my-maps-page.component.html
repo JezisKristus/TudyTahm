@@ -1,24 +1,35 @@
-<body class="d-flex">
-<app-sidebar class="d-flex"></app-sidebar>
-<div class="container-fluid p-4 d-flex flex-grow-1 flex-column">
-  <h2 class="mb-4">My maps</h2>
-  <div class="row flex-grow-1">
-    <a routerLink="" class="col-md-3">
-    <div class="col-md-3">
-      <div class="map-card">
-        <div class="map-thumbnail"></div>
-        <p class="text-center">Real World (boring)</p>
+<!-- my-maps.component.html -->
+<div class="maps-container">
+  <app-sidebar></app-sidebar>
+
+  <div class="main-content">
+    <div class="header">
+      <div class="monitor-icon">
+        <i class="fas fa-desktop"></i>
+      </div>
+      <h1 class="page-title">My maps</h1>
+      <div class="header-actions">
+        <button class="help-button">
+          <i class="fas fa-question-circle"></i>
+        </button>
+        <button class="notification-button">
+          <i class="fas fa-bell"></i>
+        </button>
       </div>
     </div>
-    </a>
-    <div class="col-md-3">
-      <div class="map-card add-map">
-        <div class="map-thumbnail d-flex align-items-center justify-content-center">
-          <span class="plus-sign">+</span>
+
+    <div class="maps-grid">
+      <div class="map-card" *ngFor="let map of maps">
+        <div class="map-content"></div>
+        <div class="map-title">{{ map.name }}</div>
+      </div>
+
+      <div class="add-map-card" (click)="addNewMap()">
+        <div class="add-icon">
+          <i class="fas fa-plus"></i>
         </div>
-        <p class="text-center">ADD MAP</p>
+        <div class="add-text">ADD MAP</div>
       </div>
     </div>
   </div>
 </div>
-</body>
