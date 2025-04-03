@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import {RouterLink, RouterLinkActive} from "@angular/router";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 
 @Component({
   selector: 'app-register-page',
-    imports: [
-        RouterLink,
-        RouterLinkActive
-    ],
+  standalone: true,
+  imports: [
+    RouterLink,
+    RouterLinkActive
+  ],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss'
 })

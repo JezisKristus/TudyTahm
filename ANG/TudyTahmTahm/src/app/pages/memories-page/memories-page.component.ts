@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-memories',
-  imports: [SidebarComponent],
+  standalone: true,
+  imports: [SidebarComponent, NgFor],
   templateUrl: './memories-page.component.html',
   styleUrls: ['./memories-page.component.scss']
 })
