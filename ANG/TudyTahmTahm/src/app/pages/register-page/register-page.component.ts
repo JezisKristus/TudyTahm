@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import {RouterLink, RouterLinkActive} from "@angular/router";
 
 @Component({
-  selector: 'app-sign-in-page',
+  selector: 'app-register-page',
     imports: [
         RouterLink,
         RouterLinkActive
     ],
-  templateUrl: './sign-in-page.component.html',
-  styleUrl: './sign-in-page.component.scss'
+  templateUrl: './register-page.component.html',
+  styleUrl: './register-page.component.scss'
 })
-export class SignInPageComponent {
+export class RegisterPageComponent {
 
 }
