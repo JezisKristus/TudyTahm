@@ -13,26 +13,26 @@
     <input type="text" class="search-box" placeholder="Search" />
 
     <ul class="nav-links">
-      <li class="nav-item">
-        <a routerLink="/shared" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <li class="nav-item" routerLink="/shared" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a>
         <span class="icon">🔗</span>
         <span class="text">Shared</span>
           </a>
       </li>
-      <li class="nav-item">
-        <a routerLink="/memories" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <li class="nav-item" routerLink="/memories" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a>
         <span class="icon">🕒</span>
         <span class="text">Memories</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a routerLink="/my-maps" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <li class="nav-item" routerLink="/my-maps" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a>
         <span class="icon">🗺️</span>
         <span class="text">My maps</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <li routerLink="/settings" routerLinkActive="active" class="nav-item" ariaCurrentWhenActive="page">
+        <a>
         <span class="icon">⚙️</span>
         <span class="text">Settings</span>
         </a>
@@ -42,7 +42,7 @@
 
   <!-- Spodní část -->
   <div class="bottom-section">
-    <img ngSrc="bench.png" height="69" width="69" alt="Tahm" class="logo"/>
+    <img routerLink="" routerLinkActive="active" ngSrc="bench.png" height="69" width="69" alt="Tahm" class="logo"/>
     <span class="brand">TUDY TAHM</span>
   </div>
 </div>
