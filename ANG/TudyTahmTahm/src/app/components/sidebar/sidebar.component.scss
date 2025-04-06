@@ -87,6 +87,7 @@ $sidebar-hover: #335033; // Zelená hover
     .logo {
       width: 40px;
       height: 40px;
+      cursor: pointer;
     }
 
     .brand {
@@ -94,6 +95,7 @@ $sidebar-hover: #335033; // Zelená hover
       font-weight: bold;
       font-size: 16px;
       color: $sidebar-text;
+      cursor: pointer;
     }
   }
 }
