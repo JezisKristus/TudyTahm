@@ -12,7 +12,7 @@ import { NgFor } from '@angular/common';
 })
 export class MyMapsPageComponent implements OnInit {
   maps = [
-    { id: 0, name: 'Real world (boring)' },
+    { id: 0, name: 'Real world (boring)'},
     { id: 1, name: 'Map name' },
     { id: 2, name: 'Map name' },
     { id: 3, name: 'Map name' }
