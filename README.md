@@ -6,3 +6,4 @@ Buďte připraveni na spoustu úžasných funkcí!
 - Custom markery!
 - Realny mapy!
 - A víc! (asi)
+- test
