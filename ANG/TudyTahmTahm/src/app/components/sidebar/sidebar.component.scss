@@ -1,7 +1,7 @@
 // Barvy podle předlohy
-$sidebar-bg: #1f3b1d; // Tmavě zelená
-$sidebar-text: #d4af37; // Zlatá
-$sidebar-hover: #2e4d29; // Zelená hover
+$sidebar-bg: var(--dark-green); // Tmavě zelená
+$sidebar-text: var(--gold); // Zlatá
+$sidebar-hover: #335033; // Zelená hover
 
 .sidebar {
   width: 240px;
@@ -24,12 +24,14 @@ $sidebar-hover: #2e4d29; // Zelená hover
       height: 40px;
       background-color: #ccc;
       border-radius: 50%;
+      cursor: pointer;
     }
 
     .username {
       margin-left: 10px;
       font-size: 18px;
       font-weight: bold;
+      cursor: pointer;
     }
   }
 

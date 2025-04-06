@@ -1,9 +1,9 @@
 // Variables
-$dark-green: #2c422e;
-$medium-green: #3c563e;
-$light-green: #4a684c;
-$gold: #c2a94e;
-$text-light: #e6e6e6;
+$dark-green: var(--dark-green);
+$medium-green: var(--primary-green);
+$light-green: #5C8B5CFF;
+$gold: var(--gold);
+$text-light: var(--text-color);
 $border-color: rgba(255, 255, 255, 0.9);
 
 // Global styles
@@ -12,7 +12,6 @@ $border-color: rgba(255, 255, 255, 0.9);
   height: 100vh;
   background-color: $dark-green;
   color: $text-light;
-  font-family: Arial, sans-serif;
 }
 
 // Main content area
@@ -26,25 +25,25 @@ $border-color: rgba(255, 255, 255, 0.9);
     display: flex;
     align-items: center;
     padding: 20px;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid var(--gold);
     background-color: $dark-green;
-
-    .share-icon-large {
-      width: 30px;
-      height: 30px;
-      background-color: $gold;
-      mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>');
-      mask-size: contain;
-      mask-repeat: no-repeat;
-      mask-position: center;
-      margin-right: 15px;
-    }
 
     h1 {
       color: $gold;
       margin: 0;
       font-size: 24px;
     }
+  }
+
+  .share-icon-large {
+    width: 30px;
+    height: 30px;
+    background-color: $gold;
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    margin-right: 15px;
   }
 
   .content-body {
@@ -54,7 +53,7 @@ $border-color: rgba(255, 255, 255, 0.9);
     .groups-panel {
       width: 220px;
       background-color: $medium-green;
-      border-right: 5px solid $gold;
+      border-right: 2px solid var(--dark-green);
       padding: 10px 0;
 
 
@@ -62,9 +61,11 @@ $border-color: rgba(255, 255, 255, 0.9);
         padding: 12px 20px;
         cursor: pointer;
         border-bottom: 1px solid $gold;
+        color: var(--gold);
+        font-weight: bold;
 
         &:hover {
-          background-color: rgba(255, 255, 255, 0.5);
+          background-color: rgba(0, 0, 0, 0.16);
         }
       }
     }
@@ -77,7 +78,7 @@ $border-color: rgba(255, 255, 255, 0.9);
         display: flex;
         margin-bottom: 20px;
         padding-bottom: 20px;
-        border-bottom: 3px solid $border-color;
+        border-bottom: 1px solid var(--dark-green);
 
         .map-thumbnail {
           width: 80px;
@@ -96,6 +97,7 @@ $border-color: rgba(255, 255, 255, 0.9);
             color: $gold;
             margin: 0 0 5px 0;
             font-size: 18px;
+            font-weight: bold;
           }
 
           .map-author {

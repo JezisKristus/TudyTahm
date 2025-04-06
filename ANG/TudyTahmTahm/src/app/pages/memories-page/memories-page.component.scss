@@ -13,16 +13,23 @@
 
 .main-content {
   flex-grow: 1;
-  padding: 30px;
   background-color: var(--primary-green);
   min-height: 100vh;
   position: relative;
 }
 
-.header {
+.content-header {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
+  padding: 20px;
+  border-bottom: 1px solid var(--gold);
+  background-color: var(--dark-green);
+
+  h1 {
+    color: var(--gold);
+    margin: 0;
+    font-size: 24px;
+  }
 }
 
 .refresh-icon {
@@ -39,7 +46,7 @@
 
 .page-title {
   font-size: 24px;
-  color: var(--white);
+  color: var(--gold);
   font-weight: 500;
 }
 
@@ -47,6 +54,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+  padding: 30px;
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 1fr);
