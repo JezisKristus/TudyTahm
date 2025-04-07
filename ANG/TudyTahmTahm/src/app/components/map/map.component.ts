@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-// Import the required classes from the Leaflet library
 import * as L from 'leaflet';  // This imports the entire Leaflet library, including its types
 
 @Component({
