@@ -3,37 +3,37 @@ import * as L from 'leaflet';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { RouterLink } from '@angular/router';
 
 @Component({
-    selector: 'app-journey-page',
-    templateUrl: './journey-page.component.html',
-    styleUrls: ['./journey-page.component.scss'],
-    standalone: true,
-    imports: [
-      CommonModule,
-      FormsModule,
-      LeafletModule,
-    ]
+  selector: 'app-journey-page',
+  templateUrl: './journey-page.component.html',
+  styleUrls: ['./journey-page.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    LeafletModule,
+    RouterLink,
+  ]
 })
 export class JourneyPageComponent implements OnInit {
   journeyName = '';
   distance = 0;
 
-  map: any;
-  mapOptions: any;
-  mapLayers: any;
+  mapOptions: L.MapOptions = {} as L.MapOptions;
+  mapLayers: L.Layer[] = [];
 
   points = [
-    { lat: 50.12, lng: 14.45, visible: true },
+    { lat: 50.1192600, lng: 14.4918975, visible: true },
     { lat: 50.121, lng: 14.451, visible: true },
     { lat: 50.122, lng: 14.452, visible: true },
     { lat: 50.123, lng: 14.453, visible: true },
-    // ... přidej další body dle potřeby
   ];
 
   ngOnInit(): void {
     this.mapOptions = {
-      center: L.latLng(50.121, 14.451),
+      center: L.latLng(50.1192600, 14.4918975),
       zoom: 17,
       layers: [
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -41,10 +41,6 @@ export class JourneyPageComponent implements OnInit {
         })
       ]
     };
-
-    this.map = L.map('map', this.mapOptions); // Inicializace mapy
-
-    this.mapLayers = [];
 
     this.updatePath();
   }
@@ -56,22 +52,17 @@ export class JourneyPageComponent implements OnInit {
     const latlngs = visiblePoints.map(p => L.latLng(p.lat, p.lng));
 
     this.mapLayers = [
-      L.polyline(latlngs, { color: 'red', weight: 4 })
+      L.polyline(latlngs, { color: 'red', weight: 4 }),
+      ...latlngs.map(p => L.circleMarker(p, { radius: 5, color: 'red' }))
     ];
-
-    latlngs.forEach(p => {
-      this.mapLayers.push(L.circleMarker(p, { radius: 5, color: 'red' }));
-    });
 
     this.distance = this.calculateDistance(latlngs);
   }
 
-  calculateDistance(points: Array<{lat: number, lng: number} & L.LatLngLiteral>): number {
+  calculateDistance(points: L.LatLng[]): number {
     let dist = 0;
     for (let i = 1; i < points.length; i++) {
-      const point1 = L.latLng(points[i-1]);
-      const point2 = L.latLng(points[i]);
-      dist += point1.distanceTo(point2);
+      dist += points[i - 1].distanceTo(points[i]);
     }
     return parseFloat((dist / 1000).toFixed(2)); // km
   }

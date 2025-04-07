@@ -1,12 +1,15 @@
 <div class="journey-container">
   <div class="sidebar">
-    <input class="journey-name" placeholder="Journey name..." [(ngModel)]="journeyName" />
+    <div class="header">
+      <i class="fas fa-arrow-circle-left" routerLink="/memories"></i>
+      <input class="journey-name" placeholder="Journey name..." [(ngModel)]="journeyName" />
+    </div>
 
     <div class="points-list">
       <div *ngFor="let point of points; let i = index">
         <label>
-          {{ 'Point' + (i + 1) }}
-          <input type="checkbox" [(ngModel)]="point.visible" />
+          {{ 'Point ' + (i + 1) }}
+          <input type="checkbox" [(ngModel)]="point.visible" (change)="updatePath()" />
         </label>
       </div>
     </div>
