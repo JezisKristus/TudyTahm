@@ -19,7 +19,7 @@
     </div>
 
     <div class="maps-grid">
-      <div class="map-card" *ngFor="let map of maps">
+      <div class="map-card" routerLinkActive = "true" routerLink="" *ngFor="let map of maps">
         <div class="map-content"></div>
         <div class="map-title">{{ map.name }}</div>
       </div>

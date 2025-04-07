@@ -2,11 +2,12 @@
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { NgFor } from '@angular/common';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 
 @Component({
   selector: 'app-my-maps',
   standalone: true,
-  imports: [SidebarComponent, NgFor],
+  imports: [SidebarComponent, NgFor, RouterLinkActive, RouterLink],
   templateUrl: './my-maps-page.component.html',
   styleUrls: ['./my-maps-page.component.scss']
 })
