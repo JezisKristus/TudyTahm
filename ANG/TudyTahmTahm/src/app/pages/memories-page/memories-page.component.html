@@ -10,7 +10,7 @@
     </div>
 
     <div class="journeys-grid">
-      <div class="journey-card" *ngFor="let journey of journeys">
+      <div class="journey-card" routerLink='/journey' routerLinkActive="true" *ngFor="let journey of journeys">
         <div class="journey-title">{{journey.title}}</div>
       </div>
     </div>

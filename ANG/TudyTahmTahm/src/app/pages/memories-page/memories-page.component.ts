@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { NgFor } from '@angular/common';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 
 @Component({
   selector: 'app-memories',
   standalone: true,
-  imports: [SidebarComponent, NgFor],
+  imports: [SidebarComponent, NgFor, RouterLink, RouterLinkActive],
   templateUrl: './memories-page.component.html',
   styleUrls: ['./memories-page.component.scss']
 })

@@ -1,18 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
-import {SidebarComponent} from '../../components/sidebar/sidebar.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 @Component({
-  selector: 'app-journey-page',
-  templateUrl: './journey-page.component.html',
-  styleUrls: ['./journey-page.component.scss']
+    selector: 'app-journey-page',
+    templateUrl: './journey-page.component.html',
+    styleUrls: ['./journey-page.component.scss'],
+    standalone: true,
+    imports: [
+      CommonModule,
+      FormsModule,
+      LeafletModule,
+    ]
 })
 export class JourneyPageComponent implements OnInit {
   journeyName = '';
   distance = 0;
 
+  map: any;
   mapOptions: any;
-  map:any;
   mapLayers: any;
 
   points = [
@@ -24,7 +32,7 @@ export class JourneyPageComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.mapOptions  = L.MapOptions({
+    this.mapOptions = {
       center: L.latLng(50.121, 14.451),
       zoom: 17,
       layers: [
@@ -32,7 +40,9 @@ export class JourneyPageComponent implements OnInit {
           attribution: '© OpenStreetMap contributors'
         })
       ]
-    });
+    };
+
+    this.map = L.map('map', this.mapOptions); // Inicializace mapy
 
     this.mapLayers = [];
 
@@ -56,10 +66,12 @@ export class JourneyPageComponent implements OnInit {
     this.distance = this.calculateDistance(latlngs);
   }
 
-  calculateDistance(points: L.LatLng): number {
+  calculateDistance(points: Array<{lat: number, lng: number} & L.LatLngLiteral>): number {
     let dist = 0;
     for (let i = 1; i < points.length; i++) {
-      dist += points[i - 1].distanceTo(points[i]);
+      const point1 = L.latLng(points[i-1]);
+      const point2 = L.latLng(points[i]);
+      dist += point1.distanceTo(point2);
     }
     return parseFloat((dist / 1000).toFixed(2)); // km
   }

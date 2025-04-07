@@ -6,6 +6,7 @@ import { MyMapsPageComponent } from './pages/my-maps-page/my-maps-page.component
 import { MemoriesPageComponent } from './pages/memories-page/memories-page.component';
 import { SharedPageComponent } from './pages/shared-page/shared-page.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
+import {JourneyPageComponent} from './pages/journey-page/journey-page.component';
 
 export const routes: Routes = [
   {path: '', component: MapPageComponent },
@@ -15,4 +16,5 @@ export const routes: Routes = [
   {path: 'memories', component: MemoriesPageComponent},
   {path: 'shared', component: SharedPageComponent},
   {path: 'settings', component: SettingsPageComponent},
+  {path: 'journey', component: JourneyPageComponent}
 ];
