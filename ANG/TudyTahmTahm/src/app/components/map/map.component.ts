@@ -22,7 +22,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     // Add a marker to the map
     this.marker = L.marker([50.1192600, 14.4918975]).addTo(this.map)
-      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+      .bindPopup('Your custom marker')
       .openPopup();
   }
 
