@@ -14,5 +14,5 @@ export const routes: Routes = [
   {path: 'my-maps', component: MyMapsPageComponent},
   {path: 'memories', component: MemoriesPageComponent},
   {path: 'shared', component: SharedPageComponent},
-  {path: 'settings', component: SettingsPageComponent}
+  {path: 'settings', component: SettingsPageComponent},
 ];
