@@ -41,7 +41,6 @@ export class JourneyPageComponent implements OnInit {
         })
       ]
     };
-
     this.updatePath();
   }
 
