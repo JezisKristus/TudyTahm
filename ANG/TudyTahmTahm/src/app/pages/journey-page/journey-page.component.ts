@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { RouterLink } from '@angular/router';
+import {LeafletModule} from '@bluehalo/ngx-leaflet';
 
 @Component({
   selector: 'app-journey-page',
