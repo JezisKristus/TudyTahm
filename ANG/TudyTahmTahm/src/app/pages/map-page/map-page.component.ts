@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 import { MapComponent } from '../../components/map/map.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 
@@ -7,7 +7,8 @@ import { SidebarComponent } from '../../components/sidebar/sidebar.component';
   standalone: true,
   imports: [MapComponent, SidebarComponent],
   templateUrl: './map-page.component.html',
-  styleUrl: './map-page.component.scss'
+  styleUrl: './map-page.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class MapPageComponent {
 

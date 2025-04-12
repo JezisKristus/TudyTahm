@@ -1,0 +1,58 @@
+.add-marker-btn {
+  background: linear-gradient(
+      135deg,
+      #264d2c 0%,
+      #2f5d35 40%,
+      #2f5d35 60%,
+      #264d2c 100%
+  );
+  color: #d4b87c;
+  font-size: 0.875rem; // Reduced font size
+  font-family: sans-serif;
+  height: 40px; // Reduced height
+  width: 145px;
+  border: none;
+  border-radius: 25px;
+  padding: 0.5rem 1rem; // Reduced padding
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+
+  .icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.custom-popup-container {
+  outline: none;
+
+  .leaflet-popup-content-wrapper {
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .leaflet-popup-content {
+    margin: 0 !important;
+  }
+}
+
+
