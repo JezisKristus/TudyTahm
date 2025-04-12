@@ -9,4 +9,4 @@
           crossorigin=""></script>
 </head>
 <div id="map"></div>
-
+<app-marker-details *ngIf="selectedMarker" [marker]="selectedMarker"></app-marker-details>

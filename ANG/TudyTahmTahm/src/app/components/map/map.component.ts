@@ -1,12 +1,18 @@
-import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation, Output, EventEmitter} from '@angular/core';
 import * as L from 'leaflet';
 import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
+import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-map',
   standalone: true,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
+  imports: [
+    MarkerDetailsComponent,
+    NgIf
+  ],
   encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements OnInit, OnDestroy {
@@ -14,6 +20,8 @@ export class MapComponent implements OnInit, OnDestroy {
   layer: any;
   private markers: L.Marker[] = [];
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
+  @Output() markerClicked = new EventEmitter<L.Marker>(); // EventEmitter for marker click
+  selectedMarker: L.Marker | null = null; // Store the selected marker
 
   constructor(private viewContainerRef: ViewContainerRef) {}
 
@@ -73,6 +81,12 @@ export class MapComponent implements OnInit, OnDestroy {
   private addMarker(latlng: L.LatLng): void {
     const marker = L.marker(latlng).addTo(this.map);
     this.markers.push(marker);
+
+    // Emit event when marker is clicked
+    marker.on('click', () => {
+      this.markerClicked.emit(marker); // Emit the clicked marker
+      this.selectedMarker = marker; // Store the clicked marker
+    });
 
     console.log('Marker přidán:', marker);
     console.log('Aktuální seznam markerů:', this.markers);
