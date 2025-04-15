@@ -6,11 +6,11 @@ import {NgForOf, NgOptimizedImage} from '@angular/common';
   selector: 'app-marker-details',
   standalone: true,
   templateUrl: './marker-details.component.html',
+  styleUrls: ['./marker-details.component.scss'],
   imports: [
     NgOptimizedImage,
     NgForOf
   ],
-  styleUrls: ['./marker-details.component.scss']
 })
 
 export class MarkerDetailsComponent implements OnChanges {

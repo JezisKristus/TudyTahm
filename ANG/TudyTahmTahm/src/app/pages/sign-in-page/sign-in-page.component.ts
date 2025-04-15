@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from "@angular/router";
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -12,5 +13,9 @@ import { RouterLink, RouterLinkActive } from "@angular/router";
   styleUrl: './sign-in-page.component.scss'
 })
 export class SignInPageComponent {
+  form: FormGroup;
 
+  public constructor(private fb:FormBuilder) {
+
+  }
 }

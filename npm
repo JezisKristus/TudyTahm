@@ -1,0 +1,12 @@
+npm install -g @angular/cli
+
+npm i bootstrap@5.3.5
+npm i bootstrap-icons
+
+npm i leaflet
+npm i @types/leaflet
+npm i @types/leaflet.markercluster
+npm i leaflet.markercluster
+npm i leaflet-routing-machine
+
+npm i
