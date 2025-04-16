@@ -9,4 +9,6 @@ npm i @types/leaflet.markercluster
 npm i leaflet.markercluster
 npm i leaflet-routing-machine
 
-npm i
+npm i --force
+
+npm i @angular/common@15.2.0

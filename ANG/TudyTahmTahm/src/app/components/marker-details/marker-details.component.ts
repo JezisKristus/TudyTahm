@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as L from 'leaflet';
 import {NgForOf, NgOptimizedImage} from '@angular/common';
+import {LeafletModule} from '@bluehalo/ngx-leaflet';
 
 @Component({
   selector: 'app-marker-details',
@@ -9,7 +10,8 @@ import {NgForOf, NgOptimizedImage} from '@angular/common';
   styleUrls: ['./marker-details.component.scss'],
   imports: [
     NgOptimizedImage,
-    NgForOf
+    NgForOf,
+    LeafletModule
   ],
 })
 

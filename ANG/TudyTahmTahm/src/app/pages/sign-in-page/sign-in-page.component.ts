@@ -13,7 +13,6 @@ import {FormBuilder, FormGroup} from '@angular/forms';
   styleUrl: './sign-in-page.component.scss'
 })
 export class SignInPageComponent {
-  form: FormGroup;
 
   public constructor(private fb:FormBuilder) {
 
