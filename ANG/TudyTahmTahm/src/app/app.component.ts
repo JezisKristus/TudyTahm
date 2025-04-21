@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
+import { AuthenticationService } from './services/authentication.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  imports: [
+    RouterOutlet
+  ],
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'TudyTahmTahm';
+  /*public constructor(private router: Router,
+                     private authentication: AuthenticationService) {
+  }*/
 }

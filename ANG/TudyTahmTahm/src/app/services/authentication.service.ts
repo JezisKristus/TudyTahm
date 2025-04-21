@@ -7,7 +7,6 @@ import {Observable, tap} from 'rxjs';
 })
 export class AuthenticationService {
 
-
   public constructor(private http: HttpClient) {}
 
   public login(credentials: Credentials): Observable<TokenResult> {

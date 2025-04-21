@@ -11,4 +11,6 @@ npm i leaflet-routing-machine
 
 npm i --force
 
+ng update
+
 npm i @angular/common@15.2.0
