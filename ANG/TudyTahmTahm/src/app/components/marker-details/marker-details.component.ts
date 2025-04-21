@@ -1,6 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import * as L from 'leaflet';
-import {NgForOf, NgOptimizedImage} from '@angular/common';
+import {NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import {LeafletModule} from '@bluehalo/ngx-leaflet';
 
 @Component({
@@ -11,12 +11,18 @@ import {LeafletModule} from '@bluehalo/ngx-leaflet';
   imports: [
     NgOptimizedImage,
     NgForOf,
-    LeafletModule
+    LeafletModule,
+    NgIf
   ],
 })
 
 export class MarkerDetailsComponent implements OnChanges {
   @Input() marker: L.Marker | null = null; // Input for the selected marker
+  @Output() cancel = new EventEmitter<void>(); // Emit when cancel is clicked
+  @Output() save = new EventEmitter<void>(); // Emit when save is clicked
+  @Output() deleteMarker = new EventEmitter<void>(); // Emit when marker should be deleted
+
+  isVisible = true
 
   // Array of icon URLs for the icon grid
   icons: string[] = [
@@ -30,5 +36,19 @@ export class MarkerDetailsComponent implements OnChanges {
     if (changes['marker'] && changes['marker'].currentValue) {
       console.log('Selected marker updated:', this.marker);
     }
+  }
+
+  onCancel(): void {
+    this.deleteMarker.emit(); // Emit delete marker event
+    this.cancel.emit(); // Emit cancel event
+    this.isVisible = false; // Hide the marker details
+  }
+
+  onSave(): void {
+    this.save.emit(); // Emit save event
+  }
+
+  show(): void {
+    this.isVisible = true; // Znovu zobrazí komponentu
   }
 }

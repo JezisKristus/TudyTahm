@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation, Output, EventEmitter, AfterViewInit} from '@angular/core';
 import * as L from 'leaflet';
 import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
 import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
@@ -15,9 +15,10 @@ import {NgIf} from '@angular/common';
   ],
   encapsulation: ViewEncapsulation.None
 })
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   map: any;
   layer: any;
+  private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
   private markers: L.Marker[] = [];
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
   @Output() markerClicked = new EventEmitter<L.Marker>(); // EventEmitter for marker click
@@ -26,6 +27,14 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(private viewContainerRef: ViewContainerRef) {}
 
   ngOnInit(): void {
+    // Přesun inicializace mapy do ngAfterViewInit
+  }
+
+  ngAfterViewInit(): void {
+    this.initializeMap(); // Inicializace mapy po vykreslení DOM
+  }
+
+  private initializeMap(): void {
     this.map = L.map('map').setView([49.8022514, 15.6252330], 8);
     this.layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -82,14 +91,41 @@ export class MapComponent implements OnInit, OnDestroy {
     const marker = L.marker(latlng).addTo(this.map);
     this.markers.push(marker);
 
-    // Emit event when marker is clicked
     marker.on('click', () => {
-      this.markerClicked.emit(marker); // Emit the clicked marker
-      this.selectedMarker = marker; // Store the clicked marker
+      this.onMarkerClick(marker); // Přesměrování na novou metodu
     });
 
     console.log('Marker přidán:', marker);
     console.log('Aktuální seznam markerů:', this.markers);
+  }
+
+  onMarkerClick(marker: L.Marker): void {
+    this.selectedMarker = marker;
+
+    if (!this.markerDetailsRef) {
+      // Pokud ještě komponentu nemáš, vytvoř ji
+      this.viewContainerRef.clear();
+      this.markerDetailsRef = this.viewContainerRef.createComponent(MarkerDetailsComponent);
+    }
+
+    // Nastavení markeru
+    this.markerDetailsRef.instance.marker = marker;
+
+    // Zajištění viditelnosti
+    this.markerDetailsRef.instance.show();
+  }
+
+
+  onCancel(): void {
+    this.selectedMarker = null; // Reset vybraného markeru
+  }
+
+  onSave(): void {
+    this.selectedMarker = null; // Reset vybraného markeru
+  }
+
+  onDeleteMarker(): void {
+    this.onCancel(); // Reuse cancel logic to delete marker
   }
 
   ngOnDestroy(): void {

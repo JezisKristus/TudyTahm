@@ -1,4 +1,4 @@
-<div class="marker-options-panel">
+<div class="marker-options-panel" *ngIf="marker && isVisible">
   <h6>Marker options</h6>
   <div class="icon-grid">
     <div class="icon" *ngFor="let icon of icons">
@@ -15,7 +15,7 @@
   <textarea placeholder="Add description"></textarea>
 
   <div class="button-row">
-    <button class="cancel">Cancel</button>
-    <button class="save">Save</button>
+    <button class="cancel" (click)="onCancel()">Cancel</button>
+    <button class="save" (click)="onSave()">Save</button>
   </div>
 </div>

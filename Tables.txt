@@ -49,21 +49,15 @@ Table Users {
   UserName varchar
   UserPassword varchar
   UserEmail varchar
-  UserIcon bitmap
+  UserIconPath varchar
 }
 
 Table Markers {
   MarkerID integer [primary key]
-  IdWiki integer
   IdUser integer
-  IdPoint int 
+  IdPoint int
   MarkerName varchar
   MarkerIconPath varchar
-}
-
-Table Wiki {
-  WikiID integer [primary key]
-  WikiName varchar
 }
 
 
@@ -85,17 +79,20 @@ Table Journey {
 
 Table GPSPoint {
   PointID int [pk]
+  IdMap int
   Latitude decimal
   Longitude decimal
 }
 
 Table UserGroup {
   GroupID int [pk]
+  GroupName varchar
 }
 
 Table GroupUsers {
   IdUser int
   IdGroup int
+  IdPermission int
 }
 
 Table Permissions {
@@ -106,6 +103,26 @@ Table Permissions {
   Delete bit
 }
 
+Table JourneyGroups {
+  IdJourney int
+  IdGroup int
+}
+
+Table Labels {
+  LabelId int [pk]
+  Name varchar
+  Color varchar
+}
+
+Table MapLabels {
+  IdLabel int
+  IdMap int
+}
+
+Table MarkerLabels {
+  IdMarker int
+  IdLabel int
+}
 
 
 
@@ -114,19 +131,25 @@ Ref: Journey.JourneyID < JourneyUsers.IdJourney
 Ref: GPSPoint.PointID > Journey.JourneyID
 Ref: Maps.IdUser > Users.UserID
 Ref: Markers.IdUser > Users.UserID
-Ref: Wiki.WikiID > Markers.IdWiki
 Ref: Overlays.IdMap > Maps.MapID
-
-
-
 Ref: "Markers"."IdPoint" < "GPSPoint"."PointID"
-
-
-
 Ref: "Users"."UserID" < "GroupUsers"."IdUser"
-
 Ref: "UserGroup"."GroupID" < "GroupUsers"."IdGroup"
+Ref: "Journey"."JourneyID" < "JourneyGroups"."IdJourney"
 
+Ref: "UserGroup"."GroupID" < "JourneyGroups"."IdGroup"
+
+Ref: "GroupUsers"."IdPermission" < "Permissions"."PermissionID"
+
+Ref: "Labels"."LabelId" < "MarkerLabels"."IdLabel"
+
+Ref: "Markers"."MarkerID" < "MarkerLabels"."IdMarker"
+
+Ref: "Labels"."LabelId" < "MapLabels"."IdLabel"
+
+Ref: "Maps"."MapID" < "MapLabels"."IdMap"
+
+Ref: "Maps"."MapID" < "GPSPoint"."PointID"
 
 ----------------------------------------------------------------------------------------------------
 
@@ -136,11 +159,7 @@ BITMAP = BLOB(64MB) / MEDIUMBLOB(16GB)
 Kudy Tahm
 
 
-
-
 MYSQLPHP
-
-
 
 
 create Table Regions (
