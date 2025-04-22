@@ -2,7 +2,8 @@ import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncaps
 import * as L from 'leaflet';
 import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
 import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
-import {NgIf} from '@angular/common';
+import {Marker} from '../../models/marker';
+import {MarkerService} from '../../services/marker.service';
 
 @Component({
   selector: 'app-map',
@@ -10,21 +11,25 @@ import {NgIf} from '@angular/common';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   imports: [
-    MarkerDetailsComponent,
-    NgIf
+    MarkerDetailsComponent
   ],
   encapsulation: ViewEncapsulation.None
 })
+
+
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   map: any;
   layer: any;
   private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
-  private markers: L.Marker[] = [];
+
+  private lMarkers: L.Marker[] = []; // Leaflet markers
+  private myMarkers: Marker[] = []; // Our custom markers
+
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
   @Output() markerClicked = new EventEmitter<L.Marker>(); // EventEmitter for marker click
   selectedMarker: L.Marker | null = null; // Store the selected marker
 
-  constructor(private viewContainerRef: ViewContainerRef) {}
+  constructor(private viewContainerRef: ViewContainerRef, private markerService: MarkerService) {}
 
   ngOnInit(): void {
     // Přesun inicializace mapy do ngAfterViewInit
@@ -32,6 +37,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initializeMap(); // Inicializace mapy po vykreslení DOM
+
+    this.markerService.findByMapId(this.map.id).subscribe(result => this.myMarkers = result);
+    const lMarkers = this.convertMarkersToLeafletMarkers(this.myMarkers);
+
   }
 
   private initializeMap(): void {
@@ -42,6 +51,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
       this.showPopup(event.latlng);
+    });
+  }
+
+  private convertMarkersToLeafletMarkers(markers: Marker[]): L.Marker[] {
+    return markers.map(marker => {
+      const leafletMarker: L.Marker = L.marker([marker.latitude, marker.longitude]);
+      return leafletMarker;
     });
   }
 
@@ -89,14 +105,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private addMarker(latlng: L.LatLng): void {
     const marker = L.marker(latlng).addTo(this.map);
-    this.markers.push(marker);
+    this.lMarkers.push(marker);
 
     marker.on('click', () => {
       this.onMarkerClick(marker); // Přesměrování na novou metodu
     });
 
     console.log('Marker přidán:', marker);
-    console.log('Aktuální seznam markerů:', this.markers);
+    console.log('Aktuální seznam markerů:', this.lMarkers);
   }
 
   onMarkerClick(marker: L.Marker): void {

@@ -1,5 +1,5 @@
 export interface Marker {
-  markerID: number;
+  markerId: number;
   idUser: number;
   idPoint: number;
   markerName: string;
