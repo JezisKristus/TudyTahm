@@ -1,0 +1,116 @@
+/* memories.component.scss */
+:host {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.memories-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.main-content {
+  flex-grow: 1;
+  background-color: var(--primary-green);
+  min-height: 100vh;
+  position: relative;
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--gold);
+  background-color: var(--dark-green);
+
+  h1 {
+    color: var(--gold);
+    margin: 0;
+    font-size: 24px;
+  }
+}
+
+.refresh-icon {
+  width: 35px;
+  height: 35px;
+  background-color: var(--light-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.page-title {
+  font-size: 24px;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.journeys-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 30px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.journey-card {
+  background-color: var(--white);
+  border-radius: 10px;
+  height: 180px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.journey-title {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+}
+
+.add-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: var(--light-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+
+  &:hover {
+    background-color: var(--dark-green);
+  }
+}

@@ -1,0 +1,13 @@
+﻿namespace TT_API.DTOs {
+    public class CreateMarkerDTO {
+
+        public int IDUser { get; set; }
+        public string MarkerName { get; set; }
+        public string MarkerDescription { get; set; }
+        public string MarkerIconPath { get; set; }
+
+        public float Latitude { get; set; }
+        public float Longitude { get; set; }
+
+    }
+}

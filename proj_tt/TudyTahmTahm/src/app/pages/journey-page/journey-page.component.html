@@ -1,0 +1,29 @@
+<div class="journey-container">
+  <div class="sidebar">
+    <div class="header">
+      <i class="fas fa-arrow-circle-left" routerLink="/memories"></i>
+      <input class="journey-name" placeholder="Journey name..." [(ngModel)]="journeyName" />
+    </div>
+
+    <div class="points-list">
+      <div *ngFor="let point of points; let i = index">
+        <label>
+          {{ 'Point ' + (i + 1) }}
+          <input type="checkbox" [(ngModel)]="point.visible" (change)="updatePath()" />
+        </label>
+      </div>
+    </div>
+
+    <div class="distance">
+      Journey distance: {{ distance }} km
+    </div>
+
+    <div class="buttons">
+      <button class="share">Share</button>
+      <button class="save">Save</button>
+      <button class="discard">Discard</button>
+    </div>
+  </div>
+
+  <div class="map" leaflet [leafletOptions]="mapOptions" [leafletLayers]="mapLayers"></div>
+</div>

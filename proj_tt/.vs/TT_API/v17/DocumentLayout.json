@@ -1,0 +1,216 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\EditBySteve\\Desktop\\TudyTahm\\PROJ_TT\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DB24C46D-C180-4BBA-9E82-518E6982F5C9}|api\\TT_API.csproj|c:\\users\\editbysteve\\desktop\\tudytahm\\proj_tt\\api\\mycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB24C46D-C180-4BBA-9E82-518E6982F5C9}|api\\TT_API.csproj|solutionrelative:api\\mycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\MyContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\GroupUsers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\User.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Permission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Overlay.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\MarkerLabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Marker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\MapLabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\UserGroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\JourneyGroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Journey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MyContext.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\Desktop\\TudyTahm\\PROJ_TT\\api\\MyContext.cs",
+              "RelativeDocumentMoniker": "api\\MyContext.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\Desktop\\TudyTahm\\PROJ_TT\\api\\MyContext.cs",
+              "RelativeToolTip": "api\\MyContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T01:10:23.332Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GroupUsers.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\GroupUsers.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\GroupUsers.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\GroupUsers.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\GroupUsers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:44:35.75Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\User.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\User.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:14.252Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Permission.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Permission.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Permission.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Permission.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Permission.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:12.731Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Overlay.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Overlay.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Overlay.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Overlay.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Overlay.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:12.202Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MarkerLabel.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\MarkerLabel.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\MarkerLabel.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\MarkerLabel.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\MarkerLabel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:11.699Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Marker.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Marker.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Marker.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Marker.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Marker.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:07.034Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MapLabel.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\MapLabel.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\MapLabel.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\MapLabel.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\MapLabel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:06.081Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MyContext.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\MyContext.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\MyContext.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\MyContext.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\MyContext.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:01:02.728Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "UserGroup.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\UserGroup.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\UserGroup.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\UserGroup.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\UserGroup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:14.859Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "JourneyGroup.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\JourneyGroup.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\JourneyGroup.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\JourneyGroup.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\JourneyGroup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:03.682Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Journey.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Journey.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Journey.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Models\\Journey.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Models\\Journey.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T00:39:02.338Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Program.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Program.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\source\\repos\\TT_API\\TT_API\\Program.cs",
+              "RelativeToolTip": "..\\..\\..\\source\\repos\\TT_API\\TT_API\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T23:20:36.732Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+/* my-maps.component.scss */
+:host {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.maps-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.main-content {
+  flex-grow: 1;
+  background-color: #dcdcdc;
+  min-height: 100vh;
+}
+
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--gold);
+  background-color: var(--dark-green);
+  justify-content: space-between;
+
+  h1 {
+    color: var(--gold);
+    font-size: 24px;
+  }
+}
+
+.monitor-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--gold);
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-title {
+  font-size: 22px;
+  color: var(--primary-green);
+  font-weight: 500;
+  margin-right: auto;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.help-button, .notification-button {
+  background: none;
+  border: none;
+  color: var(--primary-green);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.maps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 30px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.map-card, .add-map-card {
+  background-color: var(--white);
+  border-radius: 10px;
+  height: 160px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.map-card:hover, .add-map-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-content {
+  flex-grow: 1;
+}
+
+.map-title {
+  padding: 10px;
+  text-align: center;
+  color: #333;
+  font-size: 14px;
+  border-top: 1px solid #eee;
+}
+
+.add-map-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--white);
+}
+
+.add-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.add-text {
+  font-size: 14px;
+  color: #666;
+}
