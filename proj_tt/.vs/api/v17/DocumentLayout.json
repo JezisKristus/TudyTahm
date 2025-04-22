@@ -1,48 +1,89 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\",
+  "WorkspaceRootPath": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\mycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\mycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\label.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\label.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\dtos\\createmarkerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\maplabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\maplabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\dtos\\createmarkerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\dtos\\createmarkerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\controllers\\markercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\controllers\\markercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\controllers\\markercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\mycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\mycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\9.0.101\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\models\\marker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\marker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\models\\gpspoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\gpspoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\gpspoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\usergroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\usergroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\services\\tokensservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\services\\tokensservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\markerlabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\markerlabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\journeyuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\journeyuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\marker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\marker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\overlay.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\overlay.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\permission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\permission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\anton\u00EDn\\documents\\github\\tudytahm\\proj_tt\\api\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\journeygroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\journeygroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\map.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\map.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\journey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\journey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\models\\groupusers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\groupusers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\services\\tokensservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\services\\tokensservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\ang\\api\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -53,52 +94,249 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Marker.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Models\\Marker.cs",
-              "RelativeDocumentMoniker": "api\\Models\\Marker.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Models\\Marker.cs",
-              "RelativeToolTip": "api\\Models\\Marker.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAoAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Label.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Label.cs",
+              "RelativeDocumentMoniker": "api\\Models\\Label.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Label.cs",
+              "RelativeToolTip": "api\\Models\\Label.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T02:08:26.871Z"
+              "WhenOpened": "2025-04-22T14:17:46.891Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "JourneyUser.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\JourneyUser.cs",
+              "RelativeDocumentMoniker": "api\\Models\\JourneyUser.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\JourneyUser.cs",
+              "RelativeToolTip": "api\\Models\\JourneyUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:17:37.497Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MyContext.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\MyContext.cs",
+              "RelativeDocumentMoniker": "api\\MyContext.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\MyContext.cs",
+              "RelativeToolTip": "api\\MyContext.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAzwB4AAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T01:12:31.553Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MarkerLabel.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\MarkerLabel.cs",
+              "RelativeDocumentMoniker": "api\\Models\\MarkerLabel.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\MarkerLabel.cs",
+              "RelativeToolTip": "api\\Models\\MarkerLabel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:21:07.342Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Marker.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Marker.cs",
+              "RelativeDocumentMoniker": "api\\Models\\Marker.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Marker.cs",
+              "RelativeToolTip": "api\\Models\\Marker.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T02:08:26.871Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "GPSPoint.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\GPSPoint.cs",
+              "RelativeDocumentMoniker": "api\\Models\\GPSPoint.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\GPSPoint.cs",
+              "RelativeToolTip": "api\\Models\\GPSPoint.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T02:09:03.7Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "MapLabel.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\MapLabel.cs",
+              "RelativeDocumentMoniker": "api\\Models\\MapLabel.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\MapLabel.cs",
+              "RelativeToolTip": "api\\Models\\MapLabel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:20:46.488Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "CreateMarkerDTO.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\DTOs\\CreateMarkerDTO.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\DTOs\\CreateMarkerDTO.cs",
               "RelativeDocumentMoniker": "api\\DTOs\\CreateMarkerDTO.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\DTOs\\CreateMarkerDTO.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\DTOs\\CreateMarkerDTO.cs",
               "RelativeToolTip": "api\\DTOs\\CreateMarkerDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-22T02:03:55.32Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MarkerController.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Controllers\\MarkerController.cs",
-              "RelativeDocumentMoniker": "api\\Controllers\\MarkerController.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Controllers\\MarkerController.cs",
-              "RelativeToolTip": "api\\Controllers\\MarkerController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAA0AAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Program.cs",
+              "RelativeDocumentMoniker": "api\\Program.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Program.cs",
+              "RelativeToolTip": "api\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwCUAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T02:02:37.238Z"
+              "WhenOpened": "2025-04-22T01:12:30.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MarkerController.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Controllers\\MarkerController.cs",
+              "RelativeDocumentMoniker": "api\\Controllers\\MarkerController.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Controllers\\MarkerController.cs",
+              "RelativeToolTip": "api\\Controllers\\MarkerController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB8AAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T02:02:37.238Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
+              "Title": "UserGroup.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\UserGroup.cs",
+              "RelativeDocumentMoniker": "api\\Models\\UserGroup.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\UserGroup.cs",
+              "RelativeToolTip": "api\\Models\\UserGroup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:21:50.859Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Overlay.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Overlay.cs",
+              "RelativeDocumentMoniker": "api\\Models\\Overlay.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Overlay.cs",
+              "RelativeToolTip": "api\\Models\\Overlay.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:21:22.726Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Permission.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Permission.cs",
+              "RelativeDocumentMoniker": "api\\Models\\Permission.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Permission.cs",
+              "RelativeToolTip": "api\\Models\\Permission.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:21:33.698Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\User.cs",
+              "RelativeDocumentMoniker": "api\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\User.cs",
+              "RelativeToolTip": "api\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T01:46:17.327Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "GroupUsers.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\GroupUsers.cs",
+              "RelativeDocumentMoniker": "api\\Models\\GroupUsers.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\GroupUsers.cs",
+              "RelativeToolTip": "api\\Models\\GroupUsers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:16:50.752Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Journey.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Journey.cs",
+              "RelativeDocumentMoniker": "api\\Models\\Journey.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Journey.cs",
+              "RelativeToolTip": "api\\Models\\Journey.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:17:11.3Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "JourneyGroup.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\JourneyGroup.cs",
+              "RelativeDocumentMoniker": "api\\Models\\JourneyGroup.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\JourneyGroup.cs",
+              "RelativeToolTip": "api\\Models\\JourneyGroup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:17:23.438Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Map.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Map.cs",
+              "RelativeDocumentMoniker": "api\\Models\\Map.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Models\\Map.cs",
+              "RelativeToolTip": "api\\Models\\Map.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:20:16.415Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
               "Title": "AuthenticationController.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Controllers\\AuthenticationController.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Controllers\\AuthenticationController.cs",
               "RelativeDocumentMoniker": "api\\Controllers\\AuthenticationController.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Controllers\\AuthenticationController.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Controllers\\AuthenticationController.cs",
               "RelativeToolTip": "api\\Controllers\\AuthenticationController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAABJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -106,23 +344,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Models\\User.cs",
-              "RelativeDocumentMoniker": "api\\Models\\User.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Models\\User.cs",
-              "RelativeToolTip": "api\\Models\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T01:46:17.327Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 19,
               "Title": "TokensService.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Services\\TokensService.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Services\\TokensService.cs",
               "RelativeDocumentMoniker": "api\\Services\\TokensService.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Services\\TokensService.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\Services\\TokensService.cs",
               "RelativeToolTip": "api\\Services\\TokensService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -130,64 +356,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 20,
               "Title": "WeatherForecast.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\WeatherForecast.cs",
+              "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\WeatherForecast.cs",
               "RelativeDocumentMoniker": "api\\WeatherForecast.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\WeatherForecast.cs",
+              "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\ANG\\api\\WeatherForecast.cs",
               "RelativeToolTip": "api\\WeatherForecast.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-22T01:12:32.942Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MyContext.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\MyContext.cs",
-              "RelativeDocumentMoniker": "api\\MyContext.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\MyContext.cs",
-              "RelativeToolTip": "api\\MyContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAA+AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T01:12:31.553Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "GPSPoint.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Models\\GPSPoint.cs",
-              "RelativeDocumentMoniker": "api\\Models\\GPSPoint.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Models\\GPSPoint.cs",
-              "RelativeToolTip": "api\\Models\\GPSPoint.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAUAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T02:09:03.7Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Microsoft.PackageDependencyResolution.targets",
-              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\9.0.101\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
-              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\9.0.101\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
-              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\9.0.101\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
-              "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\9.0.101\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
-              "ViewState": "AgIAAPIAAAAAAAAAAIAwwBABAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-04-22T06:24:29.949Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Program.cs",
-              "RelativeDocumentMoniker": "api\\Program.cs",
-              "ToolTip": "C:\\Users\\Anton\u00EDn\\Documents\\GitHub\\TudyTahm\\proj_tt\\api\\Program.cs",
-              "RelativeToolTip": "api\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T01:12:30.37Z"
             }
           ]
         }

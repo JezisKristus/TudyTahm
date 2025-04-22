@@ -25,5 +25,12 @@ namespace TT_API {
             optionsBuilder.UseMySQL("server=mysqlstudenti.litv.sssvt.cz;database=3b1_patejdlstepan_db2;user=patejdlstepan;password=123456;SslMode=none");
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            modelBuilder.Entity<JourneyUser>().HasNoKey();
+            modelBuilder.Entity<MapLabel>().HasNoKey();
+            modelBuilder.Entity<MarkerLabel>().HasNoKey();
+
+        }
+
     }
 }
