@@ -9,8 +9,8 @@ using TT_API.Models;
 using TT_API.Services;
 
 namespace TT_API.Controllers {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
 
     public class AuthenticationController : ControllerBase {
         private TokensService service = new TokensService();

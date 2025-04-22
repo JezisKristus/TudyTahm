@@ -14,18 +14,18 @@ export class MarkerService {
   public constructor(private http: HttpClient) {}
 
   public getMarkers(): Observable<Marker[]> {
-    const url = `${environment.apiUrl}/Marker`;
+    const url = `http://localhost:5010/api/Marker`;
     return this.http.get<Marker[]>(url).pipe(
       map(markers => markers.filter(marker => this.isValidLatLng(marker.latitude, marker.longitude))) // Filtrování neplatných markerů
     );
   }
 
   public findByMapId(id: number): Observable<Marker[]> {
-    return this.http.get<Marker[]>('http://localhost:5010/api/Markers/Map/' + id); // Připraveno až bude víc map
+    return this.http.get<Marker[]>('http://localhost:5010/api/Marker/Map/' + id); // Připraveno až bude víc map
   }
   public create(createMarkerDto: CreateMarkerDto): Observable<Marker> {
     console.log('Sending create request with data:', createMarkerDto);
-    return this.http.post<Marker>(`${environment.apiUrl}/Marker`, createMarkerDto).pipe(
+    return this.http.post<Marker>(`http://localhost:5010/api/Marker`, createMarkerDto).pipe(
       map(response => {
         console.log('Received response from API:', response);
         return response;
@@ -33,10 +33,10 @@ export class MarkerService {
     );
   }
   public update(marker: Marker): Observable<Marker> {
-    return this.http.put<Marker>('http://localhost:5010/api/Markers/' + marker.markerId, marker);
+    return this.http.put<Marker>('http://localhost:5010/api/Marker/' + marker.markerId, marker);
   }
   public delete(marker: Marker): Observable<void> {
-    return this.http.delete<void>('http://localhost:5010/api/Markers/' + marker.markerId);
+    return this.http.delete<void>('http://localhost:5010/api/Marker/' + marker.markerId);
   }
 
 

@@ -4,6 +4,8 @@ namespace TT_API {
         public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.WebHost.UseUrls("http://localhost:5010");
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -20,6 +22,7 @@ namespace TT_API {
                     }
                 );
             });
+            
 
             var app = builder.Build();
 

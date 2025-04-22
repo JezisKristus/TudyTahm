@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TT_API.Controllers {
 
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
 
     public class MarkerController : ControllerBase {
 
@@ -47,7 +47,21 @@ namespace TT_API.Controllers {
                 .Where(m => m.IDUser == 6) //zatim mame stejne jenom usera 6
                 .ToListAsync();
 
-            return Ok(markers);
+            var completemarkers = new List<CreateMarkerDTO>();
+            foreach (var m in markers) {
+                var gps = await context.GPSPoints.FindAsync(m.IDPoint);
+                CreateMarkerDTO cmdto = new CreateMarkerDTO() {
+                    IDUser = m.IDUser,
+                    MarkerName = m.MarkerName,
+                    MarkerDescription = m.MarkerDescription,
+                    MarkerIconPath = m.MarkerIconPath,
+                    Latitude = gps.Latitude,
+                    Longitude = gps.Longitude
+                };
+                completemarkers.Add(cmdto);
+            }
+
+            return Ok(completemarkers);
         }
     }
 }

@@ -13,5 +13,6 @@ namespace TT_API.Models
         public string MarkerName { get; set; }
         public string MarkerDescription { get; set; }
         public string MarkerIconPath { get; set; }
+
     }
 }
