@@ -19,7 +19,6 @@ namespace TT_API.Controllers {
         [HttpPost]
         public async Task<IActionResult> CreateMarker([FromBody] CreateMarkerDTO cmDTO) {
             GPSPoint point = new GPSPoint() {
-                PointID = context.GPSPoints.Count(),
                 Latitude = cmDTO.Latitude,
                 Longitude = cmDTO.Longitude,
             };
@@ -27,7 +26,7 @@ namespace TT_API.Controllers {
             Marker marker = new Marker() {
                 
                 IDUser = 6, //debug user
-                IDPoint = context.GPSPoints.Count(),
+                IDPoint = context.GPSPoints.Count()+1,
                 MarkerName = cmDTO.MarkerName,
                 MarkerDescription = cmDTO.MarkerDescription,
                 MarkerIconPath = cmDTO.MarkerIconPath,
@@ -35,8 +34,9 @@ namespace TT_API.Controllers {
             };
 
             context.GPSPoints.Add(point);
+            await context.SaveChangesAsync();
             context.Markers.Add(marker);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             return Ok();
         }

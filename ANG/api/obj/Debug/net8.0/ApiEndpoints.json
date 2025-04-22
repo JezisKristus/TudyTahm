@@ -34,17 +34,11 @@
   {
     "ContainingType": "TT_API.Controllers.MarkerController",
     "Method": "GetMarkersForUser",
-    "RelativePath": "api/Marker/{userId}",
+    "RelativePath": "api/Marker",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
