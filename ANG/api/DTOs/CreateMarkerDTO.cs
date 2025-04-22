@@ -2,7 +2,6 @@
     public class CreateMarkerDTO {
 
         public int IDUser { get; set; }
-        public int IDPoint { get; set; }
         public string MarkerName { get; set; }
         public string MarkerDescription { get; set; }
         public string MarkerIconPath { get; set; }
