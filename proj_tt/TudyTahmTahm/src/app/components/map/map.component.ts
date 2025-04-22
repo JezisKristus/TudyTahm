@@ -4,6 +4,7 @@ import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.com
 import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
 import {Marker} from '../../models/marker';
 import {MarkerService} from '../../services/marker.service';
+import {GPSPoint} from '../../models/gps-point';
 
 @Component({
   selector: 'app-map',
@@ -16,7 +17,6 @@ import {MarkerService} from '../../services/marker.service';
   encapsulation: ViewEncapsulation.None
 })
 
-
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   map: any;
   layer: any;
@@ -24,6 +24,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private lMarkers: L.Marker[] = []; // Leaflet markers
   private myMarkers: Marker[] = []; // Our custom markers
+  private gpsPoints : GPSPoint[] = [];
 
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
   @Output() markerClicked = new EventEmitter<L.Marker>(); // EventEmitter for marker click
@@ -38,9 +39,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.initializeMap(); // Inicializace mapy po vykreslení DOM
 
-    this.markerService.findByMapId(this.map.id).subscribe(result => this.myMarkers = result);
-    const lMarkers = this.convertMarkersToLeafletMarkers(this.myMarkers);
+    this.markerService.getMarkers().subscribe(result => {
+      this.myMarkers = result;
+      this.addMarkersToMap(this.myMarkers); // Přidání markerů do mapy
 
+    });
   }
 
   private initializeMap(): void {
@@ -48,6 +51,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
+    this.lMarkers = this.convertMarkersToLeafletMarkers(this.myMarkers); // Převod našich markerů na Leaflet markery
 
     this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
       this.showPopup(event.latlng);
@@ -113,6 +117,25 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     console.log('Marker přidán:', marker);
     console.log('Aktuální seznam markerů:', this.lMarkers);
+  }
+
+  private addMarkersToMap(markers: Marker[]): void {
+    markers.forEach(marker => {
+      if (this.isValidLatLng(marker.latitude, marker.longitude)) { // Kontrola platnosti souřadnic
+        const leafletMarker = L.marker([marker.latitude, marker.longitude]).addTo(this.map);
+        this.lMarkers.push(leafletMarker);
+
+        leafletMarker.on('click', () => {
+          this.onMarkerClick(leafletMarker); // Přesměrování na metodu pro kliknutí na marker
+        });
+      } else {
+        console.warn('Neplatné souřadnice markeru:', marker);
+      }
+    });
+  }
+
+  private isValidLatLng(lat: number, lng: number): boolean {
+    return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
   }
 
   onMarkerClick(marker: L.Marker): void {

@@ -42,9 +42,8 @@ namespace TT_API.Controllers {
         }
 
         [HttpGet] //tady pak pridat overovani usera
-        public async Task<IActionResult> GetMarkersForUser() {
-            var markers = await context.Markers
-                .Include(m => m.IDUser)
+        public async Task<IActionResult> GetMarkersForUser() { // Markery jenom toho usera 
+            var markers = await context.Markers // Include nebylo potřeba, for some reason to rozbíjelo get
                 .Where(m => m.IDUser == 6) //zatim mame stejne jenom usera 6
                 .ToListAsync();
 

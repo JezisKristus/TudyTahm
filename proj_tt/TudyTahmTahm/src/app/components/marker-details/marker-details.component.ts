@@ -2,6 +2,8 @@ import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from
 import * as L from 'leaflet';
 import {NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import {LeafletModule} from '@bluehalo/ngx-leaflet';
+import { MarkerService } from '../../services/marker.service';
+import { Marker} from '../../models/marker';
 
 @Component({
   selector: 'app-marker-details',
@@ -21,6 +23,7 @@ export class MarkerDetailsComponent implements OnChanges {
   @Output() cancel = new EventEmitter<void>(); // Emit when cancel is clicked
   @Output() save = new EventEmitter<void>(); // Emit when save is clicked
   @Output() deleteMarker = new EventEmitter<void>(); // Emit when marker should be deleted
+  @Output() markerCreated = new EventEmitter<Marker>(); // Emit when a marker is created
 
   isVisible = true
 
@@ -31,6 +34,8 @@ export class MarkerDetailsComponent implements OnChanges {
     'assets/icons/icon3.png',
     'assets/icons/icon4.png'
   ];
+
+  constructor(private markerService: MarkerService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['marker'] && changes['marker'].currentValue) {
@@ -45,7 +50,27 @@ export class MarkerDetailsComponent implements OnChanges {
   }
 
   onSave(): void {
-    this.save.emit(); // Emit save event
+    if (this.marker) {
+      const createMarkerDto = {
+        idUser: 6, // Debug user
+        markerName: 'New Marker', // Replace with actual name logic
+        markerDescription: 'Description', // Replace with actual description logic
+        markerIconPath: 'assets/icons/icon1.png', // Replace with selected icon logic
+        latitude: this.marker.getLatLng().lat,
+        longitude: this.marker.getLatLng().lng
+      };
+
+      this.markerService.create(createMarkerDto).subscribe({
+        next: (createdMarker) => {
+          console.log('Marker created:', createdMarker);
+          this.markerCreated.emit(createdMarker); // Emit the created marker
+          this.save.emit(); // Emit save event after successful creation
+        },
+        error: (err) => {
+          console.error('Error creating marker:', err);
+        }
+      });
+    }
   }
 
   show(): void {

@@ -29,9 +29,11 @@ namespace TT_API {
                 app.UseSwaggerUI();
             }
 
-            app.UseAuthorization();
 
-            app.UseCors();
+            app.UseCors(); // Has to be first for correct CORS handling
+
+
+            app.UseAuthorization();
 
             app.MapControllers();
 
