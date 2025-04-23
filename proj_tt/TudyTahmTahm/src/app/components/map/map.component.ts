@@ -60,7 +60,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private convertMarkersToLeafletMarkers(markers: Marker[]): L.Marker[] {
     return markers.map(marker => {
-      const leafletMarker: L.Marker = L.marker([marker.latitude, marker.longitude]);
+      const leafletMarker: L.Marker = L.marker([marker.latitude, marker.longitude], {
+        icon: L.icon({ iconUrl: marker.markerIconPath })
+      });
+      (leafletMarker as any).markerId = marker.markerId; // Attach markerId to the Leaflet marker
       return leafletMarker;
     });
   }
@@ -141,19 +144,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   onMarkerClick(marker: L.Marker): void {
     this.selectedMarker = marker;
 
-    if (!this.markerDetailsRef) {
-      // Pokud ještě komponentu nemáš, vytvoř ji
-      this.viewContainerRef.clear();
-      this.markerDetailsRef = this.viewContainerRef.createComponent(MarkerDetailsComponent);
+    // Destroy existing MarkerDetailsComponent if it exists
+    if (this.markerDetailsRef) {
+      this.markerDetailsRef.destroy();
     }
 
-    // Nastavení markeru
-    this.markerDetailsRef.instance.marker = marker;
+    // Create a new instance of MarkerDetailsComponent
+    this.viewContainerRef.clear();
+    this.markerDetailsRef = this.viewContainerRef.createComponent(MarkerDetailsComponent);
 
-    // Zajištění viditelnosti
+    // Set the marker input and ensure visibility
+    this.markerDetailsRef.instance.marker = marker;
     this.markerDetailsRef.instance.show();
   }
-
 
   onCancel(): void {
     this.selectedMarker = null; // Reset vybraného markeru

@@ -1,4 +1,4 @@
-export interface CreateMarkerDto {
+export interface CreateUpdateMarkerDto {
   idUser: number;
   markerName: string;
   markerDescription: string;

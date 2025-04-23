@@ -36,6 +36,46 @@
         }
       }
     },
+    "/api/GPSPoint/{id}": {
+      "get": {
+        "tags": [
+          "GPSPoint"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GPSPoint"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GPSPoint"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GPSPoint"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Marker": {
       "post": {
         "tags": [
@@ -140,11 +180,33 @@
           },
           "latitude": {
             "type": "number",
-            "format": "double"
+            "format": "float"
           },
           "longitude": {
             "type": "number",
-            "format": "double"
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GPSPoint": {
+        "type": "object",
+        "properties": {
+          "pointID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idMap": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float"
           }
         },
         "additionalProperties": false

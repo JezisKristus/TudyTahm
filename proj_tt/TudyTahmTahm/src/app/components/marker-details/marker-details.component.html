@@ -12,7 +12,8 @@
   <label class="label">Labels</label>
   <hr />
 
-  <textarea placeholder="Add description"></textarea>
+  <label class="label">Description</label>
+  <textarea [(ngModel)]="description" placeholder="Add description"></textarea>
 
   <div class="button-row">
     <button class="cancel" (click)="onCancel()">Cancel</button>

@@ -4,6 +4,7 @@ import {NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import {LeafletModule} from '@bluehalo/ngx-leaflet';
 import { MarkerService } from '../../services/marker.service';
 import { Marker} from '../../models/marker';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-marker-details',
@@ -14,7 +15,8 @@ import { Marker} from '../../models/marker';
     NgOptimizedImage,
     NgForOf,
     LeafletModule,
-    NgIf
+    NgIf,
+    FormsModule
   ],
 })
 
@@ -26,6 +28,7 @@ export class MarkerDetailsComponent implements OnChanges {
   @Output() markerCreated = new EventEmitter<Marker>(); // Emit when a marker is created
 
   isVisible = true
+  description: string = ''; // Description of the marker
 
   // Array of icon URLs for the icon grid
   icons: string[] = [
@@ -51,7 +54,7 @@ export class MarkerDetailsComponent implements OnChanges {
 
   onSave(): void {
     if (this.marker) {
-      const createMarkerDto = {
+      const markerDto = {
         idUser: 6, // Debug user
         markerName: 'New Marker', // Replace with actual name logic
         markerDescription: 'Description', // Replace with actual description logic
@@ -60,16 +63,31 @@ export class MarkerDetailsComponent implements OnChanges {
         longitude: this.marker.getLatLng().lng
       };
 
-      this.markerService.create(createMarkerDto).subscribe({
-        next: (createdMarker) => {
-          console.log('Marker created:', createdMarker);
-          this.markerCreated.emit(createdMarker); // Emit the created marker
-          this.save.emit(); // Emit save event after successful creation
-        },
-        error: (err) => {
-          console.error('Error creating marker:', err);
-        }
-      });
+      /*if ((this.marker as any).markerId) {
+        // Update existing marker
+        this.markerService.update({ ...markerDto, markerId: (this.marker as any).markerId }).subscribe({
+          next: (updatedMarker) => {
+            console.log('Marker updated:', updatedMarker);
+            this.markerCreated.emit(updatedMarker); // Emit the updated marker
+            this.save.emit(); // Emit save event after successful update
+          },
+          error: (err) => {
+            console.error('Error updating marker:', err);
+          }
+        });
+      } else {*/
+        // Create new marker
+        this.markerService.create(markerDto).subscribe({
+          next: (createdMarker) => {
+            console.log('Marker created:', createdMarker);
+            this.markerCreated.emit(createdMarker); // Emit the created marker
+            this.save.emit(); // Emit save event after successful creation
+          },
+          error: (err) => {
+            console.error('Error creating marker:', err);
+          }
+        });
+      //}
     }
   }
 
