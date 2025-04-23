@@ -6,6 +6,7 @@ export interface Marker {
   markerName: string;
   markerDescription: string;
   markerIconPath: string;
+  // Musíme vymyslet jak bude teda fungovat marker a point, co půjde jak
   longitude: number; // Musí být platné číslo
   latitude: number;  // Musí být platné číslo
 }
@@ -13,3 +14,5 @@ export interface Marker {
 //je to takhle, protoze kdyz se do databaze uklada marker musi mit vzdycky i GPSPoint, v API se pak rozhodne
 //jestli pouzit novej gpspoint nebo pouzit starej, kazdopadne to zatim nedelam zatim se vytvori automaticky. gragas support
 
+// Lenka dala do tisku nejen jejich prosekty na kajaky.
+// schizofrenie je když
