@@ -68,6 +68,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "TT_API.Controllers.MarkerController",
+    "Method": "DeleteMarker",
+    "RelativePath": "api/Marker/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "TT_API.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",

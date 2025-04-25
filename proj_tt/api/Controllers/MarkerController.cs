@@ -18,23 +18,38 @@ namespace TT_API.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> CreateMarker([FromBody] CreateMarkerDTO cmDTO) {
-            GPSPoint point = new GPSPoint() {
-                Latitude = cmDTO.Latitude,
-                Longitude = cmDTO.Longitude,
-            };
+
+            var existingPoint = await context.GPSPoints
+            .FirstOrDefaultAsync(p =>
+                //p.MapID == cmDTO.MapID &&
+                p.Latitude == cmDTO.Latitude &&
+                p.Longitude == cmDTO.Longitude);
+
+            GPSPoint point;
+
+            if (existingPoint == null) {
+                point = new GPSPoint() {
+                    Latitude = cmDTO.Latitude,
+                    Longitude = cmDTO.Longitude,
+                };
+
+                context.GPSPoints.Add(point);
+                await context.SaveChangesAsync();
+
+            } else {
+                point = existingPoint;
+            }
 
             Marker marker = new Marker() {
                 
                 IDUser = 6, //debug user
-                IDPoint = context.GPSPoints.Count()+1,
+                IDPoint = point.PointID,
                 MarkerName = cmDTO.MarkerName,
                 MarkerDescription = cmDTO.MarkerDescription,
                 MarkerIconPath = cmDTO.MarkerIconPath,
 
             };
 
-            context.GPSPoints.Add(point);
-            await context.SaveChangesAsync();
             context.Markers.Add(marker);
             await context.SaveChangesAsync();
 
@@ -63,5 +78,29 @@ namespace TT_API.Controllers {
 
             return Ok(completemarkers);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMarker(int id) { // Markery jenom toho usera 
+            var marker = await context.Markers.FindAsync(id);
+
+            if (marker == null) return NotFound();
+
+            context.Markers.Remove(marker);
+
+            await context.SaveChangesAsync();
+
+            var unusedPoints = await context.GPSPoints
+            .Where(gp => !context.Markers.Any(m => m.IDPoint == gp.PointID))
+            .ToListAsync();
+
+            foreach (var value in unusedPoints) {
+                context.GPSPoints.Remove(value);
+            }
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }

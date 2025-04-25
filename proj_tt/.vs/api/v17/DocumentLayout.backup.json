@@ -7,10 +7,6 @@
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\controllers\\markercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\proj_tt\\api\\dtos\\createmarkerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\dtos\\createmarkerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\proj_tt\\api\\controllers\\gpspointcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\controllers\\gpspointcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -21,6 +17,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\proj_tt\\api\\models\\marker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\models\\marker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\proj_tt\\api\\dtos\\createmarkerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|solutionrelative:api\\dtos\\createmarkerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B75143BA-A9CE-4C97-95B6-FBA806E395C0}|api\\TT_API.csproj|c:\\users\\editbysteve\\phpstormprojects\\tudytahm\\proj_tt\\api\\models\\overlay.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -94,13 +94,13 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "GPSPointController.cs",
               "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\Controllers\\GPSPointController.cs",
               "RelativeDocumentMoniker": "api\\Controllers\\GPSPointController.cs",
               "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\Controllers\\GPSPointController.cs",
               "RelativeToolTip": "api\\Controllers\\GPSPointController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAA9AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-22T20:48:18.072Z",
               "EditorCaption": ""
@@ -113,14 +113,14 @@
               "RelativeDocumentMoniker": "api\\Controllers\\MarkerController.cs",
               "ToolTip": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\Controllers\\MarkerController.cs",
               "RelativeToolTip": "api\\Controllers\\MarkerController.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAQwD0AAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAACQAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-22T02:02:37.238Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "CreateMarkerDTO.cs",
               "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\DTOs\\CreateMarkerDTO.cs",
               "RelativeDocumentMoniker": "api\\DTOs\\CreateMarkerDTO.cs",
@@ -128,12 +128,11 @@
               "RelativeToolTip": "api\\DTOs\\CreateMarkerDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T16:35:30.391Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T16:35:30.391Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "GPSPoint.cs",
               "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\Models\\GPSPoint.cs",
               "RelativeDocumentMoniker": "api\\Models\\GPSPoint.cs",
@@ -146,7 +145,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "Marker.cs",
               "DocumentMoniker": "C:\\Users\\EditBySteve\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\Models\\Marker.cs",
               "RelativeDocumentMoniker": "api\\Models\\Marker.cs",
@@ -167,8 +166,7 @@
               "RelativeToolTip": "api\\Models\\Overlay.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T14:21:22.726Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T14:21:22.726Z"
             },
             {
               "$type": "Document",
@@ -192,8 +190,7 @@
               "RelativeToolTip": "api\\WeatherForecast.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T01:12:32.942Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T01:12:32.942Z"
             },
             {
               "$type": "Document",
@@ -205,8 +202,7 @@
               "RelativeToolTip": "api\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-22T18:58:13.304Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T18:58:13.304Z"
             },
             {
               "$type": "Document",
@@ -218,8 +214,7 @@
               "RelativeToolTip": "api\\Controllers\\AuthenticationController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T01:53:19.079Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T01:53:19.079Z"
             },
             {
               "$type": "Document",
@@ -243,8 +238,7 @@
               "RelativeToolTip": "api\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T01:12:30.37Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T01:12:30.37Z"
             },
             {
               "$type": "Document",
@@ -256,8 +250,7 @@
               "RelativeToolTip": "api\\MyContext.cs",
               "ViewState": "AgIAAAEAAAAAAAAAAAAcwB4AAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T01:12:31.553Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T01:12:31.553Z"
             },
             {
               "$type": "Document",
@@ -269,8 +262,7 @@
               "RelativeToolTip": "api\\Properties\\launchSettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-22T18:52:12.227Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T18:52:12.227Z"
             },
             {
               "$type": "Document",
