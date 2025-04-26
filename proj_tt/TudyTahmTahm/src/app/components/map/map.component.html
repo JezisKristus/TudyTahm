@@ -1,2 +1,9 @@
 <div id="map" style="height: 100%; width: 100%;"></div>
-<app-marker-details [marker]="selectedMarker" (cancel)="onCancel()" (save)="onSave()"></app-marker-details>
+
+<app-marker-details
+  *ngIf="selectedMarker"
+  [marker]="selectedMarker"
+  (deleteMarker)="onDeleteMarker(selectedMarker)"
+  (save)="onSave()">
+</app-marker-details>
+

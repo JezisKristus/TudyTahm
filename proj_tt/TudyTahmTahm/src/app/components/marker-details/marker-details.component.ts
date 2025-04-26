@@ -1,10 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import * as L from 'leaflet';
-import {NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
-import {LeafletModule} from '@bluehalo/ngx-leaflet';
+import { AppMarker } from '../../models/appMarker'; // Import custom marker model
 import { MarkerService } from '../../services/marker.service';
-import { Marker} from '../../models/marker';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-marker-details',
@@ -12,27 +10,25 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './marker-details.component.html',
   styleUrls: ['./marker-details.component.scss'],
   imports: [
-    NgOptimizedImage,
-    NgForOf,
-    LeafletModule,
-    NgIf,
-    FormsModule
+    FormsModule,
+    CommonModule // Přidání CommonModule pro podporu NgIf
   ],
 })
-
 export class MarkerDetailsComponent implements OnChanges {
-  @Input() marker: L.Marker | null = null; // Input for the selected marker
-  @Output() cancel = new EventEmitter<void>(); // Emit when cancel is clicked
-  @Output() save = new EventEmitter<void>(); // Emit when save is clicked
-  @Output() deleteMarker = new EventEmitter<void>(); // Emit when marker should be deleted
-  @Output() markerCreated = new EventEmitter<Marker>(); // Emit when a marker is created
+  @Input() marker: AppMarker | null = null;  // Zajistí, že přijímáme AppMarker
+  @Output() cancel = new EventEmitter<void>();
+  @Output() save = new EventEmitter<AppMarker>();
+  @Output() deleteMarker = new EventEmitter<AppMarker>(); // Now emits AppMarker
 
-  isVisible = true
-  description: string = ''; // Description of the marker
+  isVisible = false;
+  description: string = '';
+  markerName: string = '';
+  selectedIconIndex: number = 0;
+  isNewMarker: boolean = true;
 
   // Array of icon URLs for the icon grid
   icons: string[] = [
-    'assets/icons/icon1.png',
+    'icon1.png',
     'assets/icons/icon2.png',
     'assets/icons/icon3.png',
     'assets/icons/icon4.png'
@@ -42,56 +38,90 @@ export class MarkerDetailsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['marker'] && changes['marker'].currentValue) {
-      console.log('Selected marker updated:', this.marker);
+      this.isVisible = true;
+      if (this.marker?.markerId) {
+        this.isNewMarker = false;
+        this.markerName = this.marker.markerName || '';
+        this.description = this.marker.markerDescription || '';
+        this.selectedIconIndex = this.icons.indexOf(this.marker.markerIconPath || '');
+        if (this.selectedIconIndex < 0) this.selectedIconIndex = 0;
+      } else {
+        this.isNewMarker = true;
+        this.markerName = '';
+        this.description = '';
+        this.selectedIconIndex = 0;
+      }
     }
   }
 
+  getFormattedCoordinates(): string {
+    if (!this.marker || this.marker.latitude === undefined || this.marker.longitude === undefined) {
+      return 'Coordinates not available';
+    }
+    return `${this.marker.latitude.toFixed(6)}, ${this.marker.longitude.toFixed(6)}`;
+  }
+
+  selectIcon(index: number): void {
+    this.selectedIconIndex = index;
+  }
+
   onCancel(): void {
-    this.deleteMarker.emit(); // Emit delete marker event
-    this.cancel.emit(); // Emit cancel event
-    this.isVisible = false; // Hide the marker details
+    if (this.isNewMarker && this.marker) {
+      this.deleteMarker.emit(this.marker); // Emit the AppMarker to delete it
+    }
+    this.isVisible = false;
+    this.cancel.emit();
+  }
+
+  onDelete(): void {
+    if (this.marker) {
+      this.deleteMarker.emit(this.marker); // Emit the AppMarker to delete it
+      this.isVisible = false;
+    }
   }
 
   onSave(): void {
     if (this.marker) {
       const markerDto = {
-        idUser: 6, // Debug user
-        markerName: 'New Marker', // Replace with actual name logic
-        markerDescription: 'Description', // Replace with actual description logic
-        markerIconPath: 'assets/icons/icon1.png', // Replace with selected icon logic
-        latitude: this.marker.getLatLng().lat,
-        longitude: this.marker.getLatLng().lng
+        idUser: this.marker.idUser || 6, // Default to 6 if not set
+        idPoint: this.marker.idPoint || 0,
+        markerName: this.markerName || 'Unnamed Marker',
+        markerDescription: this.description || '',
+        markerIconPath: this.icons[this.selectedIconIndex],
+        latitude: this.marker.latitude,
+        longitude: this.marker.longitude
       };
 
-      /*if ((this.marker as any).markerId) {
+      if (this.marker.markerId) {
         // Update existing marker
-        this.markerService.update({ ...markerDto, markerId: (this.marker as any).markerId }).subscribe({
+        this.markerService.update({
+          ...markerDto,
+          markerId: this.marker.markerId
+        }).subscribe({
           next: (updatedMarker) => {
-            console.log('Marker updated:', updatedMarker);
-            this.markerCreated.emit(updatedMarker); // Emit the updated marker
-            this.save.emit(); // Emit save event after successful update
+            // Update marker data
+            this.marker = updatedMarker;
+            this.save.emit(updatedMarker);
+            this.isVisible = false;
           },
-          error: (err) => {
-            console.error('Error updating marker:', err);
-          }
+          error: (err) => console.error('Error updating marker:', err)
         });
-      } else {*/
+      } else {
         // Create new marker
         this.markerService.create(markerDto).subscribe({
           next: (createdMarker) => {
-            console.log('Marker created:', createdMarker);
-            this.markerCreated.emit(createdMarker); // Emit the created marker
-            this.save.emit(); // Emit save event after successful creation
+            // Update the marker with ID and other data
+            this.marker = createdMarker;
+            this.save.emit(createdMarker);
+            this.isVisible = false;
           },
-          error: (err) => {
-            console.error('Error creating marker:', err);
-          }
+          error: (err) => console.error('Error creating marker:', err)
         });
-      //}
+      }
     }
   }
 
   show(): void {
-    this.isVisible = true; // Znovu zobrazí komponentu
+    this.isVisible = true;
   }
 }

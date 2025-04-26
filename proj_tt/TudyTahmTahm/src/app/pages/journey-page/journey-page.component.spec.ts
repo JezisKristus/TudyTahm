@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { JourneyPageComponent } from './journey-page.component';
+import {JourneyPageComponent} from './journey-page.component';
 
 describe('JourneyPageComponent', () => {
   let component: JourneyPageComponent;

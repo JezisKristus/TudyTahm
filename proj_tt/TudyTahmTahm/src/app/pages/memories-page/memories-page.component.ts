@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { NgFor } from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {SidebarComponent} from '../../components/sidebar/sidebar.component';
+import {NgFor} from '@angular/common';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 
 @Component({

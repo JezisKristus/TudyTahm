@@ -1,4 +1,4 @@
-export interface Marker {
+export interface AppMarker {
   markerId: number;
   idUser: number;
   idPoint: number;

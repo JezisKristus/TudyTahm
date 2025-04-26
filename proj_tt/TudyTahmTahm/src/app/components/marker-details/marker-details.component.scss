@@ -19,6 +19,12 @@
     margin-bottom: 0.5rem;
   }
 
+  h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+
   .icon-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -28,18 +34,31 @@
     .icon {
       width: 40px;
       height: 40px;
-      background: #eee;
+      background: #2a3e2b;
       border-radius: 4px;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+
+      &.selected {
+        border: 2px solid #d4b87c;
+        img {
+          filter: grayscale(0%);
+        }
+      }
 
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: grayscale(100%);
+        filter: grayscale(60%);
       }
     }
   }
@@ -65,6 +84,17 @@
     color: #d1b97f;
   }
 
+  input[type="text"] {
+    background: #2a3e2b;
+    color: #d1b97f;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    font-family: inherit;
+  }
+
   textarea {
     flex: 1;
     background: #2a3e2b;
@@ -74,32 +104,48 @@
     padding: 0.5rem;
     resize: none;
     margin-top: 0.5rem;
+    margin-bottom: 1rem;
     font-family: inherit;
+    min-height: 100px;
   }
 
   .button-row {
     display: flex;
     justify-content: space-between;
-    margin-top: 1rem;
-    position: relative; /* Přidáno pro zajištění správného vrstvení */
+    margin-top: auto;
+    gap: 0.5rem;
 
     button {
-      padding: 0.4rem 1rem;
+      flex: 1;
+      padding: 0.4rem 0.5rem;
       border: none;
       border-radius: 6px;
       font-weight: bold;
       font-size: 0.9rem;
       cursor: pointer;
-      z-index: 1; /* Zajištění, že tlačítka budou nad ostatními prvky */
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
 
       &.cancel {
+        background: #3d5f3d;
+        color: white;
+      }
+
+      &.delete {
         background: #d62828;
         color: white;
-        position: relative; /* Přidáno pro zajištění správného vrstvení */
       }
 
       &.save {
-        background: #3d5f3d;
+        background: #4c7f4c;
         color: white;
       }
     }

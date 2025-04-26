@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MyMapsPageComponent } from './my-maps-page.component';
+import {MyMapsPageComponent} from './my-maps-page.component';
 
 describe('MyMapsPageComponent', () => {
   let component: MyMapsPageComponent;

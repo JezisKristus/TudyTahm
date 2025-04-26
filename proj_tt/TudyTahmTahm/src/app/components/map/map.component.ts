@@ -2,9 +2,16 @@ import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncaps
 import * as L from 'leaflet';
 import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
 import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
-import {Marker} from '../../models/marker';
+import {AppMarker} from '../../models/appMarker';
 import {MarkerService} from '../../services/marker.service';
 import {GPSPoint} from '../../models/gps-point';
+import {NgIf} from '@angular/common';
+
+// Rozšíření ExtendedMarker o vlastnosti AppMarker
+interface ExtendedMarker extends L.Marker, AppMarker {
+  markerData: AppMarker;
+  markerId: number;
+}
 
 @Component({
   selector: 'app-map',
@@ -12,78 +19,78 @@ import {GPSPoint} from '../../models/gps-point';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   imports: [
-    MarkerDetailsComponent
+    MarkerDetailsComponent,
+    NgIf
   ],
   encapsulation: ViewEncapsulation.None
 })
 
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
-  map: any;
+  map!: L.Map; // Použijte "!" k inicializaci později
   layer: any;
   private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
 
-  private lMarkers: L.Marker[] = []; // Leaflet markers
-  private myMarkers: Marker[] = []; // Our custom markers
-  private gpsPoints : GPSPoint[] = [];
+  private Lmarkers: ExtendedMarker[] = []; // Unified marker array
+  private myMarkers: AppMarker[] = [];
+  private gpsPoints: GPSPoint[] = [];
 
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
-  @Output() markerClicked = new EventEmitter<L.Marker>(); // EventEmitter for marker click
-  selectedMarker: L.Marker | null = null; // Store the selected marker
+
+  @Output() markerClicked = new EventEmitter<L.Marker<any>>();  selectedMarker: ExtendedMarker | null = null ; // Store the selected marker
 
   constructor(private viewContainerRef: ViewContainerRef, private markerService: MarkerService) {}
 
   ngOnInit(): void {
-    // Přesun inicializace mapy do ngAfterViewInit
+    // Přesunuto do ngAfterViewInit
   }
 
   ngAfterViewInit(): void {
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+      console.error('Map container not found!');
+      return;
+    }
+
     this.initializeMap(); // Inicializace mapy po vykreslení DOM
-
-    this.markerService.getMarkers().subscribe(result => {
-      this.myMarkers = result;
-      this.addMarkersToMap(this.myMarkers); // Přidání markerů do mapy
-
+    this.markerService.getMarkers().subscribe({
+      next: (markers) => {
+        this.addMarkersToMap(markers); // Přidání markerů na mapu
+      },
+      error: (err) => console.error('Error loading markers:', err)
     });
   }
 
   private initializeMap(): void {
-    this.map = L.map('map').setView([49.8022514, 15.6252330], 8);
+    this.map = L.map('map').setView([49.8022514, 15.6252330], 8); // Inicializace mapy
     this.layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
-    this.lMarkers = this.convertMarkersToLeafletMarkers(this.myMarkers); // Převod našich markerů na Leaflet markery
 
     this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
       this.showPopup(event.latlng);
     });
   }
 
-  private convertMarkersToLeafletMarkers(markers: Marker[]): L.Marker[] {
-    return markers.map(marker => {
-      const leafletMarker: L.Marker = L.marker([marker.latitude, marker.longitude], {
-        icon: L.icon({ iconUrl: marker.markerIconPath })
-      });
-      (leafletMarker as any).markerId = marker.markerId; // Attach markerId to the Leaflet marker
-      return leafletMarker;
-    });
-  }
-
   private showPopup(latlng: L.LatLng): void {
-    // Zničíme existující popup, pokud existuje
+    // Destroy existing popup if it exists
     if (this.popupRef) {
       this.popupRef.destroy();
       this.popupRef = null;
     }
-    L.DomUtil.create('div', 'custom-popup-container');
+
+    // Create popup container
+    const popupContainer = L.DomUtil.create('div', 'custom-popup-container');
+
+    // Create component
     this.popupRef = this.viewContainerRef.createComponent(AddMarkerPopupComponent);
-    this.popupRef.instance.latlng = latlng; // Předání souřadnic do popupu
+    this.popupRef.instance.latlng = latlng; // Pass coordinates to popup
     this.popupRef.instance.addMarker.subscribe((coordinates: L.LatLng) => {
-      this.addMarker(coordinates); // Přidání markeru do mapy
-      this.popupRef?.destroy(); // Zavření popupu po přidání markeru
+      this.addMarker(coordinates); // Add marker to map
+      this.popupRef?.destroy(); // Close popup after adding marker
       this.popupRef = null;
     });
 
-    // Připojení popupu k DOM
+    // Attach popup to DOM
     document.body.appendChild(this.popupRef.location.nativeElement);
 
     const popupOverlay = L.popup({
@@ -91,48 +98,73 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       closeOnClick: false,
       autoClose: false,
       className: 'custom-popup-container',
-
     })
       .setLatLng(latlng)
       .setContent(this.popupRef.location.nativeElement)
       .openOn(this.map);
 
-    // Přidáme logiku pro odstranění popupu při kliknutí na mapu
+    // Logic to remove popup when clicking on map
     const removePopup = () => {
       this.map.closePopup(popupOverlay);
       if (this.popupRef) {
         this.popupRef.destroy();
         this.popupRef = null;
       }
-      this.map.off('click', removePopup); // Odstraníme listener
+      this.map.off('click', removePopup); // Remove listener
     };
 
     this.map.on('click', removePopup);
   }
 
   private addMarker(latlng: L.LatLng): void {
-    const marker = L.marker(latlng).addTo(this.map);
-    this.lMarkers.push(marker);
+    const marker = L.marker(latlng, {
+      icon: L.icon({
+        iconUrl: 'assets/icons/default-icon.png', // Default icon for new markers
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+      })
+    }).addTo(this.map) as ExtendedMarker;
+
+    this.Lmarkers.push(marker);
 
     marker.on('click', () => {
-      this.onMarkerClick(marker); // Přesměrování na novou metodu
+      this.onMarkerClick(marker);
     });
 
-    console.log('Marker přidán:', marker);
-    console.log('Aktuální seznam markerů:', this.lMarkers);
+    // Automaticky otevřít detaily markeru pro nový marker
+    this.selectedMarker = marker;
+    this.onMarkerClick(marker);
+
+    console.log('Marker added:', marker);
   }
 
-  private addMarkersToMap(markers: Marker[]): void {
-    markers.forEach(marker => {
-      if (this.isValidLatLng(marker.latitude, marker.longitude)) { // Kontrola platnosti souřadnic
-        const leafletMarker = L.marker([marker.latitude, marker.longitude]).addTo(this.map);
-        this.lMarkers.push(leafletMarker);
+  private addMarkersToMap(markers: AppMarker[]): void {
+    markers.forEach(markerData => {
+      if (this.isValidLatLng(markerData.latitude, markerData.longitude)) {
+        // Vytvoření vlastního L.Icon na základě markerIconPath
+        const markerIcon = L.icon({
+          iconUrl: markerData.markerIconPath || 'assets/icons/default-icon.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41]
+        });
+
+        // Vytvoření Leaflet markeru
+        const leafletMarker = L.marker(
+          [markerData.latitude, markerData.longitude],
+          { icon: markerIcon }
+        ).addTo(this.map) as ExtendedMarker;
+
+        // Nastavení markerData a ID
+        leafletMarker.markerData = markerData;
+        leafletMarker.markerId = markerData.markerId;
+
+        this.Lmarkers.push(leafletMarker);
 
         leafletMarker.on('click', () => {
-          this.onMarkerClick(leafletMarker); // Přesměrování na metodu pro kliknutí na marker
+          this.onMarkerClick(leafletMarker);
         });
       } else {
-        console.warn('Neplatné souřadnice markeru:', marker);
+        console.warn('Invalid marker coordinates:', markerData);
       }
     });
   }
@@ -141,33 +173,103 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
   }
 
-  onMarkerClick(marker: L.Marker): void {
+  onMarkerClick(marker: ExtendedMarker): void {
+    // Reset icon of previously selected marker
+    if (this.selectedMarker && this.selectedMarker !== marker) {
+      const defaultIcon = L.icon({
+        iconUrl: this.selectedMarker.markerData.markerIconPath || 'assets/icons/default-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+      });
+      this.selectedMarker.setIcon(defaultIcon);
+    }
+
     this.selectedMarker = marker;
+
+    // Change icon of the selected marker
+    const selectedIcon = L.icon({
+      iconUrl: 'assets/icons/selected-icon.png', // Path to the selected marker icon
+      iconSize: [30, 45], // Slightly larger size for emphasis
+      iconAnchor: [15, 45]
+    });
+    marker.setIcon(selectedIcon);
+
+    this.markerClicked.emit(marker);
 
     // Destroy existing MarkerDetailsComponent if it exists
     if (this.markerDetailsRef) {
       this.markerDetailsRef.destroy();
     }
 
-    // Create a new instance of MarkerDetailsComponent
-    this.viewContainerRef.clear();
     this.markerDetailsRef = this.viewContainerRef.createComponent(MarkerDetailsComponent);
 
-    // Set the marker input and ensure visibility
-    this.markerDetailsRef.instance.marker = marker;
+    // Set up event handlers
+    this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
+    this.markerDetailsRef.instance.save.subscribe((markerData: AppMarker) => this.onSave(markerData));
+    this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
+
+    // Pass the markerData (including id) to the MarkerDetailsComponent
+    console.log('Passing marker data to MarkerDetailsComponent:', marker.markerData);
+    this.markerDetailsRef.instance.marker = marker.markerData; // Ensure markerData contains the id
     this.markerDetailsRef.instance.show();
   }
 
   onCancel(): void {
-    this.selectedMarker = null; // Reset vybraného markeru
+    this.selectedMarker = null; // Reset selected marker
   }
 
-  onSave(): void {
-    this.selectedMarker = null; // Reset vybraného markeru
+  onSave(markerData?: AppMarker): void {
+    if (this.selectedMarker && markerData) {
+      // Update icon if needed
+      if (markerData.markerIconPath) {
+        const icon = L.icon({
+          iconUrl: markerData.markerIconPath,
+          iconSize: [25, 41],
+          iconAnchor: [12, 41]
+        });
+        this.selectedMarker.setIcon(icon);
+      }
+    }
+    this.selectedMarker = null;
   }
 
-  onDeleteMarker(): void {
-    this.onCancel(); // Reuse cancel logic to delete marker
+  onDeleteMarker(marker: AppMarker | null): void {
+    if (!marker) return;
+
+    // Ensure markerId is defined before sending the delete request
+    if (marker.markerId) {
+      this.markerService.delete(marker).subscribe({
+        next: () => {
+          console.log(`Marker with ID ${marker.markerId} deleted successfully.`);
+          const markerToRemove = this.Lmarkers.find(m => m.markerId === marker.markerId);
+          if (markerToRemove) {
+            this.removeMarkerFromMap(markerToRemove);
+          }
+          this.resetMarkerDetails(); // Reset marker details after deletion
+        },
+        error: (err) => console.error('Error deleting marker:', err)
+      });
+    } else {
+      console.warn('Cannot delete marker without a valid markerId.');
+    }
+  }
+
+  private resetMarkerDetails(): void {
+    this.selectedMarker = null; // Reset selected marker
+    if (this.markerDetailsRef) {
+      this.markerDetailsRef.destroy(); // Destroy the MarkerDetailsComponent
+      this.markerDetailsRef = undefined;
+    }
+  }
+
+  private removeMarkerFromMap(marker: ExtendedMarker): void {
+    if (!marker) return;
+
+    // Remove from map
+    marker.remove();
+    // Remove from our array
+    this.Lmarkers = this.Lmarkers.filter(m => m !== marker);
+    this.selectedMarker = null;
   }
 
   ngOnDestroy(): void {
@@ -176,6 +278,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.popupRef) {
       this.popupRef.destroy();
+    }
+    if (this.markerDetailsRef) {
+      this.markerDetailsRef.destroy();
     }
   }
 }

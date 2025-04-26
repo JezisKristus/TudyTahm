@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SharedPageComponent } from './shared-page.component';
+import {SharedPageComponent} from './shared-page.component';
 
 describe('SharedPageComponent', () => {
   let component: SharedPageComponent;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {catchError} from 'rxjs';
