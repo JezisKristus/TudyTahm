@@ -66,6 +66,7 @@ namespace TT_API.Controllers {
             foreach (var m in markers) {
                 var gps = await context.GPSPoints.FindAsync(m.IDPoint);
                 CreateMarkerDTO cmdto = new CreateMarkerDTO() {
+                    MarkerID = m.MarkerID,
                     IDUser = m.IDUser,
                     MarkerName = m.MarkerName,
                     MarkerDescription = m.MarkerDescription,

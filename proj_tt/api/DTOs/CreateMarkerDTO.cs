@@ -1,6 +1,7 @@
 ﻿namespace TT_API.DTOs {
     public class CreateMarkerDTO {
 
+        public int MarkerID { get; set; }
         public int IDUser { get; set; }
         public string MarkerName { get; set; }
         public string MarkerDescription { get; set; }
