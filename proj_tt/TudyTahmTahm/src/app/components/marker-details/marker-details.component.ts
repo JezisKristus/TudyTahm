@@ -83,6 +83,7 @@ export class MarkerDetailsComponent implements OnChanges {
   onSave(): void {
     if (this.marker) {
       const markerDto = {
+        markerId: this.marker.idPoint || 0,
         idUser: this.marker.idUser || 6, // Default to 6 if not set
         idPoint: this.marker.idPoint || 0,
         markerName: this.markerName || 'Unnamed Marker',
