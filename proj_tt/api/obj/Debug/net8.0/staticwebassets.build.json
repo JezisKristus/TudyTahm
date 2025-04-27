@@ -1,12 +1,11 @@
 {
   "Version": 1,
-  "Hash": "djV6Z0uHNC8OBqlJFPx2UpEBZG185pWN0DcyXcUx598=",
+  "Hash": "qBjPVuHPVg7PWbKSKkn/aSEfPd2gtFsEtRv0s1n7eEU=",
   "Source": "TT_API",
   "BasePath": "_content/TT_API",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }

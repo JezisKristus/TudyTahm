@@ -6,6 +6,7 @@ using TT_API.Models;
 using TT_API.Services;
 using TT_API.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 namespace TT_API.Controllers {
 
@@ -55,6 +56,33 @@ namespace TT_API.Controllers {
 
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMarker(int id, [FromBody] CreateMarkerDTO cmDTO) {
+            var marker = await context.Markers.FindAsync(id);
+
+            if (marker == null) {
+                return NotFound();
+            }
+
+            var point = await context.GPSPoints.FindAsync(marker.IDPoint);
+
+            if (marker.MarkerName != cmDTO.MarkerName) marker.MarkerName = cmDTO.MarkerName;
+            if (marker.MarkerDescription != cmDTO.MarkerDescription) marker.MarkerDescription = cmDTO.MarkerDescription;
+            if (marker.MarkerIconPath != cmDTO.MarkerIconPath) marker.MarkerIconPath = cmDTO.MarkerIconPath;
+
+            if (point != null) {
+                if (point.Latitude != cmDTO.Latitude) point.Latitude = cmDTO.Latitude;
+                if (point.Longitude != cmDTO.Longitude) point.Longitude = cmDTO.Longitude;
+            }
+
+               
+            await context.SaveChangesAsync();
+
+            return NoContent();
+
+        }
+
 
         [HttpGet] //tady pak pridat overovani usera
         public async Task<IActionResult> GetMarkersForUser() { // Markery jenom toho usera 

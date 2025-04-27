@@ -69,6 +69,27 @@
   },
   {
     "ContainingType": "TT_API.Controllers.MarkerController",
+    "Method": "UpdateMarker",
+    "RelativePath": "api/Marker/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "cmDTO",
+        "Type": "TT_API.DTOs.CreateMarkerDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TT_API.Controllers.MarkerController",
     "Method": "DeleteMarker",
     "RelativePath": "api/Marker/{id}",
     "HttpMethod": "DELETE",
