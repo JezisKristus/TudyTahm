@@ -16,15 +16,19 @@ import { CommonModule } from '@angular/common';
 })
 export class MarkerDetailsComponent implements OnChanges {
   @Input() marker: AppMarker | null = null;  // Zajistí, že přijímáme AppMarker
+  @Input() markerId : number = 0; // explicitně si převzít markerId
+
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppMarker>();
   @Output() deleteMarker = new EventEmitter<AppMarker>(); // Now emits AppMarker
+  @Output() refreshMarkers = new EventEmitter<void>(); // Přidání nového EventEmitteru
 
   isVisible = false;
   description: string = '';
   markerName: string = '';
   selectedIconIndex: number = 0;
   isNewMarker: boolean = true;
+
 
   // Array of icon URLs for the icon grid
   icons: string[] = [
@@ -34,7 +38,7 @@ export class MarkerDetailsComponent implements OnChanges {
     'assets/icons/icon4.png'
   ];
 
-  constructor(private markerService: MarkerService) {}
+  constructor(private markerService: MarkerService)   {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['marker'] && changes['marker'].currentValue) {
@@ -50,6 +54,11 @@ export class MarkerDetailsComponent implements OnChanges {
         this.markerName = '';
         this.description = '';
         this.selectedIconIndex = 0;
+      }
+
+      // Ensure default icon is used if markerIconPath is empty
+      if (this.marker && !this.marker.markerIconPath) {
+        this.marker.markerIconPath = 'default-icon.png';
       }
     }
   }
@@ -83,8 +92,8 @@ export class MarkerDetailsComponent implements OnChanges {
   onSave(): void {
     if (this.marker) {
       const markerDto = {
-        markerId: this.marker.idPoint || 0,
-        idUser: this.marker.idUser || 6, // Default to 6 if not set
+        markerId: this.marker.markerId || 0,
+        idUser: this.marker.idUser || 6,
         idPoint: this.marker.idPoint || 0,
         markerName: this.markerName || 'Unnamed Marker',
         markerDescription: this.description || '',
@@ -95,15 +104,12 @@ export class MarkerDetailsComponent implements OnChanges {
 
       if (this.marker.markerId) {
         // Update existing marker
-        this.markerService.update({
-          ...markerDto,
-          markerId: this.marker.markerId
-        }).subscribe({
+        this.markerService.update(markerDto).subscribe({
           next: (updatedMarker) => {
-            // Update marker data
             this.marker = updatedMarker;
             this.save.emit(updatedMarker);
             this.isVisible = false;
+            this.refreshMarkers.emit(); // Emit události pro znovunačtení markerů
           },
           error: (err) => console.error('Error updating marker:', err)
         });
@@ -111,10 +117,10 @@ export class MarkerDetailsComponent implements OnChanges {
         // Create new marker
         this.markerService.create(markerDto).subscribe({
           next: (createdMarker) => {
-            // Update the marker with ID and other data
             this.marker = createdMarker;
             this.save.emit(createdMarker);
             this.isVisible = false;
+            this.refreshMarkers.emit(); // Emit události pro znovunačtení markerů
           },
           error: (err) => console.error('Error creating marker:', err)
         });

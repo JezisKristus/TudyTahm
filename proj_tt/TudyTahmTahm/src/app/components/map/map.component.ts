@@ -11,6 +11,7 @@ import {NgIf} from '@angular/common';
 interface ExtendedMarker extends L.Marker, AppMarker {
   markerData: AppMarker;
   markerId: number;
+  markerID?: number;
 }
 
 @Component({
@@ -52,12 +53,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.initializeMap(); // Inicializace mapy po vykreslení DOM
-    this.markerService.getMarkers().subscribe({
-      next: (markers) => {
-        this.addMarkersToMap(markers); // Přidání markerů na mapu
-      },
-      error: (err) => console.error('Error loading markers:', err)
-    });
+    this.loadMarkers(); // Přesun logiky načítání markerů do samostatné metody
   }
 
   private initializeMap(): void {
@@ -119,11 +115,23 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private addMarker(latlng: L.LatLng): void {
     const marker = L.marker(latlng, {
       icon: L.icon({
-        iconUrl: 'assets/icons/default-icon.png', // Default icon for new markers
+        iconUrl: 'assets/icons/default-icon.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41]
       })
     }).addTo(this.map) as ExtendedMarker;
+
+    // Initialize markerData with default values
+    marker.markerData = {
+      markerId: 0, // Will be assigned by the server after creation
+      idUser: 6,  // Default user ID
+      idPoint: 0,
+      markerName: '',
+      markerDescription: '',
+      markerIconPath: 'assets/icons/default-icon.png',
+      longitude: latlng.lng,
+      latitude: latlng.lat
+    };
 
     this.Lmarkers.push(marker);
 
@@ -131,17 +139,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.onMarkerClick(marker);
     });
 
-    // Automaticky otevřít detaily markeru pro nový marker
     this.selectedMarker = marker;
     this.onMarkerClick(marker);
-
-    console.log('Marker added:', marker);
   }
-
   private addMarkersToMap(markers: AppMarker[]): void {
     markers.forEach(markerData => {
       if (this.isValidLatLng(markerData.latitude, markerData.longitude)) {
-        // Vytvoření vlastního L.Icon na základě markerIconPath
+        // Use default icon if markerIconPath is empty
         const markerIcon = L.icon({
           iconUrl: markerData.markerIconPath || 'assets/icons/default-icon.png',
           iconSize: [25, 41],
@@ -194,6 +198,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     marker.setIcon(selectedIcon);
 
+    const markerData = marker.markerData || {};
+
+    console.log('Normalized marker data:', markerData);
+
     this.markerClicked.emit(marker);
 
     // Destroy existing MarkerDetailsComponent if it exists
@@ -207,11 +215,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
     this.markerDetailsRef.instance.save.subscribe((markerData: AppMarker) => this.onSave(markerData));
     this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
+    this.markerDetailsRef.instance.refreshMarkers.subscribe(() => {
+      this.refreshMarkers(); // Přidání odběru na refreshMarkers
+    });
 
     // Pass the markerData (including id) to the MarkerDetailsComponent
     console.log('Passing marker data to MarkerDetailsComponent:', marker.markerData);
     this.markerDetailsRef.instance.marker = marker.markerData; // Ensure markerData contains the id
     this.markerDetailsRef.instance.show();
+
   }
 
   onCancel(): void {
@@ -236,16 +248,21 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   onDeleteMarker(marker: AppMarker | null): void {
     if (!marker) return;
 
+    // Check for both capitalization variants
+    const markerIdToUse = marker.markerId || (marker as any).markerID;
+
     // Ensure markerId is defined before sending the delete request
-    if (marker.markerId) {
-      this.markerService.delete(marker).subscribe({
+    if (markerIdToUse) {
+      this.markerService.delete({...marker, markerId: markerIdToUse}).subscribe({
         next: () => {
-          console.log(`Marker with ID ${marker.markerId} deleted successfully.`);
-          const markerToRemove = this.Lmarkers.find(m => m.markerId === marker.markerId);
+          console.log(`Marker with ID ${markerIdToUse} deleted successfully.`);
+          const markerToRemove = this.Lmarkers.find(m =>
+            (m.markerId === markerIdToUse) || (m.markerID === markerIdToUse)
+          );
           if (markerToRemove) {
             this.removeMarkerFromMap(markerToRemove);
           }
-          this.resetMarkerDetails(); // Reset marker details after deletion
+          this.resetMarkerDetails();
         },
         error: (err) => console.error('Error deleting marker:', err)
       });
@@ -270,6 +287,23 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     // Remove from our array
     this.Lmarkers = this.Lmarkers.filter(m => m !== marker);
     this.selectedMarker = null;
+  }
+
+  private loadMarkers(): void {
+    this.markerService.getMarkers().subscribe({
+      next: (markers) => {
+        this.addMarkersToMap(markers);
+      },
+      error: (err) => console.error('Error loading markers:', err)
+    });
+  }
+
+  private refreshMarkers(): void {
+    // Odstranění všech markerů z mapy
+    this.Lmarkers.forEach(marker => marker.remove());
+    this.Lmarkers = [];
+    // Znovunačtení markerů
+    this.loadMarkers();
   }
 
   ngOnDestroy(): void {

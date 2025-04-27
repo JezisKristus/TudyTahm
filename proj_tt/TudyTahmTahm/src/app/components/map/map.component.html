@@ -3,6 +3,7 @@
 <app-marker-details
   *ngIf="selectedMarker"
   [marker]="selectedMarker"
+  [markerId]="selectedMarker.markerId"
   (deleteMarker)="onDeleteMarker(selectedMarker)"
   (save)="onSave()">
 </app-marker-details>

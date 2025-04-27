@@ -185,6 +185,10 @@
       "CreateMarkerDTO": {
         "type": "object",
         "properties": {
+          "markerID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "idUser": {
             "type": "integer",
             "format": "int32"
