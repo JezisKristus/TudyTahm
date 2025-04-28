@@ -1,4 +1,4 @@
-<div class="marker-options-panel" *ngIf="marker && isVisible">
+<form class="marker-options-panel" *ngIf="marker && isVisible" (ngSubmit)="onSave()">
   <h6>Marker Options</h6>
   <div class="icon-grid">
     <div class="icon" *ngFor="let icon of icons; let i = index"
@@ -9,18 +9,18 @@
   </div>
 
   <h3>Marker Details</h3>
-  <p *ngIf="marker"><strong>ID:</strong> {{ marker.markerId }}</p> <!-- Display marker ID -->
+  <p *ngIf="marker"><strong>ID:</strong> {{ marker.markerID }}</p> <!-- Display marker ID -->
   <p *ngIf="marker"><strong>Location:</strong> {{ getFormattedCoordinates() }}</p>
 
   <label class="label">Name</label>
-  <input type="text" [(ngModel)]="markerName" placeholder="Add marker name">
+  <input type="text" [(ngModel)]="markerName" name="markerName" [placeholder]="marker.markerName || 'Add marker name'" required>
 
   <label class="label">Description</label>
-  <textarea [(ngModel)]="description" placeholder="Add description"></textarea>
+  <textarea [(ngModel)]="description" name="description" [placeholder]="marker.markerDescription || 'Add description'"></textarea>
 
   <div class="button-row">
-    <button class="cancel" (click)="onCancel()">Cancel</button>
-    <button class="delete" (click)="onDelete()">Delete</button>
-    <button class="save" (click)="onSave()">Save</button>
+    <button type="button" class="cancel" (click)="onCancel()">Cancel</button>
+    <button type="button" class="delete" (click)="onDelete()">Delete</button>
+    <button type="submit" class="save">Save</button>
   </div>
-</div>
+</form>

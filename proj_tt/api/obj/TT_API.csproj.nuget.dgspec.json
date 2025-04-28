@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj": {}
+    "C:\\Users\\Antonín\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj": {
+    "C:\\Users\\Antonín\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
+        "projectUniqueName": "C:\\Users\\Antonín\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
         "projectName": "TT_API",
-        "projectPath": "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
-        "packagesPath": "C:\\Users\\vlasakantonin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\obj\\",
+        "projectPath": "C:\\Users\\Antonín\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
+        "packagesPath": "C:\\Users\\Antonín\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Antonín\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\vlasakantonin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Antonín\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +44,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -59,7 +58,7 @@
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.4, )"
+              "version": "[8.0.5, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
@@ -97,7 +96,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

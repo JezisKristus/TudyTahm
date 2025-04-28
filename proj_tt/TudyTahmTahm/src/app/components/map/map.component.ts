@@ -11,8 +11,7 @@ import {NgIf} from '@angular/common';
 // Rozšíření ExtendedMarker o vlastnosti AppMarker
 interface ExtendedMarker extends L.Marker, AppMarker {
   markerData: AppMarker;
-  markerId: number;
-  markerID?: number;
+  markerID: number;
 }
 
 @Component({
@@ -63,25 +62,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
 
-
-    const markers = L.layerGroup([
-      L.marker([51.505, -0.09]).bindPopup("Marker 1"),
-      L.marker([51.515, -0.1]).bindPopup("Marker 2"),
-      L.marker([51.525, -0.11]).bindPopup("Marker 3"),
-      L.marker([51.535, -0.12]).bindPopup("Marker 4")
-    ]).addTo(this.map);
-
-    const searchControl = new (L.Control as any).Search({
-      layer: markers,
-      initial: false, // Don't open the search box by default
-      zoom: 12, // Zoom to the selected marker's location
-      marker: false // Don't show markers in search results
-    });
-
-    this.map.addControl(searchControl);
-
-
-    this.map.addControl(searchControl);
 
     this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
       this.showPopup(event.latlng);
@@ -136,7 +116,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private addMarker(latlng: L.LatLng): void {
     const marker = L.marker(latlng, {
       icon: L.icon({
-        iconUrl: 'assets/icons/default-icon.png',
+        iconUrl: 'http://localhost:5010/api/Image/default-icon.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41]
       })
@@ -144,12 +124,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Initialize markerData with default values
     marker.markerData = {
-      markerId: 0, // Will be assigned by the server after creation
-      idUser: 6,  // Default user ID
-      idPoint: 0,
+      markerID: 0, // Will be assigned by the server after creation
+      IDUser: 6,  // Default user ID
+      IDPoint: 0,
       markerName: '',
       markerDescription: '',
-      markerIconPath: 'assets/icons/default-icon.png',
+      markerIconPath: 'http://localhost:5010/api/Image/default-icon.png',
       longitude: latlng.lng,
       latitude: latlng.lat
     };
@@ -168,7 +148,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.isValidLatLng(markerData.latitude, markerData.longitude)) {
         // Use default icon if markerIconPath is empty
         const markerIcon = L.icon({
-          iconUrl: markerData.markerIconPath || 'assets/icons/default-icon.png',
+          iconUrl: markerData.markerIconPath || 'http://localhost:5010/api/Image/default-icon.png',
           iconSize: [25, 41],
           iconAnchor: [12, 41]
         });
@@ -181,7 +161,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Nastavení markerData a ID
         leafletMarker.markerData = markerData;
-        leafletMarker.markerId = markerData.markerId;
+        leafletMarker.markerID = markerData.markerID;
 
         this.Lmarkers.push(leafletMarker);
 
@@ -202,7 +182,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     // Reset icon of previously selected marker
     if (this.selectedMarker && this.selectedMarker !== marker) {
       const defaultIcon = L.icon({
-        iconUrl: this.selectedMarker.markerData.markerIconPath || 'assets/icons/default-icon.png',
+        iconUrl: this.selectedMarker.markerData.markerIconPath || 'http://localhost:5010/api/Image/default-marker.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41]
       });
@@ -213,7 +193,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Change icon of the selected marker
     const selectedIcon = L.icon({
-      iconUrl: 'assets/icons/selected-icon.png', // Path to the selected marker icon
+      iconUrl: 'http://localhost:5010/api/Image/selected-marker.png', // Path to the selected marker icon
       iconSize: [30, 45], // Slightly larger size for emphasis
       iconAnchor: [15, 45]
     });
@@ -270,15 +250,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!marker) return;
 
     // Check for both capitalization variants
-    const markerIdToUse = marker.markerId || (marker as any).markerID;
+    const markerIdToUse = marker.markerID || (marker as any).markerID;
 
     // Ensure markerId is defined before sending the delete request
     if (markerIdToUse) {
-      this.markerService.delete({...marker, markerId: markerIdToUse}).subscribe({
+      this.markerService.delete({...marker, markerID: markerIdToUse}).subscribe({
         next: () => {
           console.log(`Marker with ID ${markerIdToUse} deleted successfully.`);
           const markerToRemove = this.Lmarkers.find(m =>
-            (m.markerId === markerIdToUse) || (m.markerID === markerIdToUse)
+            (m.markerID === markerIdToUse) || (m.markerID === markerIdToUse)
           );
           if (markerToRemove) {
             this.removeMarkerFromMap(markerToRemove);

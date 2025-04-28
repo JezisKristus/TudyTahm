@@ -1,6 +1,6 @@
 export interface GPSPoint {
   pointID: number;
-  idMap: number;
+  IDMap: number;
   latitude: number;
   longitude: number;
 }

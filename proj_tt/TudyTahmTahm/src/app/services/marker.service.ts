@@ -49,7 +49,7 @@ export class MarkerService {
 
   public update(marker: AppMarker): Observable<AppMarker> {
     console.log('Updating marker with data:', marker);
-    return this.http.put<AppMarker>(`${environment.apiUrl}/Marker/${marker.markerId}`, marker).pipe(
+    return this.http.put<AppMarker>(`${environment.apiUrl}/Marker/${marker.markerID}`, marker).pipe(
       tap(response => {
         console.log('Received updated marker from API:', response);
         return response;
@@ -58,13 +58,13 @@ export class MarkerService {
   }
 
   public delete(marker: AppMarker): Observable<void> {
-    if (!marker.markerId) {
+    if (!marker.markerID) {
       throw new Error('Marker ID is required to delete a marker.');
     }
-    const url = `${environment.apiUrl}/Marker/${marker.markerId}`;
+    const url = `${environment.apiUrl}/Marker/${marker.markerID}`;
     console.log(`Sending DELETE request to: ${url}`);
     return this.http.delete<void>(url).pipe(
-      tap(() => console.log(`Marker with ID ${marker.markerId} deleted successfully.`))
+      tap(() => console.log(`Marker with ID ${marker.markerID} deleted successfully.`))
     );
   }
 

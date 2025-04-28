@@ -11,17 +11,17 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./marker-details.component.scss'],
   imports: [
     FormsModule,
-    CommonModule // Přidání CommonModule pro podporu NgIf
+    CommonModule // PřIDání CommonModule pro podporu NgIf
   ],
 })
 export class MarkerDetailsComponent implements OnChanges {
   @Input() marker: AppMarker | null = null;  // Zajistí, že přijímáme AppMarker
-  @Input() markerId : number = 0; // explicitně si převzít markerId
+  @Input() markerID : number = 0; // explicitně si převzít markerID
 
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppMarker>();
   @Output() deleteMarker = new EventEmitter<AppMarker>(); // Now emits AppMarker
-  @Output() refreshMarkers = new EventEmitter<void>(); // Přidání nového EventEmitteru
+  @Output() refreshMarkers = new EventEmitter<void>(); // PřIDání nového EventEmitteru
 
   isVisible = false;
   description: string = '';
@@ -30,12 +30,9 @@ export class MarkerDetailsComponent implements OnChanges {
   isNewMarker: boolean = true;
 
 
-  // Array of icon URLs for the icon grid
+  // Array of icon URLs for the icon grID
   icons: string[] = [
-    'icon1.png',
-    'assets/icons/icon2.png',
-    'assets/icons/icon3.png',
-    'assets/icons/icon4.png'
+    'icon1.png'
   ];
 
   constructor(private markerService: MarkerService)   {}
@@ -43,7 +40,7 @@ export class MarkerDetailsComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['marker'] && changes['marker'].currentValue) {
       this.isVisible = true;
-      if (this.marker?.markerId) {
+      if (this.marker?.markerID) {
         this.isNewMarker = false;
         this.markerName = this.marker.markerName || '';
         this.description = this.marker.markerDescription || '';
@@ -92,9 +89,9 @@ export class MarkerDetailsComponent implements OnChanges {
   onSave(): void {
     if (this.marker) {
       const markerDto = {
-        markerId: this.marker.markerId || 0,
-        idUser: this.marker.idUser || 6,
-        idPoint: this.marker.idPoint || 0,
+        markerID: this.marker.markerID || 0,
+        IDUser: this.marker.IDUser || 6,
+        IDPoint: this.marker.IDPoint || 0,
         markerName: this.markerName || 'Unnamed Marker',
         markerDescription: this.description || '',
         markerIconPath: this.icons[this.selectedIconIndex],
@@ -102,7 +99,7 @@ export class MarkerDetailsComponent implements OnChanges {
         longitude: this.marker.longitude
       };
 
-      if (this.marker.markerId) {
+      if (this.marker.markerID) {
         // Update existing marker
         this.markerService.update(markerDto).subscribe({
           next: (updatedMarker) => {

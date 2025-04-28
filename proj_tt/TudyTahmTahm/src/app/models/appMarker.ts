@@ -1,7 +1,7 @@
 export interface AppMarker {
-  markerId: number;
-  idUser: number;
-  idPoint: number;
+  markerID: number;
+  IDUser: number;
+  IDPoint: number;
   //idMap: number; // Pro gps-point vlastně neni důvod, musíme vyřešit jak je napojit, jestli to tahat přes 2 classy nebo přes jednu
   markerName: string;
   markerDescription: string;
