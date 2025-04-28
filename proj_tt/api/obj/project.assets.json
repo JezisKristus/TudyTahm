@@ -6917,7 +6917,6 @@
       "path": "system.io/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7026,7 +7025,6 @@
       "path": "system.reflection/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7167,7 +7165,6 @@
       "path": "system.reflection.primitives/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7224,7 +7221,6 @@
       "path": "system.runtime/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7530,7 +7526,6 @@
       "path": "system.text.encoding/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7772,7 +7767,6 @@
       "path": "system.threading.tasks/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -7961,25 +7955,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\patejdlstepan\\.nuget\\packages\\": {},
+    "C:\\Users\\vlasakantonin\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\patejdlstepan\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
+      "projectUniqueName": "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
       "projectName": "TT_API",
-      "projectPath": "C:\\Users\\patejdlstepan\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
-      "packagesPath": "C:\\Users\\patejdlstepan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\patejdlstepan\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\obj\\",
+      "projectPath": "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\TT_API.csproj",
+      "packagesPath": "C:\\Users\\vlasakantonin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\vlasakantonin\\PhpstormProjects\\TudyTahm\\proj_tt\\api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\patejdlstepan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\vlasakantonin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

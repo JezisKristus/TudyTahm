@@ -7,9 +7,12 @@ npm i @types/leaflet.markercluster
 npm i leaflet.markercluster
 npm i leaflet-routing-machine
 
+npm i @angular/cli
+npm i @angular/core
+
+npm install --save leaflet-search
+npm install leaflet.locatecontrol
+
 npm i --force
 
 ng update
-
-npm i @angular/cli
-npm i @angular/core

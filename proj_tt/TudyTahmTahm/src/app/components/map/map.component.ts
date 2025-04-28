@@ -1,5 +1,6 @@
 import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation, Output, EventEmitter, AfterViewInit} from '@angular/core';
 import * as L from 'leaflet';
+import 'leaflet-search';
 import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
 import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
 import {AppMarker} from '../../models/appMarker';
@@ -61,6 +62,26 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
+
+
+    const markers = L.layerGroup([
+      L.marker([51.505, -0.09]).bindPopup("Marker 1"),
+      L.marker([51.515, -0.1]).bindPopup("Marker 2"),
+      L.marker([51.525, -0.11]).bindPopup("Marker 3"),
+      L.marker([51.535, -0.12]).bindPopup("Marker 4")
+    ]).addTo(this.map);
+
+    const searchControl = new (L.Control as any).Search({
+      layer: markers,
+      initial: false, // Don't open the search box by default
+      zoom: 12, // Zoom to the selected marker's location
+      marker: false // Don't show markers in search results
+    });
+
+    this.map.addControl(searchControl);
+
+
+    this.map.addControl(searchControl);
 
     this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
       this.showPopup(event.latlng);
