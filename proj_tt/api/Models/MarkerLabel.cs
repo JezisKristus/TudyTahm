@@ -6,7 +6,7 @@ namespace TT_API.Models
     public class MarkerLabel
     {
 
-        public int IdLabel { get; set; }
-        public int IdMarker { get; set; }
+        public int IDLabel { get; set; }
+        public int IDMarker { get; set; }
     }
 }

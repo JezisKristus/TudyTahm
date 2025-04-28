@@ -8,7 +8,7 @@ namespace TT_API.Models
 
         [Key]
         public int OverlayID { get; set; }
-        public int IdMap { get; set; }
+        public int IDMap { get; set; }
         public byte[] overlay { get; set; }
     }
 }

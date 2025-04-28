@@ -8,7 +8,7 @@ namespace TT_API.Models
 
         [Key]
         public int MapID { get; set; }
-        public int IdUser { get; set; }
+        public int IDUser { get; set; }
         public string MapName { get; set; }
         public string MapIcon { get; set; }
     }

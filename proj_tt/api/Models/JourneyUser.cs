@@ -5,7 +5,7 @@ namespace TT_API.Models
 {
     public class JourneyUser
     {
-        public int IdJourney { get; set; }
-        public int IdUser { get; set; }
+        public int IDJourney { get; set; }
+        public int IDUser { get; set; }
     }
 }

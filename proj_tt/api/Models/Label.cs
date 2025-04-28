@@ -6,7 +6,7 @@ namespace TT_API.Models
     {
 
         [Key]
-        public int LabelId { get; set; }
+        public int LabelID { get; set; }
         public string Color { get; set; }
         public string Name { get; set; }
     }

@@ -42,6 +42,22 @@
     ]
   },
   {
+    "ContainingType": "TT_API.Controllers.ImageController",
+    "Method": "ReadFile",
+    "RelativePath": "api/Image/{filename}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filename",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "TT_API.Controllers.MarkerController",
     "Method": "CreateMarker",
     "RelativePath": "api/Marker",
