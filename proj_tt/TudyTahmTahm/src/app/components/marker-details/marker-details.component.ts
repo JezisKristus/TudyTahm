@@ -16,7 +16,6 @@ import { CommonModule } from '@angular/common';
 })
 export class MarkerDetailsComponent implements OnChanges {
   @Input() marker: AppMarker | null = null;  // Zajistí, že přijímáme AppMarker
-  @Input() markerID : number = 0; // explicitně si převzít markerID
 
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppMarker>();
@@ -34,26 +33,35 @@ export class MarkerDetailsComponent implements OnChanges {
   icons: string[] = [
     'icon1.png'
   ];
-
   constructor(private markerService: MarkerService)   {}
+
+  ngOnInit() {
+    if (this.marker) {
+      this.description = this.marker.markerDescription || '';
+      this.markerName = this.marker.markerName || '';
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['marker'] && changes['marker'].currentValue) {
-      this.isVisible = true;
+      this.isVisible = true;  // Make sure the sidebar is visible
+
       if (this.marker?.markerID) {
+        // Existing marker
         this.isNewMarker = false;
         this.markerName = this.marker.markerName || '';
-        this.description = this.marker.markerDescription || '';
+        this.description = this.marker.markerDescription || '';  // Ensure description is populated
         this.selectedIconIndex = this.icons.indexOf(this.marker.markerIconPath || '');
         if (this.selectedIconIndex < 0) this.selectedIconIndex = 0;
       } else {
+        // New marker
         this.isNewMarker = true;
         this.markerName = '';
-        this.description = '';
+        this.description = '';  // Clear description for a new marker
         this.selectedIconIndex = 0;
       }
 
-      // Ensure default icon is used if markerIconPath is empty
+      // Ensure default icon if markerIconPath is empty
       if (this.marker && !this.marker.markerIconPath) {
         this.marker.markerIconPath = 'default-icon.png';
       }
@@ -92,6 +100,7 @@ export class MarkerDetailsComponent implements OnChanges {
         markerID: this.marker.markerID || 0,
         IDUser: this.marker.IDUser || 6,
         IDPoint: this.marker.IDPoint || 0,
+        IDMap: this.marker.IDMap || 1,
         markerName: this.markerName || 'Unnamed Marker',
         markerDescription: this.description || '',
         markerIconPath: this.icons[this.selectedIconIndex],

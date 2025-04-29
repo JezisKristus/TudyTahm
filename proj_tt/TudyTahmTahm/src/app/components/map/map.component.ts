@@ -116,7 +116,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private addMarker(latlng: L.LatLng): void {
     const marker = L.marker(latlng, {
       icon: L.icon({
-        iconUrl: 'http://localhost:5010/api/Image/default-icon.png',
+        iconUrl: 'default-icon.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41]
       })
@@ -126,7 +126,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     marker.markerData = {
       markerID: 0, // Will be assigned by the server after creation
       IDUser: 6,  // Default user ID
-      IDPoint: 0,
+      IDPoint: 0, // Will be assinged by the server after creation
+      IDMap: 1, // Default map ID
       markerName: '',
       markerDescription: '',
       markerIconPath: 'http://localhost:5010/api/Image/default-icon.png',

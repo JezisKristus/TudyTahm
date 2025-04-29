@@ -13,10 +13,10 @@
   <p *ngIf="marker"><strong>Location:</strong> {{ getFormattedCoordinates() }}</p>
 
   <label class="label">Name</label>
-  <input type="text" [(ngModel)]="markerName" name="markerName" [placeholder]="marker.markerName || 'Add marker name'" required>
+  <input type="text" [(ngModel)]="markerName" name="markerName" placeholder = 'Add marker name' required>
 
   <label class="label">Description</label>
-  <textarea [(ngModel)]="description" name="description" [placeholder]="marker.markerDescription || 'Add description'"></textarea>
+  <textarea [(ngModel)]="marker.markerDescription" name="description" placeholder="Add description"></textarea>
 
   <div class="button-row">
     <button type="button" class="cancel" (click)="onCancel()">Cancel</button>
