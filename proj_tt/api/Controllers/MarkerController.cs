@@ -24,7 +24,8 @@ namespace TT_API.Controllers {
             .FirstOrDefaultAsync(p =>
                 //p.MapID == cmDTO.MapID &&
                 p.Latitude == cmDTO.Latitude &&
-                p.Longitude == cmDTO.Longitude);
+                p.Longitude == cmDTO.Longitude &&
+                p.IDMap == cmDTO.IDMap);
 
             GPSPoint point;
 
@@ -32,6 +33,7 @@ namespace TT_API.Controllers {
                 point = new GPSPoint() {
                     Latitude = cmDTO.Latitude,
                     Longitude = cmDTO.Longitude,
+                    IDMap = cmDTO.IDMap
                 };
 
                 context.GPSPoints.Add(point);
@@ -96,6 +98,7 @@ namespace TT_API.Controllers {
                 CreateMarkerDTO cmdto = new CreateMarkerDTO() {
                     MarkerID = m.MarkerID,
                     IDUser = m.IDUser,
+                    IDMap = gps.IDMap,
                     MarkerName = m.MarkerName,
                     MarkerDescription = m.MarkerDescription,
                     MarkerIconPath = m.MarkerIconPath,
