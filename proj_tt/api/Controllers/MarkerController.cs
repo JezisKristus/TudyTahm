@@ -45,7 +45,7 @@ namespace TT_API.Controllers {
 
             Marker marker = new Marker() {
                 
-                IDUser = 6, //debug user
+                IDUser = cmDTO.IDUser, //debug user
                 IDPoint = point.PointID,
                 MarkerName = cmDTO.MarkerName,
                 MarkerDescription = cmDTO.MarkerDescription,
