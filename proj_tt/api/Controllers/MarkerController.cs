@@ -86,10 +86,9 @@ namespace TT_API.Controllers {
         }
 
 
-        [HttpGet] //tady pak pridat overovani usera
-        public async Task<IActionResult> GetMarkersForUser() { // Markery jenom toho usera 
+        [HttpGet("ByMapID/{mapID}")] //tady pak pridat overovani usera
+        public async Task<IActionResult> GetMarkersForUser(int mapID) { // Markery jenom toho usera 
             var markers = await context.Markers // Include nebylo potřeba, for some reason to rozbíjelo get
-                .Where(m => m.IDUser == 6) //zatim mame stejne jenom usera 6
                 .ToListAsync();
 
             var completemarkers = new List<CreateMarkerDTO>();
@@ -105,11 +104,37 @@ namespace TT_API.Controllers {
                     Latitude = gps.Latitude,
                     Longitude = gps.Longitude
                 };
-                completemarkers.Add(cmdto);
+                if (cmdto.IDMap == mapID) completemarkers.Add(cmdto);
             }
 
             return Ok(completemarkers);
         }
+
+        [HttpGet("ByMarkerID/{markerID}")] //tady pak pridat overovani usera
+        public async Task<IActionResult> GetMarker(int markerID) { // Markery jenom toho usera 
+
+            var marker = await context.Markers.FindAsync(markerID);
+
+            if (marker == null) { return NotFound(); }
+
+            var gps = await context.GPSPoints.FindAsync(marker.IDPoint);
+
+            var completemarkers = new List<CreateMarkerDTO>();
+
+                CreateMarkerDTO cmdto = new CreateMarkerDTO() {
+                    MarkerID = marker.MarkerID,
+                    IDUser = marker.IDUser,
+                    IDMap = gps.IDMap,
+                    MarkerName = marker.MarkerName,
+                    MarkerDescription = marker.MarkerDescription,
+                    MarkerIconPath = marker.MarkerIconPath,
+                    Latitude = gps.Latitude,
+                    Longitude = gps.Longitude
+                };
+
+            return Ok(cmdto);
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMarker(int id) { // Markery jenom toho usera 
