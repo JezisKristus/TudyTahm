@@ -4,4 +4,5 @@ export interface Map {
   isCustom: boolean;
   mapName: string;
   mapPath: string;
+  mapPreviewPath: string;
 }

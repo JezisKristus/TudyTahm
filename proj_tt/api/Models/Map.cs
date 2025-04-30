@@ -1,3 +1,4 @@
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -12,5 +13,7 @@ namespace TT_API.Models
         public bool IsCustom { get; set; }
         public string MapName { get; set; }
         public string MapPath { get; set; }
+
+        public string MapPreviewPath { get; set; }
     }
 }

@@ -3,4 +3,5 @@ export interface CreateMapDto {
   isCustom: boolean;
   mapName: string;
   mapPath: string;
+  mapPreviewPath: string;
 }
