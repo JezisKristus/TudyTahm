@@ -18,6 +18,8 @@ namespace TT_API {
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GPSPoint> GPSPoints { get; set; }
+
+        public DbSet<JourneyPoint> JourneyPoints { get; set; }
         public DbSet<GroupUsers> GroupUsers { get; set; }
 
 
