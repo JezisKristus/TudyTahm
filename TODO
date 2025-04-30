@@ -9,6 +9,8 @@ Journeys API
 
 
 JK
+map.component.ts 311 - přepsat aby se tahal jenom jeden
+Marker - aby na cancel se nesmazal, použít že se stáhne jenom jeden
 Aby bylo kompatabilní create markerDTO, nestihnul sem v hodině
 Implementovat search
 Mapy api

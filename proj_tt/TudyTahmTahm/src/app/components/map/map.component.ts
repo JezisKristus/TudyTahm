@@ -113,6 +113,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.map.on('click', removePopup);
   }
 
+  // For new marker
   private addMarker(latlng: L.LatLng): void {
     const marker = L.marker(latlng, {
       icon: L.icon({
@@ -144,12 +145,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedMarker = marker;
     this.onMarkerClick(marker);
   }
+
+  // Essentially converting our markers to Leafletmarkers
   private addMarkersToMap(markers: AppMarker[]): void {
     markers.forEach(markerData => {
       if (this.isValidLatLng(markerData.latitude, markerData.longitude)) {
         // Use default icon if markerIconPath is empty
         const markerIcon = L.icon({
-          iconUrl: markerData.markerIconPath || 'http://localhost:5010/api/Image/default-icon.png',
+          iconUrl: 'http://localhost:5010/api/Image/' + markerData.markerIconPath || 'http://localhost:5010/api/Image/default-icon.png',
           iconSize: [25, 41],
           iconAnchor: [12, 41]
         });
@@ -292,7 +295,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadMarkers(): void {
-    this.markerService.getMarkers().subscribe({
+    this.markerService.getMarkersByMapId(1).subscribe({
       next: (markers) => {
         this.addMarkersToMap(markers);
       },
@@ -305,7 +308,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.Lmarkers.forEach(marker => marker.remove());
     this.Lmarkers = [];
     // Znovunačtení markerů
-    this.loadMarkers();
+    this.loadMarkers(); // Rewrite to only load changed marker
   }
 
   ngOnDestroy(): void {

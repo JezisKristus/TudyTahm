@@ -13,28 +13,9 @@ export class MarkerService {
 
   public constructor(private http: HttpClient) {}
 
-  public getMarkers(): Observable<AppMarker[]> {
-    const url = `${environment.apiUrl}/Marker`;
-    return this.http.get<any[]>(url, { responseType: 'json' }).pipe(
-      map(markers => {
-        if (!Array.isArray(markers)) {
-          throw new Error('Invalid response format: Expected an array of markers');
-        }
-        // Přemapování: očekáváme, že API vrací markerID, který chceme převést na markerId
-        return markers.map(marker => ({
-          ...marker,
-          markerId: marker.markerID  // zde bereme marker.markerID z API
-        }) as AppMarker).filter(marker => this.isValidLatLng(marker.latitude, marker.longitude));
-      }),
-      tap({
-        error: (err) => console.error('Error parsing markers:', err)
-      })
-    );
-  }
-
-
-  public findBytapId(id: number): Observable<AppMarker[]> {
-    return this.http.get<AppMarker[]>('environment/Marker/tap/' + id); // Ready for multiple maps
+  public getMarkersByMapId(id: number): Observable<AppMarker[]> {
+    console.log('Sending create request with id:' + id);
+    return this.http.get<AppMarker[]>('${environment.apiUrl}/Marker/ByMapID/' + id); // Ready for multiple maps
   }
 
   public create(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
