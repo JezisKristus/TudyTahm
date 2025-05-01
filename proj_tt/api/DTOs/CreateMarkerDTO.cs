@@ -4,7 +4,6 @@
         public int MarkerID { get; set; }
         public int IDUser { get; set; }
         public int IDMap { get; set; }
-
         public int IDLabel { get; set; }
         public string MarkerName { get; set; }
         public string MarkerDescription { get; set; }
