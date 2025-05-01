@@ -13,14 +13,22 @@ namespace TT_API.Controllers {
     [ApiController]
     [Route("api/[controller]")]
 
-    public class ImageController : ControllerBase {
-
+    public class ImageController : ControllerBase
+    {
         [HttpGet("{filename}")]
-        public IActionResult ReadFile(string filename) {
+        public IActionResult ReadFile(string filename)
+        {
+            string filePath = @".\assets\" + filename;
+            FileInfo file = new FileInfo(filePath);
 
-            FileInfo file = new FileInfo(@".\assets\" + filename);
+            // Check if the file exists before attempting to open it
+            if (!file.Exists)
+            {
+                return NotFound(); // Return a 404 if the file doesn't exist
+            }
+
             return File(file.OpenRead(), "image/jpeg");
         }
-
     }
+
 }

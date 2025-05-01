@@ -80,7 +80,7 @@ export class MarkerDetailsComponent implements OnChanges {
   }
 
   onCancel(): void {
-    if (this.isNewMarker && this.marker) {
+    if (this.marker?.markerID == 0) {
       this.deleteMarker.emit(this.marker); // Emit the AppMarker to delete it
     }
     this.isVisible = false;
@@ -101,6 +101,7 @@ export class MarkerDetailsComponent implements OnChanges {
         IDUser: this.marker.IDUser || 6,
         IDPoint: this.marker.IDPoint || 0,
         IDMap: this.marker.IDMap || 1,
+        IDLabel: this.marker.IDLabel || 0, // Include IDLabel
         markerName: this.markerName || 'Unnamed Marker',
         markerDescription: this.description || '',
         markerIconPath: this.icons[this.selectedIconIndex],
@@ -113,9 +114,8 @@ export class MarkerDetailsComponent implements OnChanges {
         this.markerService.update(markerDto).subscribe({
           next: (updatedMarker) => {
             this.marker = updatedMarker;
-            this.save.emit(updatedMarker);
+            this.save.emit(updatedMarker); // Emit only the updated marker
             this.isVisible = false;
-            this.refreshMarkers.emit(); // Emit události pro znovunačtení markerů
           },
           error: (err) => console.error('Error updating marker:', err)
         });
@@ -124,9 +124,8 @@ export class MarkerDetailsComponent implements OnChanges {
         this.markerService.create(markerDto).subscribe({
           next: (createdMarker) => {
             this.marker = createdMarker;
-            this.save.emit(createdMarker);
+            this.save.emit(createdMarker); // Emit only the created marker
             this.isVisible = false;
-            this.refreshMarkers.emit(); // Emit události pro znovunačtení markerů
           },
           error: (err) => console.error('Error creating marker:', err)
         });

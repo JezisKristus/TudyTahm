@@ -7,6 +7,8 @@ import {AppMarker} from '../../models/appMarker';
 import {MarkerService} from '../../services/marker.service';
 import {GPSPoint} from '../../models/gps-point';
 import {NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SearchComponent } from '../search/search.component';
 
 // Rozšíření ExtendedMarker o vlastnosti AppMarker
 interface ExtendedMarker extends L.Marker, AppMarker {
@@ -21,15 +23,21 @@ interface ExtendedMarker extends L.Marker, AppMarker {
   styleUrls: ['./map.component.scss'],
   imports: [
     MarkerDetailsComponent,
-    NgIf
+    NgIf,
+    FormsModule,
+    SearchComponent
   ],
   encapsulation: ViewEncapsulation.None
 })
 
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
+
   map!: L.Map; // Použijte "!" k inicializaci později
   layer: any;
   private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
+
+  searchQuery: string = '';
+  private searchMarker: L.Marker | null = null;
 
   private Lmarkers: ExtendedMarker[] = []; // Unified marker array
   private myMarkers: AppMarker[] = [];
@@ -129,7 +137,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       IDUser: 6,  // Default user ID
       IDPoint: 0, // Will be assinged by the server after creation
       IDMap: 1, // Default map ID
-      markerName: '',
+      IDLabel: 0, // Default label ID
+      markerName: 'New Marker',
       markerDescription: '',
       markerIconPath: 'http://localhost:5010/api/Image/default-icon.png',
       longitude: latlng.lng,
@@ -232,20 +241,47 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onCancel(): void {
+    if (this.selectedMarker) {
+        // Reset icon of the last selected marker
+        const originalIcon = L.icon({
+            iconUrl: this.selectedMarker.markerData.markerIconPath || 'http://localhost:5010/api/Image/default-marker.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        });
+        this.selectedMarker.setIcon(originalIcon);
+    }
     this.selectedMarker = null; // Reset selected marker
   }
 
   onSave(markerData?: AppMarker): void {
-    if (this.selectedMarker && markerData) {
-      // Update icon if needed
-      if (markerData.markerIconPath) {
-        const icon = L.icon({
-          iconUrl: markerData.markerIconPath,
-          iconSize: [25, 41],
-          iconAnchor: [12, 41]
-        });
-        this.selectedMarker.setIcon(icon);
+    if (this.selectedMarker){
+      if (markerData) {
+          // Update icon if needed
+          if (markerData.markerIconPath) {
+              const icon = L.icon({
+                  iconUrl: markerData.markerIconPath,
+                  iconSize: [25, 41],
+                  iconAnchor: [12, 41]
+              });
+              this.selectedMarker.setIcon(icon);
+          }
+
+          // Refresh only the saved marker
+          this.markerService.getMarkerByMarkerID(markerData.markerID).subscribe({
+              next: (updatedMarker) => {
+                  this.selectedMarker!.markerData = updatedMarker;
+                  console.log(`Marker with ID ${markerData.markerID} refreshed.`);
+              },
+              error: (err) => console.error('Error refreshing marker:', err)
+          });
       }
+    // Reset icon of the last selected marker
+    const originalIcon = L.icon({
+      iconUrl: this.selectedMarker.markerData.markerIconPath || 'http://localhost:5010/api/Image/default-marker.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41]
+    });
+    this.selectedMarker.setIcon(originalIcon);
     }
     this.selectedMarker = null;
   }
@@ -295,7 +331,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadMarkers(): void {
-    this.markerService.getMarkersByMapId(1).subscribe({
+    this.markerService.getMarkersByMapId(1).subscribe({ // change to used map ID later
       next: (markers) => {
         this.addMarkersToMap(markers);
       },
@@ -308,7 +344,49 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.Lmarkers.forEach(marker => marker.remove());
     this.Lmarkers = [];
     // Znovunačtení markerů
-    this.loadMarkers(); // Rewrite to only load changed marker
+    this.loadMarkers();
+  }
+
+  onSearch(query: string): void {
+    if (!query) return;
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.length > 0) {
+          const place = data[0];
+          const lat = parseFloat(place.lat);
+          const lon = parseFloat(place.lon);
+
+          // Zoom to location
+          this.map.setView([lat, lon], 13);
+
+          // Remove previous search marker
+          if (this.searchMarker) {
+            this.map.removeLayer(this.searchMarker);
+          }
+
+          // Add new marker
+          this.searchMarker = L.marker([lat, lon], {
+            icon: L.icon({
+              iconUrl: 'http://localhost:5010/api/Image/search-marker.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41]
+            })
+          })
+            .addTo(this.map)
+            .bindPopup(place.display_name)
+            .openPopup();
+        } else {
+          alert('Location not found.');
+        }
+      })
+      .catch(err => {
+        console.error('Search error:', err);
+        alert('Search failed.');
+      });
   }
 
   ngOnDestroy(): void {

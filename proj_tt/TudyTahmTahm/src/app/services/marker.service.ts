@@ -15,7 +15,17 @@ export class MarkerService {
 
   public getMarkersByMapId(id: number): Observable<AppMarker[]> {
     console.log('Sending create request with id:' + id);
-    return this.http.get<AppMarker[]>('${environment.apiUrl}/Marker/ByMapID/' + id); // Ready for multiple maps
+    return this.http.get<AppMarker[]>(`${environment.apiUrl}/Marker/ByMapID/${id}`); // Ready for multiple maps
+  }
+
+  public getMarkerByMarkerID(id: number): Observable<AppMarker> {
+    console.log('Sending create request with id:' + id);
+    return this.http.get<AppMarker>(`${environment.apiUrl}/Marker/ByMarkerID/${id}`).pipe(
+      tap(response => {
+        console.log('Received response from API:', response);
+        return response;
+      })
+    );
   }
 
   public create(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
@@ -47,9 +57,5 @@ export class MarkerService {
     return this.http.delete<void>(url).pipe(
       tap(() => console.log(`Marker with ID ${marker.markerID} deleted successfully.`))
     );
-  }
-
-  private isValidLatLng(lat: number, lng: number): boolean {
-    return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
   }
 }
