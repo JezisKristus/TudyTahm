@@ -150,13 +150,10 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
-            var unusedPoints = await context.GPSPoints
+            context.GPSPoints.RemoveRange(
+            await context.GPSPoints
             .Where(gp => !context.Markers.Any(m => m.IDPoint == gp.PointID))
-            .ToListAsync();
-
-            foreach (var value in unusedPoints) {
-                context.GPSPoints.Remove(value);
-            }
+            .ToListAsync());
 
             await context.SaveChangesAsync();
 

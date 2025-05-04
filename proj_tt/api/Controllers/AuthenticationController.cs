@@ -65,36 +65,44 @@ namespace TT_API.Controllers {
             return Ok();
         }
 
-        //[HttpPut("UploadPFP/{userID}")]
-        //public async Task<IActionResult> UploadPFP(IFormFile image, int userID) {
+        [HttpPut("UploadPFP/{userID}")]
+        public async Task<IActionResult> UploadPFP(IFormFile image, int userID) {
 
-        //    var user = await context.Users.FindAsync(userID);
+            var user = await context.Users.FindAsync(userID);
 
-        //    if (user == null) return NotFound();
+            if (user == null) return NotFound();
 
-        //    if (user.UserIconPath.Equals(@"pfp\default.png")) { user.UserIconPath = @"pfp\" + user.UserID + "_" + user.UserName.ToLower().Replace(' ', '-'); }
+            var extension = Path.GetExtension(image.FileName).ToLower();
 
-        //    var extension = Path.GetExtension(image.FileName).ToLower();
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
 
-        //    var icon
+            if (!allowedExtensions.Contains(extension)) {
+                return BadRequest(new { message = "Invalid file type. Only JPG and PNG are allowed." });
+            }
 
-        //    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            if (image != null && image.Length > 0) {
+                var filename = @"pfp\" + user.UserID + "_" + user.UserName.ToLower().Replace(' ', '-') + extension;
 
-        //    if (!allowedExtensions.Contains(extension)) {
-        //        return BadRequest(new { message = "Invalid file type. Only JPG and PNG are allowed." });
-        //    }
+                using (var stream = new FileStream(@".\assets\" + filename, FileMode.Create)) {
+                    await image.CopyToAsync(stream);
+                }
 
-        //    if (image != null && image.Length > 0) {
-        //        var fileName = user.
+                return Ok();
+            }
 
-        //        using (var stream = new FileStream(@"..\assets\pfp\", FileMode.Create)) {
-        //            await image.CopyToAsync(stream);
-        //        }
+            return BadRequest();
+        }
 
-        //        return Ok();
-        //    }
+        [HttpGet("pfpPath{userID}")]
 
-        //    return BadRequest();
-        //}
+        public async Task<IActionResult> GetPfpPath(int userID) {
+            var user = await context.Users.FindAsync(userID);
+
+            if (user == null) return NotFound();
+
+            var path = user.UserIconPath;
+
+            return Ok(path);
+        }
     }
 }

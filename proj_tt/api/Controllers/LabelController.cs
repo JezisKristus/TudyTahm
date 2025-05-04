@@ -99,11 +99,16 @@ namespace TT_API.Controllers {
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(int id) {
 
-            var labels = context.Labels.Where(l => l.LabelID == id).Select(l => new { l.Name, l.Color });
+            var label = await context.Labels.FirstOrDefaultAsync(l => l.LabelID == id);
 
-            if (labels == null) return NotFound();
+            if (label == null) return NotFound();
+
+            var returnts = new LabelDTO {
+                Name = label.Name,
+                Color = label.Color,
+            };
             
-            return Ok(labels);
+            return Ok(returnts);
         }
     }
 }
