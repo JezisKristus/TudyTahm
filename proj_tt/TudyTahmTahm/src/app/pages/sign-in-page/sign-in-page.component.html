@@ -1,14 +1,14 @@
-<body>
+<body style="background-color: #0a2541;">
   <div class="login-container d-flex align-items-center justify-content-center">
-    <div class="card p-4 shadow-lg">
-      <h2 class="text-center">Welcome!</h2>
+    <div class="card p-4 shadow-lg custom-bg">
+      <h2 class="text-center text-white">Welcome!</h2>
       <form [formGroup]="form" (submit)="save()">
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
+        <div class="mb-3" >
+          <label for="email" class="form-label text-white">Email</label>
           <input type="email" class="form-control" id="email" placeholder="Enter your email">
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
+          <label for="password" class="form-label text-white">Password</label>
           <input type="password" class="form-control" id="password" placeholder="Enter your password">
         </div>
         <button type="submit" class="btn btn-success w-100">Sign In</button>
@@ -16,11 +16,11 @@
       <div class="alert alert-danger mt-3" *ngIf="message">
         Invalid username or password
       </div>
-      <div class="text-center mt-3">
+      <div class="text-center mt-3 text-white">
         <a >Forgot password?</a>
       </div>
       <div class="text-center mt-2">
-        <p>Don't have an account?
+        <p class="text-white">Don't have an account?
           <a routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page" class="text-decoration-none">Register</a>
         </p>
       </div>
