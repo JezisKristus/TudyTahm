@@ -1,5 +1,6 @@
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace TT_API.Models
@@ -15,5 +16,9 @@ namespace TT_API.Models
         public string MapPath { get; set; }
 
         public string MapPreviewPath { get; set; }
+
+
+        [ForeignKey("IDUser")]
+        public User User { get; set; }
     }
 }
