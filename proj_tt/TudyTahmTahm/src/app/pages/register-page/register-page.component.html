@@ -2,25 +2,28 @@
 <div class="login-container d-flex align-items-center justify-content-center">
   <div class="card p-4 shadow-lg">
     <h2 class="text-center">Join us!</h2>
-    <form>
+    <form [formGroup]="form" (submit)="register()">
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter your email">
+        <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter your email">
       </div>
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" id="Username" placeholder="Choose a username">
+        <input type="text" class="form-control" id="username" formControlName="username" placeholder="Choose a username">
       </div>
       <div class="mb-3">
         <label for="newPassword" class="form-label">Password</label>
-        <input type="password" class="form-control" id="newPassword" placeholder="Choose your password">
+        <input type="password" class="form-control" id="newPassword" formControlName="password" placeholder="Choose your password">
       </div>
       <div class="mb-3">
         <label for="newPasswordRepeat" class="form-label">Repeat your password</label>
-        <input type="password" class="form-control" id="newPasswordRepeat" placeholder="Repeat your password">
+        <input type="password" class="form-control" id="newPasswordRepeat" formControlName="passwordRepeat" placeholder="Repeat your password">
       </div>
       <button type="submit" class="btn btn-success w-100">Register</button>
     </form>
+    <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
     <div class="text-center mt-2">
       <a routerLink="/sign-in" routerLinkActive="active" ariaCurrentWhenActive="page" class="text-decoration-none">Already have an account?</a>
     </div>

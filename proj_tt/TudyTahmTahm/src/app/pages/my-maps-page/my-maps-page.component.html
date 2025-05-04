@@ -47,6 +47,8 @@
     </div>
   </div>
 
+  <!-- Overlay and dialog -->
+  <div *ngIf="showAddMapDialog" class="dialog-overlay" (click)="onDialogClose()"></div>
   <app-add-map-dialog
     *ngIf="showAddMapDialog"
     (closeDialog)="onDialogClose()"

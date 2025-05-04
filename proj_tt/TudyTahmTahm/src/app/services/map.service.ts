@@ -21,20 +21,18 @@ export class MapService {
       );
   }
 
-  getMapsByUserId(id: number): Observable<Map[]> {
-    return this.http.get<Map[]>(`${this.apiUrl}/Map/ByUserID/${id}`)
+  getMapsByCurrentUser(): Observable<Map[]> {
+    const userId = this.getCurrentUserId();
+    return this.http.get<Map[]>(`${this.apiUrl}/Map/ByUserID/${userId}`)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  // Renamed from the original getMapByUserId for backward compatibility
-  getMapByUserId(id: number): Observable<Map[]> {
-    return this.getMapsByUserId(id);
-  }
-
   createMap(map: Partial<Map>): Observable<Map> {
-    return this.http.post<Map>(`${this.apiUrl}/Map`, map)
+    const userId = this.getCurrentUserId();
+    const payload = { ...map, idUser: userId };
+    return this.http.post<Map>(`${this.apiUrl}/Map`, payload)
       .pipe(
         catchError(this.handleError)
       );
@@ -52,6 +50,27 @@ export class MapService {
       .pipe(
         catchError(this.handleError)
       );
+  }
+
+  private getCurrentUserId(): number {
+    const user = sessionStorage.getItem('user');
+    if (!user) {
+      console.warn('No user data found in sessionStorage. Redirecting to login...');
+      // Optionally, redirect to login page here
+      return 0; // Return 0 or handle as unauthenticated
+    }
+
+    try {
+      const parsedUser = JSON.parse(user);
+      if (!parsedUser.userID) {
+        console.warn('User data is missing userID:', parsedUser);
+        return 0; // Return 0 if userID is missing
+      }
+      return parsedUser.userID;
+    } catch (error) {
+      console.error('Error parsing user data from sessionStorage:', error);
+      return 0; // Return 0 if parsing fails
+    }
   }
 
   private handleError(error: any) {

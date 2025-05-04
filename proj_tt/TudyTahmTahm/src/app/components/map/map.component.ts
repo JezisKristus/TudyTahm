@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation, Output, EventEmitter, AfterViewInit} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation, Output, EventEmitter, AfterViewInit, Input} from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-search';
 import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
@@ -46,6 +46,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
 
   @Output() markerClicked = new EventEmitter<L.Marker<any>>();  selectedMarker: ExtendedMarker | null = null ; // Store the selected marker
+  @Input() labelFilter: number | null = null; // Input for label filter
 
   constructor(private viewContainerRef: ViewContainerRef, private markerService: MarkerService) {}
 
@@ -181,6 +182,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         leafletMarker.on('click', () => {
           this.onMarkerClick(leafletMarker);
         });
+
+        // Apply label filter
+        if (this.labelFilter !== null && markerData.IDLabel !== this.labelFilter) {
+          leafletMarker.setOpacity(0); // Hide marker
+        } else {
+          leafletMarker.setOpacity(1); // Show marker
+        }
       } else {
         console.warn('Invalid marker coordinates:', markerData);
       }
@@ -399,5 +407,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.markerDetailsRef) {
       this.markerDetailsRef.destroy();
     }
+  }
+
+  ngOnChanges(): void {
+    // Update marker visibility when labelFilter changes
+    this.Lmarkers.forEach(marker => {
+      if (this.labelFilter !== null && marker.markerData.IDLabel !== this.labelFilter) {
+        marker.setOpacity(0); // Hide marker
+      } else {
+        marker.setOpacity(1); // Show marker
+      }
+    });
   }
 }

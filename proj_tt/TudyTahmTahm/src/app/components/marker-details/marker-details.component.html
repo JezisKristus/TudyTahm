@@ -18,6 +18,11 @@
   <label class="label">Description</label>
   <textarea [(ngModel)]="marker.markerDescription" name="description" placeholder="Add description"></textarea>
 
+  <label class="label">Label</label>
+  <select [(ngModel)]="marker.IDLabel" name="label">
+    <option *ngFor="let label of labels" [value]="label.labelID">{{ label.labelName }}</option>
+  </select>
+
   <div class="button-row">
     <button type="button" class="cancel" (click)="onCancel()">Cancel</button>
     <button type="button" class="delete" (click)="onDelete()">Delete</button>

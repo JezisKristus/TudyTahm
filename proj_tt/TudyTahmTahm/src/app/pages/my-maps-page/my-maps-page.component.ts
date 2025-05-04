@@ -38,9 +38,8 @@ export class MyMapsPageComponent implements OnInit {
   }
 
   loadMaps(): void {
-    const userId = 6; // Replace with authenticated user ID
     this.loading = true;
-    this.mapService.getMapsByUserId(userId)
+    this.mapService.getMapsByCurrentUser()
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (maps) => {
@@ -68,7 +67,6 @@ export class MyMapsPageComponent implements OnInit {
 
   private createMap(mapData: Partial<Map>): void {
     const payload = {
-      idUser: 6,
       isCustom: mapData.isCustom || false,
       mapName: mapData.mapName || '',
       mapPath: mapData.mapPath || ''

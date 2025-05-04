@@ -3,5 +3,14 @@
   <app-sidebar class="d-flex flex-column flex-shrink-0"></app-sidebar>
 
   <!-- Map Component -->
-  <app-map class="flex-grow-1" (markerClicked)="onMarkerClicked($event)"></app-map>
+  <div class="flex-grow-1">
+    <div class="filter-container">
+      <label for="labelFilter">Filter by Label:</label>
+      <select id="labelFilter" (change)="onLabelFilterChange($event)">
+        <option value="">All</option>
+        <option *ngFor="let label of labels" [value]="label.labelID">{{ label.labelName }}</option>
+      </select>
+    </div>
+    <app-map (markerClicked)="onMarkerClicked($event)" [labelFilter]="selectedLabelFilter"></app-map>
+  </div>
 </div>

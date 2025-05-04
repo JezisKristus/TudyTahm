@@ -3,6 +3,7 @@ import { AppMarker } from '../../models/appMarker'; // Import custom marker mode
 import { MarkerService } from '../../services/marker.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Label } from '../../models/label';
 
 @Component({
   selector: 'app-marker-details',
@@ -16,6 +17,7 @@ import { CommonModule } from '@angular/common';
 })
 export class MarkerDetailsComponent implements OnChanges {
   @Input() marker: AppMarker | null = null;  // Zajistí, že přijímáme AppMarker
+  @Input() labels: Label[] = []; // Input for available labels
 
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppMarker>();
