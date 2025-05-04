@@ -10,6 +10,8 @@ using TT_API.Services;
 using TT_API.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TT_API.Controllers {
     [ApiController]
@@ -30,7 +32,7 @@ namespace TT_API.Controllers {
 
             var token = service.Create(user);
 
-            return Ok(new { token });
+            return Ok(new { token, user.UserID});
         }
 
         [HttpPost("Register")]
@@ -48,7 +50,7 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(user.UserID);
         }
 
 
@@ -92,6 +94,26 @@ namespace TT_API.Controllers {
 
             return BadRequest();
         }
+
+        //[Authorize]
+        //[HttpGet("UserIDByToken")]
+        //public async Task<IActionResult> GetUserInfoByToken() {
+        //    var identity = User.Identity as ClaimsIdentity;
+
+        //    return Ok(identity.FindFirst("userID").Value);
+        //}
+
+        [HttpGet("UserInfoByID/{id}")]
+        public async Task<IActionResult> GetUserInfoByID(int id) {
+            var user = await context.Users.FindAsync(id);
+
+            if (user == null) return NotFound();
+
+            return Ok(new {
+                user.UserID, user.UserName, user.UserEmail, user.UserIconPath
+            });
+        }
+
 
         [HttpGet("pfpPath{userID}")]
 
