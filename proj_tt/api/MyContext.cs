@@ -5,8 +5,6 @@ namespace TT_API {
     public class MyContext : DbContext {
 
 
-        public DbSet<JourneyGroup> JourneyGroups { get; set; }
-        public DbSet<JourneyUser> JourneyUsers { get; set; }
         public DbSet<Label> Labels { get; set; }
         public DbSet<MapLabel> MapLabels { get; set; }
         public DbSet<Map> Maps { get; set; }
@@ -28,7 +26,6 @@ namespace TT_API {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<JourneyUser>().HasNoKey();
             modelBuilder.Entity<MapLabel>().HasNoKey();
             modelBuilder.Entity<MarkerLabel>().HasNoKey();
 

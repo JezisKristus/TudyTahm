@@ -1,4 +1,5 @@
 
+
 namespace TT_API {
     public class Program {
         public static void Main(string[] args) {
@@ -22,7 +23,6 @@ namespace TT_API {
                     }
                 );
             });
-            
 
             var app = builder.Build();
 

@@ -56,7 +56,7 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(map.MapID);
         }
 
         
@@ -88,7 +88,7 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(map.MapID);
         }
     }
 }
