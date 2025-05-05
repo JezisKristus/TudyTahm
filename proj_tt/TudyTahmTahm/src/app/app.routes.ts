@@ -18,4 +18,5 @@ export const routes: Routes = [
   {path: 'shared', component: SharedPageComponent , canActivate: [authGuard]},
   {path: 'settings', component: SettingsPageComponent , canActivate: [authGuard]},
   {path: 'journey', component: JourneyPageComponent , canActivate: [authGuard]},
+  { path: ':id', component: MapPageComponent, canActivate: [authGuard] },
 ];

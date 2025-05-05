@@ -4,16 +4,15 @@
     <div class="icon" *ngFor="let icon of icons; let i = index"
          [class.selected]="selectedIconIndex === i"
          (click)="selectIcon(i)">
-      <img [src]="icon" alt="icon"/>
+      <img ngSrc="icon" alt="icon" fill=""/> <!-- TODO cesta aby byla ze serveru -->
     </div>
   </div>
 
   <h3>Marker Details</h3>
-  <p *ngIf="marker"><strong>ID:</strong> {{ marker.markerID }}</p> <!-- Display marker ID -->
   <p *ngIf="marker"><strong>Location:</strong> {{ getFormattedCoordinates() }}</p>
 
   <label class="label">Name</label>
-  <input type="text" [(ngModel)]="markerName" name="markerName" placeholder = 'Add marker name' required>
+  <input type="text" [(ngModel)]="marker.markerName" name="markerName" placeholder = 'Add marker name' required>
 
   <label class="label">Description</label>
   <textarea [(ngModel)]="marker.markerDescription" name="description" placeholder="Add description"></textarea>

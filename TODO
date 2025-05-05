@@ -2,17 +2,19 @@ Všici
 Vymyslet uživatele kterej bude na ukazování
 
 
+
 D
 přidání mapy + groups
 Upravit graficky placeholdery v marker-details
 
 ŠVP
-Mapy API
-Labels API
-Journeys API
+sdílení a groups - propojeno s journey
+custom mapy API
+obrázky předělat
+Hashovat hesla
 
 JK
 Integrovat labely - kolonka v details + výběr který se ukazujou
 Dodělat map-page - chybí odstranění mapy
-Journey vymyslet
+Journey připojit na databázi
 

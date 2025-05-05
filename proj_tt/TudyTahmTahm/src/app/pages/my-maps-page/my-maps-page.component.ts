@@ -81,4 +81,13 @@ export class MyMapsPageComponent implements OnInit {
       }
     });
   }
+  storeMapInfo(map: Map): void {
+    try {
+      const mapData = JSON.stringify(map);
+      sessionStorage.setItem('selectedMap', mapData);
+      console.log('Map info stored in sessionStorage:', map);
+    } catch (error) {
+      console.error('Failed to store map info in sessionStorage:', error);
+    }
+  }
 }

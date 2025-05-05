@@ -29,9 +29,9 @@
       <p>You don't have any maps yet. Create your first map!</p>
     </div>
 
-    <div class="maps-grid" *ngIf="!loading && !error">
+    <div class="maps-grid" *ngIf="!loading && !error">   <!-- TODO routing with the mapID is not working properly, need anything else than ID? -->
       <div class="map-card"
-           [routerLink]="['/maps', map.mapID]"
+           [routerLink]="['', map.mapID]"
            routerLinkActive="active"
            *ngFor="let map of maps">
         <div class="map-content" [style.background-image]="'url(' + map.mapPreviewPath + ')'"></div>

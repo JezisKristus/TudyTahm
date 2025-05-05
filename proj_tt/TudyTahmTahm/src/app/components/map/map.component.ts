@@ -339,14 +339,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadMarkers(): void {
-    this.markerService.getMarkersByMapId(1).subscribe({ // change to used map ID later
+    const mapID = sessionStorage.getItem('mapID') || '1'; // Default map ID, change later
+
+    if (!mapID) {
+      console.error('No mapID found in sessionStorage.');
+      return;
+    }
+
+    this.markerService.getMarkersByMapId(Number(mapID)).subscribe({ // change to used map ID later
       next: (markers) => {
         this.addMarkersToMap(markers);
       },
       error: (err) => console.error('Error loading markers:', err)
     });
   }
-
   private refreshMarkers(): void {
     // Odstranění všech markerů z mapy
     this.Lmarkers.forEach(marker => marker.remove());
