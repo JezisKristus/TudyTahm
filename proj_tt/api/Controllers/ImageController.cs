@@ -30,5 +30,4 @@ namespace TT_API.Controllers {
             return File(file.OpenRead(), "image/jpeg");
         }
     }
-
 }

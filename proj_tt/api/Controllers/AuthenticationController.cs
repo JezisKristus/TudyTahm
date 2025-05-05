@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using TT_API.HelperClasses;
 
 namespace TT_API.Controllers {
     [ApiController]
@@ -24,11 +25,12 @@ namespace TT_API.Controllers {
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO logindto) {
+
             var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == logindto.Username);
 
             if (user == null) { return NotFound(new { message = "User not found." }); }
 
-            if (!user.UserPassword.Equals(logindto.Password)) { return Unauthorized(new { message = "Invalid credentials." }); }
+            if (!HashHelper.Verify(logindto.Password, user.UserPassword)) { return Unauthorized(new { message = "Invalid credentials." }); }
 
             var token = service.Create(user);
 
@@ -41,7 +43,7 @@ namespace TT_API.Controllers {
         public async Task<IActionResult> Register([FromBody] CreateUpdateUserDTO registerdto) {
             User user = new User() {
                 UserName = registerdto.UserName,
-                UserPassword = registerdto.UserPassword,
+                UserPassword = HashHelper.Hash(registerdto.UserPassword),
                 UserEmail = registerdto.UserEmail,
                 UserIconPath = @"pfp\default.png",
             };
@@ -59,7 +61,7 @@ namespace TT_API.Controllers {
             var user = await context.Users.FindAsync(userID);
 
             user.UserName = dto.UserName;
-            user.UserPassword = dto.UserPassword;
+            user.UserPassword = HashHelper.Hash(dto.UserPassword);
             user.UserEmail = dto.UserEmail;
 
             await context.SaveChangesAsync();
