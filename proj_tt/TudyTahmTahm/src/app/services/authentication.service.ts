@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { catchError, finalize, tap , map, switchMap} from 'rxjs/operators';
 import { RegisterDTO } from '../models/register-dto';
 import { SignInDTO } from '../models/sign-in-dto';
 import { environment } from '../../environments/environment.development';
@@ -43,18 +43,25 @@ export class AuthenticationService {
     }
   }
 
-  public login(credentials: SignInDTO): Observable<TokenResult> {
-    this.logout();  // Clear any previous session
+  public login(credentials: SignInDTO): Observable<{ token: TokenResult, user: User }> {
+    this.logout();
 
     return this.http.post<TokenResult>(`${environment.apiUrl}/Authentication/Login`, credentials).pipe(
-      tap((result) => {
-        console.log('Login successful. Storing token:', result);
+      switchMap((result: TokenResult) => {
         this.setToken(result.token);
+        this.setRefreshToken(result.refreshToken);
 
         if (!result.userID) {
-          console.warn('Login response missing userID. Authentication may be incomplete.');
-          return;
+          console.warn('Login response missing userID. Cannot fetch user.');
+          return throwError(() => new Error('User ID missing from login response.'));
         }
+
+        // Fetch user and combine with token
+        return this.getUserByID(result.userID).pipe(
+          map((user: User) => {
+            return { token: result, user };
+          })
+        );
       }),
       catchError((error) => {
         console.error('Login failed:', error);
@@ -63,7 +70,8 @@ export class AuthenticationService {
     );
   }
 
-  private setUser(user: User): void {
+
+  setUser(user: User): void {
     if (!user) {
       console.warn('Attempted to store undefined user');
       return;
@@ -119,6 +127,15 @@ export class AuthenticationService {
   public getToken(): string | null {
     return sessionStorage.getItem('token');
   }
+
+  private setRefreshToken(refreshToken: string): void {
+    sessionStorage.setItem('refreshToken', refreshToken);
+  }
+
+  public getRefreshToken(): string | null {
+    return sessionStorage.getItem('refreshToken');
+  }
+
 
   public getUser(): User | null {
     try {

@@ -58,55 +58,25 @@ export class SignInPageComponent implements OnDestroy {
       catchError(error => {
         console.error('Login failed:', error);
         this.message = true;
-        this.loading = false; // Hide loading spinner on error
+        this.loading = false;
         throw error;
       })
     ).subscribe({
-      next: (result: TokenResult) => {
-        console.log('User successfully logged in. Redirecting...');
-        this.loading = false; // Hide loading spinner on success
+      next: ({ token, user }) => {
+        console.log('Login and user fetch successful:', token, user);
+        this.loading = false;
 
-        // Ensure we have consistent storage - debug any issues that might occur
-        try {
-          // Check what was stored by the service
-          const storedUser = this.authentication.getUser();
-          console.log('User from authentication service:', storedUser);
+        // User is already stored in getUserByID via tap, but you can store explicitly too:
+        this.authentication.setUser(user); // Optional if already set in getUserByID
 
-          if (!storedUser || !storedUser.userID) {
-            console.warn('User data is missing or incomplete. Attempting to fix...');
-            // Fallback: If the service didn't store the data correctly, store it here
-            if (result && result.userID) {
-              this.authentication.getUserByID(result.userID).subscribe({
-                next: (user) => {
-                  console.log('Successfully retrieved user details:', user);
-                  // Navigate after ensuring user data is stored
-                  this.router.navigate(['/']);
-                },
-                error: (err) => {
-                  console.error('Failed to retrieve user details:', err);
-                  // Navigate anyway, but there might be issues
-                  this.router.navigate(['/']);
-                }
-              });
-            } else {
-              console.error('Token result missing userID. Cannot fetch user details.');
-              this.router.navigate(['/']);
-            }
-          } else {
-            // User data exists, proceed with navigation
-            this.router.navigate(['/']);
-          }
-        } catch (error) {
-          console.error('Error handling login response:', error);
-          // Navigate anyway
-          this.router.navigate(['/']);
-        }
+        this.router.navigate(['/']);
       },
       error: () => {
-        this.loading = false; // Extra safety to ensure the spinner is hidden
+        this.loading = false;
         console.error('An error occurred during login.');
       }
     });
+
   }
 
   ngOnDestroy(): void {
