@@ -15,10 +15,6 @@ export class AuthenticationService {
     // Check for corrupted storage data on service init
     this.sanitizeStorageData();
   }
-
-  /**
-   * Sanitize potentially corrupted storage data
-   */
   private sanitizeStorageData(): void {
     try {
       // Check if user data is valid JSON
@@ -96,7 +92,7 @@ export class AuthenticationService {
   }
 
   public getUserByID(id: number): Observable<User> {
-    return this.http.get<User>(`${environment.apiUrl}/User/${id}`).pipe(
+    return this.http.get<User>(`${environment.apiUrl}/Authentication/UserInfoByID/${id}`).pipe(
       tap((user) => {
         console.log('Fetched user data:', user);
         if (user) {
