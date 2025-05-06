@@ -45,7 +45,6 @@ namespace TT_API.Controllers {
 
             Marker marker = new Marker() {
                 
-                IDUser = cmDTO.IDUser, //debug user
                 IDPoint = point.PointID,
                 MarkerName = cmDTO.MarkerName,
                 MarkerDescription = cmDTO.MarkerDescription,
@@ -98,7 +97,6 @@ namespace TT_API.Controllers {
                 var gps = await context.GPSPoints.FindAsync(m.IDPoint);
                 CreateMarkerDTO cmdto = new CreateMarkerDTO() {
                     MarkerID = m.MarkerID,
-                    IDUser = m.IDUser,
                     IDMap = gps.IDMap,
                     MarkerName = m.MarkerName,
                     MarkerDescription = m.MarkerDescription,
@@ -126,7 +124,6 @@ namespace TT_API.Controllers {
 
                 CreateMarkerDTO cmdto = new CreateMarkerDTO() {
                     MarkerID = marker.MarkerID,
-                    IDUser = marker.IDUser,
                     IDMap = gps.IDMap,
                     IDLabel = marker.IDLabel,
                     MarkerName = marker.MarkerName,

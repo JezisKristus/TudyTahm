@@ -9,7 +9,6 @@ namespace TT_API.Models
 
         [Key]
         public int MarkerID { get; set; }
-        public int IDUser { get; set; }
         public int IDPoint { get; set; }
         public int IDLabel { get; set; }
         public string MarkerName { get; set; }
@@ -19,9 +18,6 @@ namespace TT_API.Models
 
         [ForeignKey("IDPoint")]
         public GPSPoint GPSPoint { get; set; }
-
-        [ForeignKey("IDUser")]
-        public User User { get; set; }
 
         [ForeignKey("IDLabel")]
         public Label Label { get; set; }
