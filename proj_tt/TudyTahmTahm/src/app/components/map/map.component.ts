@@ -1,14 +1,25 @@
-import {Component, OnInit, OnDestroy, ViewContainerRef, ComponentRef, ViewEncapsulation, Output, EventEmitter, AfterViewInit, Input} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ComponentRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewContainerRef,
+  ViewEncapsulation
+} from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-search';
-import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
+import {AddMarkerPopupComponent} from './add-marker-popup/add-marker-popup.component';
 import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
 import {AppMarker} from '../../models/appMarker';
 import {MarkerService} from '../../services/marker.service';
 import {GPSPoint} from '../../models/gps-point';
 import {NgIf} from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { SearchComponent } from '../search/search.component';
+import {FormsModule} from '@angular/forms';
+import {SearchComponent} from '../search/search.component';
 
 // Rozšíření ExtendedMarker o vlastnosti AppMarker
 interface ExtendedMarker extends L.Marker, AppMarker {
@@ -135,7 +146,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     // Initialize markerData with default values
     marker.markerData = {
       markerID: 0, // Will be assigned by the server after creation
-      IDUser: 6,  // Default user ID
       IDPoint: 0, // Will be assinged by the server after creation
       IDMap: 1, // Default map ID
       IDLabel: 0, // Default label ID

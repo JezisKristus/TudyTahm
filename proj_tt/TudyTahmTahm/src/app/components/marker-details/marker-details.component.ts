@@ -1,9 +1,9 @@
-import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { AppMarker } from '../../models/appMarker'; // Import custom marker model
-import { MarkerService } from '../../services/marker.service';
-import { FormsModule } from '@angular/forms';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {AppMarker} from '../../models/appMarker'; // Import custom marker model
+import {MarkerService} from '../../services/marker.service';
+import {FormsModule} from '@angular/forms';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
-import { Label } from '../../models/label';
+import {Label} from '../../models/label';
 
 @Component({
   selector: 'app-marker-details',
@@ -102,7 +102,6 @@ export class MarkerDetailsComponent implements OnChanges {
     if (this.marker) {
       const markerDto = {
         markerID: this.marker.markerID || 0,
-        IDUser: this.marker.IDUser || 6, // TODO odstranit všude IDUser, neni potřeba u markeru, je u mapy
         IDPoint: this.marker.IDPoint || 0,
         IDMap: this.marker.IDMap || 1,
         IDLabel: this.marker.IDLabel || 0, // Default 0
