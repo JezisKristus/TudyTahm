@@ -87,7 +87,7 @@ namespace TT_API.Controllers {
             if (image != null && image.Length > 0) {
                 var filename = @"pfp\" + user.UserID + "_" + user.UserName.ToLower().Replace(' ', '-') + extension;
 
-                using (var stream = new FileStream(@".\assets\" + filename, FileMode.Create)) {
+                using (var stream = new FileStream(@"C:\TT_LOCAL\" + filename, FileMode.Create)) {
                     await image.CopyToAsync(stream);
                 }
 
@@ -117,7 +117,7 @@ namespace TT_API.Controllers {
         }
 
 
-        [HttpGet("pfpPath{userID}")]
+        [HttpGet("pfpPath/{userID}")]
 
         public async Task<IActionResult> GetPfpPath(int userID) {
             var user = await context.Users.FindAsync(userID);

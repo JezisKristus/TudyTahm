@@ -29,5 +29,29 @@ namespace TT_API.Controllers {
 
             return File(file.OpenRead(), "image/jpeg");
         }
+
+        [HttpGet("FromLocal/{filename}")]
+        public IActionResult ReadFromLocal(string filename) {
+
+            string filepath = @"C:\TT_LOCAL\" + filename;
+            FileInfo file = new FileInfo(filepath);
+
+            if (!file.Exists) {
+                return NotFound(); // Return a 404 if the file doesn't exist
+            }
+
+            return File(file.OpenRead(), "image/jpeg");
+
+        }
+
+        [HttpPost("CreateNeededDirs")]
+        public IActionResult CreateNeededDirs() {
+            Directory.CreateDirectory(@"C:\TT_LOCAL\pfp");
+            Directory.CreateDirectory(@"C:\TT_LOCAL\map");
+            Directory.CreateDirectory(@"C:\TT_LOCAL\preview");
+            Directory.CreateDirectory(@"C:\TT_LOCAL\marker");
+
+            return Ok();
+        }
     }
 }
