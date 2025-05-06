@@ -46,6 +46,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   map!: L.Map; // Použijte "!" k inicializaci později
   layer: any;
   private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
+  mapID: number = Number(sessionStorage.getItem('Map.mapID'));
 
   searchQuery: string = '';
   private searchMarker: L.Marker | null = null;
@@ -74,6 +75,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.initializeMap(); // Inicializace mapy po vykreslení DOM
     this.loadMarkers(); // Přesun logiky načítání markerů do samostatné metody
+    this.mapID = Number(sessionStorage.getItem('mapID')) || 1; // Default to 1 if mapID is not found
   }
 
   private initializeMap(): void {
@@ -135,6 +137,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // For new marker
   private addMarker(latlng: L.LatLng): void {
+    const mapID = Number(sessionStorage.getItem('mapID')) || 1; // Default to 1 if mapID is not found
+
     const marker = L.marker(latlng, {
       icon: L.icon({
         iconUrl: 'default-icon.png',
@@ -147,7 +151,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     marker.markerData = {
       markerID: 0, // Will be assigned by the server after creation
       IDPoint: 0, // Will be assinged by the server after creation
-      IDMap: 1, // Default map ID
+      IDMap: mapID, // Default map ID
       IDLabel: 0, // Default label ID
       markerName: 'New Marker',
       markerDescription: '',
@@ -349,14 +353,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadMarkers(): void {
-    const mapID = sessionStorage.getItem('mapID') || '1'; // Default map ID, change later
+    const mapID = sessionStorage.getItem('Map.mapID') || '1'; // Default map ID, change later
 
     if (!mapID) {
       console.error('No mapID found in sessionStorage.');
       return;
     }
 
-    this.markerService.getMarkersByMapId(Number(mapID)).subscribe({ // change to used map ID later
+    this.markerService.getMarkersByMapId(Number(mapID)).subscribe({ // Not getting map id correctly probably
       next: (markers) => {
         this.addMarkersToMap(markers);
       },

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { MapService } from '../../services/map.service';
-import { Map } from '../../models/map';
-import { finalize } from 'rxjs/operators';
-import { AddMapDialogComponent } from '../../components/add-map-dialog/add-map-dialog.component';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule, NgFor, NgIf} from '@angular/common';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {SidebarComponent} from '../../components/sidebar/sidebar.component';
+import {MapService} from '../../services/map.service';
+import {AppMap} from '../../models/appMap';
+import {finalize} from 'rxjs/operators';
+import {AddMapDialogComponent} from '../../components/add-map-dialog/add-map-dialog.component';
 
 @Component({
   selector: 'app-my-maps',
@@ -23,7 +23,7 @@ import { AddMapDialogComponent } from '../../components/add-map-dialog/add-map-d
   styleUrls: ['./my-maps-page.component.scss']
 })
 export class MyMapsPageComponent implements OnInit {
-  maps: Map[] = [];
+  maps: AppMap[] = [];
   loading = true;
   error: string | null = null;
   showAddMapDialog = false;
@@ -65,7 +65,11 @@ export class MyMapsPageComponent implements OnInit {
     this.createMap(mapData);
   }
 
-  private createMap(mapData: Partial<Map>): void {
+  onMapClick(map: any): void {
+    sessionStorage.setItem('Map', JSON.stringify(map));
+  }
+
+  private createMap(mapData: Partial<AppMap>): void {
     const payload = {
       isCustom: mapData.isCustom || false,
       mapName: mapData.mapName || '',
@@ -80,14 +84,5 @@ export class MyMapsPageComponent implements OnInit {
         console.error('Failed to create map:', err);
       }
     });
-  }
-  storeMapInfo(map: Map): void {
-    try {
-      const mapData = JSON.stringify(map);
-      sessionStorage.setItem('selectedMap', mapData);
-      console.log('Map info stored in sessionStorage:', map);
-    } catch (error) {
-      console.error('Failed to store map info in sessionStorage:', error);
-    }
   }
 }

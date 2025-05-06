@@ -1,4 +1,4 @@
-export interface Map {
+export interface AppMap {
   mapID: number;
   IDUser: number;
   isCustom: boolean;

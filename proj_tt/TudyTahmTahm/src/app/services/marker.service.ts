@@ -1,20 +1,21 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { AppMarker } from '../models/appMarker';
-import { CreateUpdateMarkerDto } from '../models/create-marker-dto';
-import { environment } from '../../environments/environment';
-import { tap, map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {AppMarker} from '../models/appMarker';
+import {CreateUpdateMarkerDto} from '../models/create-marker-dto';
+import {environment} from '../../environments/environment';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MarkerService {
 
-  public constructor(private http: HttpClient) {}
+  public constructor(private http: HttpClient) {
+  }
 
   public getMarkersByMapId(id: number): Observable<AppMarker[]> {
-    console.log('Sending create request with id:' + id);
+    console.log('Getting markers from map with ID :' + id);
     return this.http.get<AppMarker[]>(`${environment.apiUrl}/Marker/ByMapID/${id}`); // Ready for multiple maps
   }
 

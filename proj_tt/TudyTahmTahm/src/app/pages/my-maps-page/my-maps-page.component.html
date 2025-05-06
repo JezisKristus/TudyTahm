@@ -31,12 +31,14 @@
 
     <div class="maps-grid" *ngIf="!loading && !error">   <!-- TODO routing with the mapID is not working properly, need anything else than ID? -->
       <div class="map-card"
+           (click)="onMapClick(map)"
            [routerLink]="['', map.mapID]"
            routerLinkActive="active"
            *ngFor="let map of maps">
         <div class="map-content" [style.background-image]="'url(' + map.mapPreviewPath + ')'"></div>
         <div class="map-title">{{ map.mapName }}</div>
       </div>
+
 
       <div class="add-map-card" (click)="addNewMap()">
         <div class="add-icon">

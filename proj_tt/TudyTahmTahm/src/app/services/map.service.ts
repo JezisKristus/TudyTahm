@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { AppMarker } from '../models/appMarker';
-import { environment } from '../../environments/environment';
-import { tap, map, catchError } from 'rxjs/operators';
-import { Map } from '../models/map';
+import {Injectable} from '@angular/core';
+import {Observable, throwError} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+import {catchError} from 'rxjs/operators';
+import {AppMap} from '../models/appMap';
 
 @Injectable({
   providedIn: 'root'
@@ -12,34 +11,35 @@ import { Map } from '../models/map';
 export class MapService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
-  getMapById(id: number): Observable<Map> {
-    return this.http.get<Map>(`${this.apiUrl}/Map/ByMapID/${id}`)
+  getMapById(id: number): Observable<AppMap> {
+    return this.http.get<AppMap>(`${this.apiUrl}/Map/ByMapID/${id}`)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  getMapsByCurrentUser(): Observable<Map[]> {
+  getMapsByCurrentUser(): Observable<AppMap[]> {
     const userId = this.getCurrentUserId();
-    return this.http.get<Map[]>(`${this.apiUrl}/Map/ByUserID/${userId}`)
+    return this.http.get<AppMap[]>(`${this.apiUrl}/Map/ByUserID/${userId}`)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  createMap(map: Partial<Map>): Observable<Map> {
+  createMap(map: Partial<AppMap>): Observable<AppMap> {
     const userId = this.getCurrentUserId();
-    const payload = { ...map, idUser: userId };
-    return this.http.post<Map>(`${this.apiUrl}/Map`, payload)
+    const payload = {...map, idUser: userId};
+    return this.http.post<AppMap>(`${this.apiUrl}/Map`, payload)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  updateMap(id: number, map: Partial<Map>): Observable<Map> {
-    return this.http.put<Map>(`${this.apiUrl}/Map/${id}`, map)
+  updateMap(id: number, map: Partial<AppMap>): Observable<AppMap> {
+    return this.http.put<AppMap>(`${this.apiUrl}/Map/${id}`, map)
       .pipe(
         catchError(this.handleError)
       );
