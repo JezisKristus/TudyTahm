@@ -69,7 +69,7 @@ export class SignInPageComponent implements OnDestroy {
         // User is already stored in getUserByID via tap, but you can store explicitly too:
         this.authentication.setUser(user); // Optional if already set in getUserByID
 
-        this.router.navigate(['/']);
+        this.router.navigate(['/my-maps']);
       },
       error: () => {
         this.loading = false;

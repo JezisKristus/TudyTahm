@@ -17,9 +17,11 @@ import {MarkerDetailsComponent} from '../marker-details/marker-details.component
 import {AppMarker} from '../../models/appMarker';
 import {MarkerService} from '../../services/marker.service';
 import {GPSPoint} from '../../models/gps-point';
-import {NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {SearchComponent} from '../search/search.component';
+import {LabelService} from '../../services/label.service';
+import {Label} from '../../models/label';
 
 // Rozšíření ExtendedMarker o vlastnosti AppMarker
 interface ExtendedMarker extends L.Marker, AppMarker {
@@ -36,7 +38,8 @@ interface ExtendedMarker extends L.Marker, AppMarker {
     MarkerDetailsComponent,
     NgIf,
     FormsModule,
-    SearchComponent
+    SearchComponent,
+    NgForOf
   ],
   encapsulation: ViewEncapsulation.None
 })
@@ -50,8 +53,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   searchQuery: string = '';
   private searchMarker: L.Marker | null = null;
+  selectedLabelFilter: number | null = null; // Store the selected label filter
 
   private Lmarkers: ExtendedMarker[] = []; // Unified marker array
+  labels: Label[] = [];
   private myMarkers: AppMarker[] = [];
   private gpsPoints: GPSPoint[] = [];
 
@@ -60,7 +65,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output() markerClicked = new EventEmitter<L.Marker<any>>();  selectedMarker: ExtendedMarker | null = null ; // Store the selected marker
   @Input() labelFilter: number | null = null; // Input for label filter
 
-  constructor(private viewContainerRef: ViewContainerRef, private markerService: MarkerService) {}
+  constructor(private viewContainerRef: ViewContainerRef, private markerService: MarkerService, private labelService: LabelService) {}
 
   ngOnInit(): void {
     // Přesunuto do ngAfterViewInit
@@ -75,6 +80,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.initializeMap(); // Inicializace mapy po vykreslení DOM
     this.loadMarkers(); // Přesun logiky načítání markerů do samostatné metody
+    this.loadLabels();
     this.mapID = Number(sessionStorage.getItem('mapID')) || 1; // Default to 1 if mapID is not found
   }
 
@@ -437,6 +443,26 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         marker.setOpacity(1); // Show marker
       }
+    });
+  }
+
+  onLabelFilterChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement; // Cast EventTarget to HTMLSelectElement
+    const labelID = selectElement.value ? parseInt(selectElement.value, 10) : null;
+    this.selectedLabelFilter = labelID;
+    console.log('Label filter changed:', labelID);
+  }
+
+  private loadLabels() {
+    const mapID = sessionStorage.getItem('Map.mapID');
+
+    if (!mapID) {
+      console.error('No mapID found in sessionStorage.');
+      return;
+    }
+
+    this.labelService.getLabelsByMapID(Number(mapID)).subscribe({ // TODO get labels to label array
+      error: (err) => console.error('Error loading markers:', err)
     });
   }
 }
