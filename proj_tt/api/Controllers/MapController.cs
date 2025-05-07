@@ -78,7 +78,7 @@ namespace TT_API.Controllers {
             return Ok();
         }
 
-        [HttpPut("RenameMap{mapID}")]
+        [HttpPut("RenameMap/{mapID}")]
         public async Task<IActionResult> UpdateMapInfo([FromBody] string mapName, int mapID) {
             var map = await context.Maps.FindAsync(mapID);
 
@@ -90,5 +90,14 @@ namespace TT_API.Controllers {
 
             return Ok(map.MapID);
         }
+
+        //[HttpPut("UploadMapPreview/{mapID}")]
+
+        //public async Task<IActionResult> UploadPreview([FromForm] IFormFile image, int mapID) {
+
+        //    var map = await context.Maps.FindAsync(mapID);
+
+
+        //}
     }
 }
