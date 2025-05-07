@@ -72,6 +72,8 @@ namespace TT_API.Controllers {
         [HttpPut("UploadPFP/{userID}")]
         public async Task<IActionResult> UploadPFP(IFormFile image, int userID) {
 
+            var help = new ImageHelper();
+
             var user = await context.Users.FindAsync(userID);
 
             if (user == null) return NotFound();
@@ -87,9 +89,11 @@ namespace TT_API.Controllers {
             if (image != null && image.Length > 0) {
                 var filename = @"pfp\" + user.UserID + "_" + user.UserName.ToLower().Replace(' ', '-') + extension;
 
-                using (var stream = new FileStream(@"C:\TT_LOCAL\" + filename, FileMode.Create)) {
-                    await image.CopyToAsync(stream);
-                }
+                help.UploadImageLocal(filename, image);
+
+                user.UserIconPath = @"L\" + filename;
+
+                await context.SaveChangesAsync();
 
                 return Ok();
             }
