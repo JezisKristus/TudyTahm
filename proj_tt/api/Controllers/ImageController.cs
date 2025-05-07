@@ -20,11 +20,10 @@ namespace TT_API.Controllers {
         [HttpGet("{filename}")]
         public IActionResult ReadFile(string filename)
         {
-            filename = HttpUtility.UrlDecode(filename);
 
             string filePath = @".\assets\" + filename;
 
-            if (filename.StartsWith(@"L\")) { filePath = @"C:\TT_LOCAL\";  filename = filename.Replace(@"L\", ""); }
+            if (filename.StartsWith(@"L\")) { filePath = @"C:\TT_LOCAL\" + filename.Replace(@"L\", ""); }
 
             FileInfo file = new FileInfo(filePath);
 
@@ -35,20 +34,6 @@ namespace TT_API.Controllers {
             }
 
             return File(file.OpenRead(), "image/jpeg");
-        }
-
-        [HttpGet("FromLocal/{filename}")]
-        public IActionResult ReadFromLocal(string filename) {
-
-            string filepath = @"C:\TT_LOCAL\" + filename;
-            FileInfo file = new FileInfo(filepath);
-
-            if (!file.Exists) {
-                return NotFound(); // Return a 404 if the file doesn't exist
-            }
-
-            return File(file.OpenRead(), "image/jpeg");
-
         }
 
         [HttpPost("CreateNeededDirs")]
