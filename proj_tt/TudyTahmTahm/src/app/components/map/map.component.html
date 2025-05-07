@@ -1,6 +1,12 @@
 
-<div style="padding: 10px;">
-  <app-search (search)="onSearch($event)"></app-search>
+<div style="padding: 10px;" class="filter-container">
+  <app-search (search)="onSearch($event)"></app-search> <!-- TODO Change graphics so it looks lookable -->
+
+  <label for="labelFilter">Filter by Label:</label>
+  <select id="labelFilter" (change)="onLabelFilterChange($event)">
+    <option value="">All</option>
+    <option *ngFor="let label of labels" [value]="label.labelID">{{ label.labelName }}</option>
+  </select>
 </div>
 
 <div id="map" style="height: 100%; width: 100%;"></div>

@@ -14,20 +14,4 @@ import {Label} from '../../models/label'; // Import the label model
   encapsulation: ViewEncapsulation.None
 })
 export class MapPageComponent {
-  selectedMarker: L.Marker | null = null; // Store the selected marker
-  selectedLabelFilter: number | null = null; // Store the selected label filter
-  labels!: Label[];
-
-  onMarkerClicked(marker: L.Marker<any>): void {
-    this.selectedMarker = marker;
-    console.log('Marker clicked:', marker);
-  }
-
-  onLabelFilterChange(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement; // Cast EventTarget to HTMLSelectElement
-    const labelID = selectElement.value ? parseInt(selectElement.value, 10) : null;
-    this.selectedLabelFilter = labelID;
-    console.log('Label filter changed:', labelID);
-  }
-
 }

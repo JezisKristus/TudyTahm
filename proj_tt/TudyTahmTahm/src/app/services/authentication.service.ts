@@ -42,6 +42,8 @@ export class AuthenticationService {
   public login(credentials: SignInDTO): Observable<{ token: TokenResult, user: User }> {
     this.logout();
 
+    console.log('Sending login requests')
+
     return this.http.post<TokenResult>(`${environment.apiUrl}/Authentication/Login`, credentials).pipe(
       switchMap((result: TokenResult) => {
         this.setToken(result.token);

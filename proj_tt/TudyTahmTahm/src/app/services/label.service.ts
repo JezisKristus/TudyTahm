@@ -11,7 +11,7 @@ import { tap, map } from 'rxjs/operators';
 
 export class LabelService{
   public constructor(private http: HttpClient) {}
-  public getLabelsByMapId(id: number): Observable<Label[]> {
+  public getLabelsByMapID(id: number): Observable<Label[]> {
     console.log('Sending request with id:' + id);
     return this.http.get<Label[]>(`${environment.apiUrl}/Label/ByMapID/${id}`); // Ready for multiple maps
   }
