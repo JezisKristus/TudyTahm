@@ -46,6 +46,10 @@ export class MapService {
   }
 
   deleteMap(id: number): Observable<void> {
+    if (!id) {
+      console.error('Invalid mapID provided for deletion:', id);
+      return throwError(() => new Error('Invalid mapID.'));
+    }
     return this.http.delete<void>(`${this.apiUrl}/Map/${id}`)
       .pipe(
         catchError(this.handleError)

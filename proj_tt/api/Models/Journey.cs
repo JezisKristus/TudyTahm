@@ -8,6 +8,7 @@ namespace TT_API.Models
     {
         [Key]
         public int JourneyID { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public int IDMap { get; set; }
 

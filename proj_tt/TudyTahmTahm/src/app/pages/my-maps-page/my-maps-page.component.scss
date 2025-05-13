@@ -17,7 +17,6 @@
   min-height: 100vh;
 }
 
-
 .header {
   display: flex;
   align-items: center;
@@ -101,14 +100,44 @@
 
 .map-content {
   flex-grow: 1;
+  background-size: cover;
+  background-position: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.map-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #eee;
 }
 
 .map-title {
-  padding: 10px;
-  text-align: center;
+  text-align: left;
   color: #333;
   font-size: 14px;
-  border-top: 1px solid #eee;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.delete-map-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #ff3b30;
+  }
 }
 
 .add-map-card {
@@ -128,4 +157,117 @@
 .add-text {
   font-size: 14px;
   color: #666;
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: #666;
+}
+
+.error-message {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 30px;
+  color: #ff3b30;
+}
+
+.no-maps {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 30px;
+  text-align: center;
+  color: #666;
+}
+
+/* Delete confirmation dialog styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.delete-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 101;
+  overflow: hidden;
+}
+
+.delete-dialog-header {
+  padding: 15px 20px;
+  background-color: var(--dark-green);
+  border-bottom: 1px solid #ddd;
+
+  h3 {
+    margin: 0;
+    color: var(--gold);
+    font-size: 18px;
+  }
+}
+
+.delete-dialog-content {
+  padding: 20px;
+
+  p {
+    margin: 0 0 10px;
+    color: #333;
+  }
+
+  .warning {
+    color: #ff3b30;
+    font-weight: 500;
+  }
+}
+
+.delete-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+
+  button {
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .cancel-btn {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    color: #333;
+
+    &:hover {
+      background-color: #e5e5e5;
+    }
+  }
+
+  .delete-btn {
+    background-color: #ff3b30;
+    border: 1px solid #ff3b30;
+    color: white;
+
+    &:hover {
+      background-color: #e6352b;
+    }
+  }
 }

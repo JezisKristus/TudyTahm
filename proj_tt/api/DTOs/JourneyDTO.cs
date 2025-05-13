@@ -4,6 +4,7 @@ using TT_API.Models;
 
 namespace TT_API.DTOs {
     public class JourneyDTO {
+        public string Name { get; set; }
         public string Description { get; set; }
         public int IDMap { get; set; }
     }
