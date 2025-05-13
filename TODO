@@ -1,16 +1,20 @@
+Všici
+Vymyslet uživatele kterej bude na ukazování
+Co mělo bějt Memories? Přejmenovat na Journeys nebo sme zapoměli celou jednu featuru?
+
+
 D
 přidání mapy + groups
 Upravit graficky placeholdery v marker-details
 
 ŠVP
-Mapy API
-Labels API
-Journeys API
-
+sdílení a groups - propojeno s journey
+custom mapy API
+obrázky předělat
+Hashovat hesla (hotovo)
 
 JK
-Aby bylo kompatabilní create markerDTO, nestihnul sem v hodině
-Implementovat search
-Mapy api
-Journey vymyslet
+Integrovat labely - kolonka v details + výběr který se ukazujou
+Dodělat map-page - chybí odstranění mapy
+Journey připojit na databázi
 

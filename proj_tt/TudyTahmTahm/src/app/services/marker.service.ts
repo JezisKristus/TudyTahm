@@ -1,40 +1,32 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { AppMarker } from '../models/appMarker';
-import { CreateUpdateMarkerDto } from '../models/create-marker-dto';
-import { environment } from '../../environments/environment';
-import { tap, map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {AppMarker} from '../models/appMarker';
+import {CreateUpdateMarkerDto} from '../models/dtos/create-marker.dto';
+import {environment} from '../../environments/environment';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MarkerService {
 
-  public constructor(private http: HttpClient) {}
-
-  public getMarkers(): Observable<AppMarker[]> {
-    const url = `${environment.apiUrl}/Marker`;
-    return this.http.get<any[]>(url, { responseType: 'json' }).pipe(
-      map(markers => {
-        if (!Array.isArray(markers)) {
-          throw new Error('Invalid response format: Expected an array of markers');
-        }
-        // Přemapování: očekáváme, že API vrací markerID, který chceme převést na markerId
-        return markers.map(marker => ({
-          ...marker,
-          markerId: marker.markerID  // zde bereme marker.markerID z API
-        }) as AppMarker).filter(marker => this.isValidLatLng(marker.latitude, marker.longitude));
-      }),
-      tap({
-        error: (err) => console.error('Error parsing markers:', err)
-      })
-    );
+  public constructor(private http: HttpClient) {
   }
 
+  public getMarkersByMapId(id: number): Observable<AppMarker[]> {
+    console.log('Getting markers from map with ID :' + id);
+    return this.http.get<AppMarker[]>(`${environment.apiUrl}/Marker/ByMapID/${id}`); // Ready for multiple maps
+  }
 
-  public findBytapId(id: number): Observable<AppMarker[]> {
-    return this.http.get<AppMarker[]>('environment/Marker/tap/' + id); // Ready for multiple maps
+  public getMarkerByMarkerID(id: number): Observable<AppMarker> {
+    console.log('Sending create request with id:' + id);
+    return this.http.get<AppMarker>(`${environment.apiUrl}/Marker/ByMarkerID/${id}`).pipe(
+      tap(response => {
+        console.log('Received response from API:', response);
+        return response;
+      })
+    );
   }
 
   public create(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
@@ -66,9 +58,5 @@ export class MarkerService {
     return this.http.delete<void>(url).pipe(
       tap(() => console.log(`Marker with ID ${marker.markerID} deleted successfully.`))
     );
-  }
-
-  private isValidLatLng(lat: number, lng: number): boolean {
-    return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
   }
 }

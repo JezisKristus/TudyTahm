@@ -1,8 +1,9 @@
-import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { AppMarker } from '../../models/appMarker'; // Import custom marker model
-import { MarkerService } from '../../services/marker.service';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {AppMarker} from '../../models/appMarker'; // Import custom marker model
+import {MarkerService} from '../../services/marker.service';
+import {FormsModule} from '@angular/forms';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {Label} from '../../models/label';
 
 @Component({
   selector: 'app-marker-details',
@@ -11,11 +12,14 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./marker-details.component.scss'],
   imports: [
     FormsModule,
-    CommonModule // PřIDání CommonModule pro podporu NgIf
+    CommonModule,
+    NgOptimizedImage,
+    // PřIDání CommonModule pro podporu NgIf
   ],
 })
 export class MarkerDetailsComponent implements OnChanges {
   @Input() marker: AppMarker | null = null;  // Zajistí, že přijímáme AppMarker
+  @Input() labels: Label[] = []; // Input for available labels
 
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppMarker>();
@@ -80,7 +84,7 @@ export class MarkerDetailsComponent implements OnChanges {
   }
 
   onCancel(): void {
-    if (this.isNewMarker && this.marker) {
+    if (this.marker?.markerID == 0) {
       this.deleteMarker.emit(this.marker); // Emit the AppMarker to delete it
     }
     this.isVisible = false;
@@ -98,11 +102,11 @@ export class MarkerDetailsComponent implements OnChanges {
     if (this.marker) {
       const markerDto = {
         markerID: this.marker.markerID || 0,
-        IDUser: this.marker.IDUser || 6,
         IDPoint: this.marker.IDPoint || 0,
         IDMap: this.marker.IDMap || 1,
-        markerName: this.markerName || 'Unnamed Marker',
-        markerDescription: this.description || '',
+        IDLabel: this.marker.IDLabel || 0, // Default 0
+        markerName: this.marker.markerName || 'new marker',
+        markerDescription: this.marker.markerDescription || '',
         markerIconPath: this.icons[this.selectedIconIndex],
         latitude: this.marker.latitude,
         longitude: this.marker.longitude
@@ -113,9 +117,8 @@ export class MarkerDetailsComponent implements OnChanges {
         this.markerService.update(markerDto).subscribe({
           next: (updatedMarker) => {
             this.marker = updatedMarker;
-            this.save.emit(updatedMarker);
+            this.save.emit(updatedMarker); // Emit only the updated marker
             this.isVisible = false;
-            this.refreshMarkers.emit(); // Emit události pro znovunačtení markerů
           },
           error: (err) => console.error('Error updating marker:', err)
         });
@@ -124,9 +127,8 @@ export class MarkerDetailsComponent implements OnChanges {
         this.markerService.create(markerDto).subscribe({
           next: (createdMarker) => {
             this.marker = createdMarker;
-            this.save.emit(createdMarker);
+            this.save.emit(createdMarker); // Emit only the created marker
             this.isVisible = false;
-            this.refreshMarkers.emit(); // Emit události pro znovunačtení markerů
           },
           error: (err) => console.error('Error creating marker:', err)
         });

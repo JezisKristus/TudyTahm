@@ -1,8 +1,7 @@
 export interface CreateUpdateMarkerDto {
   markerID: number;
-  IDUser: number;
-  IDPoint?: number;
-  IDMap?: number;
+  IDMap: number;
+  IDLabel: number;
   markerName: string;
   markerDescription: string;
   markerIconPath: string;

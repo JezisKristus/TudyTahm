@@ -1,4 +1,3 @@
-<!-- my-maps.component.html -->
 <div class="maps-container">
   <app-sidebar></app-sidebar>
 
@@ -9,20 +8,37 @@
       </div>
       <h1 class="page-title">My maps</h1>
       <div class="header-actions">
-        <button class="help-button">
+        <button class="help-button" aria-label="Help">
           <i class="fas fa-question-circle"></i>
         </button>
-        <button class="notification-button">
+        <button class="notification-button" aria-label="Notifications">
           <i class="fas fa-bell"></i>
         </button>
       </div>
     </div>
 
-    <div class="maps-grid">
-      <div class="map-card" routerLinkActive = "true" routerLink="" *ngFor="let map of maps">
-        <div class="map-content"></div>
-        <div class="map-title">{{ map.name }}</div>
+    <div *ngIf="loading" class="loading-indicator">
+      <i class="fas fa-spinner fa-spin"></i> Loading maps...
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+
+    <div *ngIf="!loading && !error && maps.length === 0" class="no-maps">
+      <p>You don't have any maps yet. Create your first map!</p>
+    </div>
+
+    <div class="maps-grid" *ngIf="!loading && !error">   <!-- TODO routing with the mapID is not working properly, need anything else than ID? -->
+      <div class="map-card"
+           (click)="onMapClick(map)"
+           [routerLink]="['', map.mapID]"
+           routerLinkActive="active"
+           *ngFor="let map of maps">
+        <div class="map-content" [style.background-image]="'url(' + map.mapPreviewPath + ')'"></div>
+        <div class="map-title">{{ map.mapName }}</div>
       </div>
+
 
       <div class="add-map-card" (click)="addNewMap()">
         <div class="add-icon">
@@ -32,4 +48,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Overlay and dialog -->
+  <div *ngIf="showAddMapDialog" class="dialog-overlay" (click)="onDialogClose()"></div>
+  <app-add-map-dialog
+    *ngIf="showAddMapDialog"
+    (closeDialog)="onDialogClose()"
+    (createMap)="onCreateMap($event)">
+  </app-add-map-dialog>
 </div>

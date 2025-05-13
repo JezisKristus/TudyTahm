@@ -1,29 +1,56 @@
-<body style="background-color: #0a2541;">
-  <div class="login-container d-flex align-items-center justify-content-center">
-    <div class="card p-4 shadow-lg custom-bg">
-      <h2 class="text-center text-white">Welcome!</h2>
-      <form [formGroup]="form" (submit)="save()">
-        <div class="mb-3" >
-          <label for="email" class="form-label text-white">Email</label>
-          <input type="email" class="form-control" id="email" placeholder="Enter your email">
+<body  style="background-color: #0a2541;">
+<div class="login-container d-flex align-items-center justify-content-center">
+  <div class="card p-4 shadow-lg custom-bg">
+    <h2 class="text-center text-white">Welcome!</h2>
+    <form [formGroup]="form" (submit)="save()">
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          formControlName="username"
+          placeholder="Enter your username"
+          [class.is-invalid]="form.get('username')?.invalid && form.get('username')?.touched">
+        <div class="invalid-feedback" *ngIf="form.get('username')?.invalid && form.get('username')?.touched">
+          Username is required
         </div>
-        <div class="mb-3">
-          <label for="password" class="form-label text-white">Password</label>
-          <input type="password" class="form-control" id="password" placeholder="Enter your password">
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched">
+        <div class="invalid-feedback" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+          Password is required
         </div>
-        <button type="submit" class="btn btn-success w-100">Sign In</button>
-      </form>
-      <div class="alert alert-danger mt-3" *ngIf="message">
-        Invalid username or password
       </div>
-      <div class="text-center mt-3 text-white">
-        <a >Forgot password?</a>
+
+      <!-- Show loading spinner if the request is in progress -->
+      <div *ngIf="loading" class="d-flex justify-content-center mt-2">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
       </div>
-      <div class="text-center mt-2">
-        <p class="text-white">Don't have an account?
-          <a routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page" class="text-decoration-none">Register</a>
-        </p>
-      </div>
+
+      <!-- Disable the button and show the spinner when loading -->
+      <button type="submit" class="btn btn-success w-100" [disabled]="loading || form.invalid">Sign In</button>
+    </form>
+
+    <div class="alert alert-danger mt-3" *ngIf="message">
+      Invalid username or password
+    </div>
+
+    <div class="text-center mt-2">
+      <p>Don't have an account?
+        <a routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page" class="text-decoration-none">Register</a>
+      </p>
     </div>
   </div>
+</div>
 </body>

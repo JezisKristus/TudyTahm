@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace TT_API.Models
@@ -8,11 +9,18 @@ namespace TT_API.Models
 
         [Key]
         public int MarkerID { get; set; }
-        public int IDUser { get; set; }
         public int IDPoint { get; set; }
+        public int IDLabel { get; set; }
         public string MarkerName { get; set; }
         public string MarkerDescription { get; set; }
         public string MarkerIconPath { get; set; }
+
+
+        [ForeignKey("IDPoint")]
+        public GPSPoint GPSPoint { get; set; }
+
+        [ForeignKey("IDLabel")]
+        public Label Label { get; set; }
 
     }
 }

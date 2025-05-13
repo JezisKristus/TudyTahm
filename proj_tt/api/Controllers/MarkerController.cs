@@ -45,11 +45,11 @@ namespace TT_API.Controllers {
 
             Marker marker = new Marker() {
                 
-                IDUser = 6, //debug user
                 IDPoint = point.PointID,
                 MarkerName = cmDTO.MarkerName,
                 MarkerDescription = cmDTO.MarkerDescription,
                 MarkerIconPath = cmDTO.MarkerIconPath,
+                IDLabel = 0,
 
             };
 
@@ -72,6 +72,7 @@ namespace TT_API.Controllers {
             if (marker.MarkerName != cmDTO.MarkerName) marker.MarkerName = cmDTO.MarkerName;
             if (marker.MarkerDescription != cmDTO.MarkerDescription) marker.MarkerDescription = cmDTO.MarkerDescription;
             if (marker.MarkerIconPath != cmDTO.MarkerIconPath) marker.MarkerIconPath = cmDTO.MarkerIconPath;
+            if (marker.IDLabel != cmDTO.IDLabel) marker.IDLabel = cmDTO.IDLabel;
 
             if (point != null) {
                 if (point.Latitude != cmDTO.Latitude) point.Latitude = cmDTO.Latitude;
@@ -86,10 +87,9 @@ namespace TT_API.Controllers {
         }
 
 
-        [HttpGet] //tady pak pridat overovani usera
-        public async Task<IActionResult> GetMarkersForUser() { // Markery jenom toho usera 
+        [HttpGet("ByMapID/{mapID}")] //tady pak pridat overovani usera
+        public async Task<IActionResult> GetMarkersForUser(int mapID) { // Markery jenom toho usera 
             var markers = await context.Markers // Include nebylo potřeba, for some reason to rozbíjelo get
-                .Where(m => m.IDUser == 6) //zatim mame stejne jenom usera 6
                 .ToListAsync();
 
             var completemarkers = new List<CreateMarkerDTO>();
@@ -97,19 +97,45 @@ namespace TT_API.Controllers {
                 var gps = await context.GPSPoints.FindAsync(m.IDPoint);
                 CreateMarkerDTO cmdto = new CreateMarkerDTO() {
                     MarkerID = m.MarkerID,
-                    IDUser = m.IDUser,
                     IDMap = gps.IDMap,
                     MarkerName = m.MarkerName,
                     MarkerDescription = m.MarkerDescription,
                     MarkerIconPath = m.MarkerIconPath,
+                    IDLabel = m.IDLabel,
                     Latitude = gps.Latitude,
                     Longitude = gps.Longitude
                 };
-                completemarkers.Add(cmdto);
+                if (cmdto.IDMap == mapID) completemarkers.Add(cmdto);
             }
 
             return Ok(completemarkers);
         }
+
+        [HttpGet("ByMarkerID/{markerID}")] //tady pak pridat overovani usera
+        public async Task<IActionResult> GetMarker(int markerID) { // Markery jenom toho usera 
+
+            var marker = await context.Markers.FindAsync(markerID);
+
+            if (marker == null) { return NotFound(); }
+
+            var gps = await context.GPSPoints.FindAsync(marker.IDPoint);
+
+            var completemarkers = new List<CreateMarkerDTO>();
+
+                CreateMarkerDTO cmdto = new CreateMarkerDTO() {
+                    MarkerID = marker.MarkerID,
+                    IDMap = gps.IDMap,
+                    IDLabel = marker.IDLabel,
+                    MarkerName = marker.MarkerName,
+                    MarkerDescription = marker.MarkerDescription,
+                    MarkerIconPath = marker.MarkerIconPath,
+                    Latitude = gps.Latitude,
+                    Longitude = gps.Longitude
+                };
+
+            return Ok(cmdto);
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMarker(int id) { // Markery jenom toho usera 
@@ -121,13 +147,10 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
-            var unusedPoints = await context.GPSPoints
+            context.GPSPoints.RemoveRange(
+            await context.GPSPoints
             .Where(gp => !context.Markers.Any(m => m.IDPoint == gp.PointID))
-            .ToListAsync();
-
-            foreach (var value in unusedPoints) {
-                context.GPSPoints.Remove(value);
-            }
+            .ToListAsync());
 
             await context.SaveChangesAsync();
 

@@ -1,0 +1,45 @@
+<div class="dialog-container">
+  <h2>Add New Map</h2>
+
+  <div>
+    <form [formGroup]="mapForm">
+      <div class="form-row">
+        <label for="mapName">Map Name</label>
+        <input id="mapName" type="text" formControlName="mapName" placeholder="Enter map name" class="full-width">
+        <div *ngIf="mapForm.get('mapName')?.hasError('required')" class="error">
+          Map name is required
+        </div>
+        <div *ngIf="mapForm.get('mapName')?.hasError('maxlength')" class="error">
+          Map name cannot exceed 50 characters
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="mapDescription">Description (Optional)</label>
+        <textarea id="mapDescription" formControlName="mapDescription" placeholder="Brief description about this map" rows="3" class="full-width"></textarea>
+        <div *ngIf="mapForm.get('mapDescription')?.hasError('maxlength')" class="error">
+          Description cannot exceed 200 characters
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>
+          <input type="checkbox" formControlName="isCustom">
+          Is Custom Map
+        </label>
+      </div>
+
+      <div class="preview-section" *ngIf="previewImageUrl">
+        <h3>Preview</h3>
+        <div class="map-preview">
+          <img [src]="previewImageUrl" alt="Map preview">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button type="button" (click)="onCancel()">Cancel</button>
+    <button type="button" [disabled]="mapForm.invalid" (click)="onCreateMap()">Create Map</button>
+  </div>
+</div>

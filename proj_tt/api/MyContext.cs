@@ -5,8 +5,6 @@ namespace TT_API {
     public class MyContext : DbContext {
 
 
-        public DbSet<JourneyGroup> JourneyGroups { get; set; }
-        public DbSet<JourneyUser> JourneyUsers { get; set; }
         public DbSet<Label> Labels { get; set; }
         public DbSet<MapLabel> MapLabels { get; set; }
         public DbSet<Map> Maps { get; set; }
@@ -18,15 +16,18 @@ namespace TT_API {
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GPSPoint> GPSPoints { get; set; }
+
+        public DbSet<JourneyPoint> JourneyPoints { get; set; }
         public DbSet<GroupUsers> GroupUsers { get; set; }
 
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseMySQL("server=mysqlstudenti.litv.sssvt.cz;database=3b1_patejdlstepan_db2;user=patejdlstepan;password=123456;SslMode=none");
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseMySQL("server=mysqlstudenti.litv.sssvt.cz;database=3b1_patejdlstepan_db2;user=patejdlstepan;password=123456;SslMode=none;Connection Timeout=30;DefaultCommandTimeout=60");
         }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<JourneyUser>().HasNoKey();
             modelBuilder.Entity<MapLabel>().HasNoKey();
             modelBuilder.Entity<MarkerLabel>().HasNoKey();
 

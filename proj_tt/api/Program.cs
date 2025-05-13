@@ -1,4 +1,5 @@
 
+
 namespace TT_API {
     public class Program {
         public static void Main(string[] args) {
@@ -21,20 +22,23 @@ namespace TT_API {
                                .AllowAnyMethod();
                     }
                 );
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
             });
-            
 
             var app = builder.Build();
+
+            app.UseCors("AllowAll"); // Needs to be right after build
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-
-            app.UseCors(); // Has to be first for correct CORS handling
-
 
             app.UseAuthorization();
 

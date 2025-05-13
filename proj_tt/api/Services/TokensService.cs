@@ -7,13 +7,15 @@ namespace TT_API.Services {
 
     public class TokensService {
 
-        const string PASSWORD = "123456";
-
+        //I aint hearing any of yall out tohle je nas secure string
+        private readonly string PASSWORD = "ForzaFerrariSempre1950";
+        
         public string Create(User user) {
             return JwtBuilder.Create()
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(PASSWORD)
                 .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+                .AddClaim("userID", user.UserID)
                 .AddClaim("user", user.UserName)
                 .Encode();
         }

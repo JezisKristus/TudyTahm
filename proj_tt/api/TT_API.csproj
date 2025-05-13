@@ -7,8 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="assets\userProfilePics\**" />
+    <Content Remove="assets\userProfilePics\**" />
+    <EmbeddedResource Remove="assets\userProfilePics\**" />
+    <None Remove="assets\userProfilePics\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="JWT" Version="11.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5"> <!-- Jakmile jde nad 8.0.x nefunguje -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4"> <!-- Jakmile jde nad 8.0.x nefunguje -->
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
