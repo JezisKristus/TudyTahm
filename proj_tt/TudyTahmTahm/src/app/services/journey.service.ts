@@ -22,6 +22,12 @@ export class JourneyService {
         })))
       );
   }
+  public getJourneyByUserID(userID: number): Observable<Journey[]> {
+    return this.http.get<Journey[]>(`${environment.apiUrl}/Journey/ByUserID/${userID}`)
+      .pipe(
+        tap((response) => console.log('Journey response:', response))
+      );
+  }
 
   public createJourney(journey: Journey): Observable<Journey> {
     return this.http.post<Journey>(`${environment.apiUrl}/Journey`, journey)

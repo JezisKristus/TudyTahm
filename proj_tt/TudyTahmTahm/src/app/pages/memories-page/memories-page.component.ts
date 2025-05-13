@@ -22,7 +22,13 @@ export class MemoriesPageComponent implements OnInit {
   }
 
   loadJourneys(): void {
-    this.journeyService.getJourneyByMapID(1).subscribe({ // TODO decide if we want userID or mapID
+    const userID = Number(sessionStorage.getItem('userID')); // Get userID from sessionStorage
+    if (!userID) {
+      console.error('User ID not found in sessionStorage');
+      return;
+    }
+
+    this.journeyService.getJourneyByUserID(userID).subscribe({
       next: (data) => this.journeys = data,
       error: (err) => console.error('Failed to load journeys', err)
     });
