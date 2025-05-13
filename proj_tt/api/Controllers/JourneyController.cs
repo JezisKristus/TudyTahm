@@ -97,7 +97,16 @@ namespace TT_API.Controllers {
 
             return Ok(journeys);
         }
+/*
+        [HttpGet("ByUserID/{userID}")]
+        public async Task<IActionResult> GetJourneyByUser(int userID) {
+            var journeys = await context.Journeys.Include(j => j.Map).Where(j => j.IDUser == userID).ToListAsync();
 
+            if (journeys == null) return NotFound();
+
+            return Ok(journeys);
+        }
+*/
         [HttpGet("Points/{jourID}")]
         public async Task<IActionResult> GetPoints(int jourID) {
             var points = await context.JourneyPoints.Where(p => p.IDJourney == jourID).ToListAsync();
