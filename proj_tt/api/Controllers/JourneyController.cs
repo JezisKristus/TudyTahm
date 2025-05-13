@@ -22,7 +22,7 @@ namespace TT_API.Controllers {
         [HttpPost]
         public async Task<IActionResult> CreateJourney([FromBody] JourneyDTO dto) {
 
-            var journey = new Journey() { Description = dto.Description, IDMap = dto.IDMap };
+            var journey = new Journey() { Name = dto.Name, Description = dto.Description, IDMap = dto.IDMap };
 
             context.Journeys.Add(journey);
 
@@ -97,6 +97,21 @@ namespace TT_API.Controllers {
 
             return Ok(journeys);
         }
+
+        [HttpGet("ByUserID/{userID}")]
+        public async Task<IActionResult> GetJourneyByUser(int userID)
+        {
+            var journeys = await context.Journeys
+                .Include(j => j.Map)
+                .Where(j => j.Map.IDUser == userID)
+                .ToListAsync();
+
+            if (!journeys.Any())
+                return NotFound();
+
+            return Ok(journeys);
+        }
+
 
         [HttpGet("Points/{jourID}")]
         public async Task<IActionResult> GetPoints(int jourID) {

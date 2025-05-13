@@ -29,16 +29,20 @@
       <p>You don't have any maps yet. Create your first map!</p>
     </div>
 
-    <div class="maps-grid" *ngIf="!loading && !error">   <!-- TODO routing with the mapID is not working properly, need anything else than ID? -->
-      <div class="map-card"
-           (click)="onMapClick(map)"
-           [routerLink]="['', map.mapID]"
-           routerLinkActive="active"
-           *ngFor="let map of maps">
-        <div class="map-content" [style.background-image]="'url(' + map.mapPreviewPath + ')'"></div>
-        <div class="map-title">{{ map.mapName }}</div>
+    <div class="maps-grid" *ngIf="!loading && !error">
+      <div class="map-card" *ngFor="let map of maps">
+        <div class="map-content"
+             (click)="onMapClick(map)"
+             [routerLink]="['', map.mapID]"
+             routerLinkActive="active"
+             [style.background-image]="'url(' + map.mapPreviewPath + ')'"></div>
+        <div class="map-footer">
+          <div class="map-title">{{ map.mapName }}</div>
+          <button class="delete-map-btn" (click)="openDeleteConfirmation(map); $event.stopPropagation()">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
       </div>
-
 
       <div class="add-map-card" (click)="addNewMap()">
         <div class="add-icon">
@@ -49,11 +53,27 @@
     </div>
   </div>
 
-  <!-- Overlay and dialog -->
+  <!-- Add Map Dialog -->
   <div *ngIf="showAddMapDialog" class="dialog-overlay" (click)="onDialogClose()"></div>
   <app-add-map-dialog
     *ngIf="showAddMapDialog"
     (closeDialog)="onDialogClose()"
     (createMap)="onCreateMap($event)">
   </app-add-map-dialog>
+
+  <!-- Delete Confirmation Dialog -->
+  <div *ngIf="showDeleteDialog" class="dialog-overlay" (click)="closeDeleteConfirmation()"></div>
+  <div *ngIf="showDeleteDialog" class="delete-dialog">
+    <div class="delete-dialog-header">
+      <h3>Delete Map</h3>
+    </div>
+    <div class="delete-dialog-content">
+      <p>Are you sure you want to delete "{{ mapToDelete?.mapName }}"?</p>
+      <p class="warning">This action cannot be undone.</p>
+    </div>
+    <div class="delete-dialog-actions">
+      <button class="cancel-btn" (click)="closeDeleteConfirmation()">Cancel</button>
+      <button class="delete-btn" (click)="confirmDelete()">Delete</button>
+    </div>
+  </div>
 </div>

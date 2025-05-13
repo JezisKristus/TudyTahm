@@ -27,6 +27,9 @@ export class MyMapsPageComponent implements OnInit {
   loading = true;
   error: string | null = null;
   showAddMapDialog = false;
+  showDeleteDialog = false;
+  mapToDelete: AppMap | null = null;
+  deleteInProgress = false;
 
   constructor(
     private mapService: MapService,
@@ -80,12 +83,51 @@ export class MyMapsPageComponent implements OnInit {
     };
 
     this.mapService.createMap(payload).subscribe({
-      next: (newMap) => {
-        this.maps.push(newMap);
+      next: () => {
+        // Reload all maps after creating a new one
+        this.loadMaps();
       },
       error: (err) => {
         console.error('Failed to create map:', err);
       }
     });
+  }
+
+  // Delete map functionality
+  openDeleteConfirmation(map: AppMap): void {
+    this.mapToDelete = map;
+    this.showDeleteDialog = true;
+  }
+
+  closeDeleteConfirmation(): void {
+    if (!this.deleteInProgress) {
+      this.showDeleteDialog = false;
+      this.mapToDelete = null;
+    }
+  }
+
+  confirmDelete(): void {
+    if (this.mapToDelete && this.mapToDelete.mapID && !this.deleteInProgress) {
+      this.deleteInProgress = true;
+
+      // Close the dialog immediately
+      this.closeDeleteConfirmation();
+
+      this.mapService.deleteMap(this.mapToDelete.mapID).subscribe({
+        next: () => {
+          // Remove the deleted map from the array
+          this.maps = this.maps.filter(map => map.mapID !== this.mapToDelete?.mapID);
+          this.deleteInProgress = false;
+        },
+        error: (err) => {
+          console.error('Failed to delete map:', err);
+          this.error = 'Failed to delete map. Please try again later.';
+          this.deleteInProgress = false;
+        }
+      });
+    } else {
+      console.error('Invalid mapID or delete operation already in progress.');
+      this.error = 'Invalid map selected for deletion.';
+    }
   }
 }
