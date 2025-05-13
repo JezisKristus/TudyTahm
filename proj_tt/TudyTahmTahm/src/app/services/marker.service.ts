@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {AppMarker} from '../models/appMarker';
-import {CreateUpdateMarkerDto} from '../models/create-marker-dto';
+import {CreateUpdateMarkerDto} from '../models/dtos/create-marker.dto';
 import {environment} from '../../environments/environment';
 import {tap} from 'rxjs/operators';
 

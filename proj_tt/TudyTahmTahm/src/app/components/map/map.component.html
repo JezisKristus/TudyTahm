@@ -1,19 +1,92 @@
+<!-- HTML Content -->
+<div class="map-container">
+  <!-- Top Navigation and Filters -->
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container-fluid">
+      <!-- Filters and Search -->
+      <div class="d-flex align-items-center filter-section">
+        <!-- Search Input -->
+        <div class="search-wrapper me-3">
+          <app-search
+            (search)="onSearch($event)"
+          ></app-search>
+        </div>
 
-<div style="padding: 10px;" class="filter-container">
-  <app-search (search)="onSearch($event)"></app-search> <!-- TODO Change graphics so it looks lookable -->
+        <!-- Label Filter Dropdown -->
+        <div class="label-filter me-3">
+          <select
+            class="form-select"
+            (change)="onLabelFilterChange($event)"
+          >
+            <option value="">All Labels</option>
+            <option *ngFor="let label of labels" [value]="label.labelID">
+              {{ label.labelName }}
+            </option>
+          </select>
+        </div>
+        <!-- Add a fallback message if no labels are available -->
+        <p *ngIf="labels && labels.length === 0">No labels available.</p>
 
-  <label for="labelFilter">Filter by Label:</label>
-  <select id="labelFilter" (change)="onLabelFilterChange($event)">
-    <option value="">All</option>
-    <option *ngFor="let label of labels" [value]="label.labelID">{{ label.labelName }}</option>
-  </select>
+        <!-- Additional Filter Buttons -->
+        <div class="filter-actions">
+          <button class="btn btn-outline-light me-2">Filters</button>
+          <button class="btn btn-outline-light">Reset</button>
+        </div>
+
+        <!-- Add Label Button -->
+        <div class="me-3">
+          <button class="btn btn-outline-light add-label-btn" (click)="openLabelModal()">
+            <i class="fas fa-plus"></i> Add Label
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- Map Container -->
+  <div class="map-wrapper">
+    <div id="map" class="map-area"></div>
+
+    <!-- Marker Details Overlay -->
+    <div class="marker-details-overlay" *ngIf="selectedMarker">
+      <app-marker-details
+        [marker]="selectedMarker"
+        (deleteMarker)="onDeleteMarker(selectedMarker)"
+        (save)="onSave()"
+      ></app-marker-details>
+    </div>
+  </div>
+
+  <!-- Add Label Modal -->
+  <div class="modal fade" id="labelModal" tabindex="-1" aria-labelledby="labelModalLabel" aria-hidden="true" [ngClass]="{'show': showLabelModal}" [ngStyle]="{'display': showLabelModal ? 'block' : 'none'}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="labelModalLabel">Create New Label</h5>
+          <button type="button" class="btn-close" (click)="closeLabelModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="labelName" class="form-label">Label Name</label>
+              <input type="text" class="form-control" id="labelName" [(ngModel)]="newLabel.labelName" name="labelName" placeholder="Enter label name">
+            </div>
+            <div class="mb-3">
+              <label for="labelColor" class="form-label">Label Color</label>
+              <input type="color" class="form-control form-control-color" id="labelColor" [(ngModel)]="newLabel.labelColor" name="labelColor" title="Choose label color">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeLabelModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="saveNewLabel()">Save Label</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop fade show" *ngIf="showLabelModal"></div>
+
 </div>
-
-<div id="map" style="height: 100%; width: 100%;"></div>
-
-<app-marker-details
-  *ngIf="selectedMarker"
-  [marker]="selectedMarker"
-  (deleteMarker)="onDeleteMarker(selectedMarker)"
-  (save)="onSave()">
-</app-marker-details>

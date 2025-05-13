@@ -21,9 +21,11 @@ namespace TT_API {
         public DbSet<GroupUsers> GroupUsers { get; set; }
 
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseMySQL("server=mysqlstudenti.litv.sssvt.cz;database=3b1_patejdlstepan_db2;user=patejdlstepan;password=123456;SslMode=none");
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseMySQL("server=mysqlstudenti.litv.sssvt.cz;database=3b1_patejdlstepan_db2;user=patejdlstepan;password=123456;SslMode=none;Connection Timeout=30;DefaultCommandTimeout=60");
         }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<MapLabel>().HasNoKey();

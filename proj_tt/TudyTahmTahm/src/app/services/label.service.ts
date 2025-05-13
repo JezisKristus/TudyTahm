@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { tap, map } from 'rxjs/operators';
+import { CreateLabelDto } from '../models/dtos/create-label.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class LabelService{
       })
     );
   }
-  public create(label: Label): Observable<Label> {
+  public createLabel(label: CreateLabelDto): Observable<Label> {
     console.log('Sending create request with data:', label);
     return this.http.post<Label>(`${environment.apiUrl}/Label`, label).pipe(
       tap(response => {
@@ -33,7 +34,7 @@ export class LabelService{
       })
     );
   }
-  public update(label: Label): Observable<Label> {
+  public updateLabel(label: Label): Observable<Label> {
     console.log('Updating label with data:', label);
     return this.http.put<Label>(`${environment.apiUrl}/Label/${label.labelID}`, label).pipe(
       tap(response => {
@@ -42,7 +43,7 @@ export class LabelService{
       })
     );
   }
-  public delete(label: Label): Observable<void> {
+  public deleteLabel(label: Label): Observable<void> {
     if (!label.labelID) {
       throw new Error('Label ID is required to delete a label.');
     }

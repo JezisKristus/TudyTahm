@@ -4,7 +4,7 @@
     <div class="icon" *ngFor="let icon of icons; let i = index"
          [class.selected]="selectedIconIndex === i"
          (click)="selectIcon(i)">
-      <img ngSrc="icon" alt="icon" fill=""/> <!-- TODO cesta aby byla ze serveru -->
+      <img ngSrc="http://localhost:5010/api/Image/default-marker.png" alt="icon" fill=""/> <!-- TODO cesta aby byla ze serveru, potřebuju tahat stejně v .ts array obrázků (nebo dělá se to jinak?)  -->
     </div>
   </div>
 

@@ -1,4 +1,208 @@
-#map {
-  height: 100%;
+// Color Variables
+:root {
+  --dark-green: #1a2c1a;
+  --gold: #d4af37;
+  --mid-green: #335033;
+  --light-green: #3a5a40;
+  --input-bg: #3a5a40;
+  --input-text: #ffffff;
+}
+
+// Global Styles
+body {
+  background-color: #f4f4f4;
+}
+
+// Map Container Layout
+.map-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Navbar Styles
+.custom-navbar {
+  background: var(--dark-green);
+  border-bottom: 2px solid #476947;
+  color: var(--gold);
+  padding: 0.5rem 1rem;
+}
+
+// Filter Section Styles
+.filter-section {
   width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+// Search and Filter Styles
+.search-wrapper {
+  flex-grow: 1;
+  max-width: 300px;
+
+  // Style for the search component
+  app-search {
+    display: flex;
+    width: 100%;
+
+    input {
+      flex-grow: 1;
+      background-color: var(--input-bg);
+      border: none;
+      color: var(--input-text);
+      padding: 0.5rem;
+      outline: none;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    button {
+      background-color: var(--mid-green);
+      border: none;
+      color: var(--gold);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: var(--dark-green);
+      }
+    }
+  }
+}
+
+.form-select {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: none;
+  width: 150px;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+}
+
+// Add Label Button
+.add-label-btn {
+  background-color: var(--mid-green);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem; // Přidán levý okraj
+
+  &:hover {
+    background-color: var(--dark-green);
+    color: var(--gold);
+  }
+}
+
+// Map Wrapper Styles
+.map-wrapper {
+  position: relative;
+  flex-grow: 1;
+  overflow: hidden;
+
+  .map-area {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+// Marker Details Overlay
+.marker-details-overlay {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  width: 350px;
+  max-width: 90%;
+}
+
+// Modal Styles
+.modal-content {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+
+  .modal-header {
+    background-color: var(--dark-green);
+    color: var(--gold);
+    border-bottom: 2px solid var(--mid-green);
+
+    .btn-close {
+      color: white;
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .modal-footer {
+    border-top: 1px solid #dee2e6;
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-primary {
+      background-color: var(--dark-green);
+      border-color: var(--mid-green);
+      color: var(--gold);
+
+      &:hover {
+        background-color: var(--mid-green);
+      }
+    }
+  }
+}
+
+// Color picker styles
+.form-control-color {
+  width: 100%;
+  height: 38px;
+}
+
+// Hover and Active States
+.btn-outline-light {
+  &:hover {
+    background-color: var(--mid-green);
+    color: var(--gold);
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+
+    .search-wrapper,
+    .label-filter,
+    .filter-actions {
+      margin-bottom: 10px;
+      max-width: 100%;
+    }
+
+    .form-select,
+    .search-wrapper {
+      width: 100%;
+    }
+
+    app-search {
+      flex-direction: column;
+
+      input, button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
 }
