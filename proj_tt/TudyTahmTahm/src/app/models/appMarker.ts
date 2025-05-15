@@ -5,7 +5,6 @@ export interface AppMarker {
   IDLabel: number;
   markerName: string;
   markerDescription: string;
-  markerIconPath: string;
   longitude: number; // Musí být platné číslo
   latitude: number;  // Musí být platné číslo
 }

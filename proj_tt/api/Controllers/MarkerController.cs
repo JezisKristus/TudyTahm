@@ -48,7 +48,6 @@ namespace TT_API.Controllers {
                 IDPoint = point.PointID,
                 MarkerName = cmDTO.MarkerName,
                 MarkerDescription = cmDTO.MarkerDescription,
-                MarkerIconPath = cmDTO.MarkerIconPath,
                 IDLabel = 0,
 
             };
@@ -71,7 +70,6 @@ namespace TT_API.Controllers {
 
             if (marker.MarkerName != cmDTO.MarkerName) marker.MarkerName = cmDTO.MarkerName;
             if (marker.MarkerDescription != cmDTO.MarkerDescription) marker.MarkerDescription = cmDTO.MarkerDescription;
-            if (marker.MarkerIconPath != cmDTO.MarkerIconPath) marker.MarkerIconPath = cmDTO.MarkerIconPath;
             if (marker.IDLabel != cmDTO.IDLabel) marker.IDLabel = cmDTO.IDLabel;
 
             if (point != null) {
@@ -100,7 +98,6 @@ namespace TT_API.Controllers {
                     IDMap = gps.IDMap,
                     MarkerName = m.MarkerName,
                     MarkerDescription = m.MarkerDescription,
-                    MarkerIconPath = m.MarkerIconPath,
                     IDLabel = m.IDLabel,
                     Latitude = gps.Latitude,
                     Longitude = gps.Longitude
@@ -128,7 +125,6 @@ namespace TT_API.Controllers {
                     IDLabel = marker.IDLabel,
                     MarkerName = marker.MarkerName,
                     MarkerDescription = marker.MarkerDescription,
-                    MarkerIconPath = marker.MarkerIconPath,
                     Latitude = gps.Latitude,
                     Longitude = gps.Longitude
                 };

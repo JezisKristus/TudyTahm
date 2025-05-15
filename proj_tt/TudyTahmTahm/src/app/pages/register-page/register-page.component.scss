@@ -1,17 +1,24 @@
-body {
+:host {
+  display: block;
+  height: 100vh;
+  margin: 0;
   background-image: url('/bg.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 100vh;
-  margin: 0;
-  align-content: center;
+}
+
+.login-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .custom-bg {
-  background: linear-gradient(150deg,var(--dark-green) 60%,rgb(21, 37, 17) 40%);
+  background: linear-gradient(150deg, var(--dark-green, #14532d) 60%, rgb(21, 37, 17) 40%);
 }
 
-.text-custom {
-  color: --text-color;
+.text-white {
+  color: #fff !important;
 }

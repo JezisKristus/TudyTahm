@@ -27,12 +27,6 @@
         <!-- Add a fallback message if no labels are available -->
         <p *ngIf="labels && labels.length === 0">No labels available.</p>
 
-        <!-- Additional Filter Buttons -->
-        <div class="filter-actions">
-          <button class="btn btn-outline-light me-2">Filters</button>
-          <button class="btn btn-outline-light">Reset</button>
-        </div>
-
         <!-- Add Label Button -->
         <div class="me-3">
           <button class="btn btn-outline-light add-label-btn" (click)="openLabelModal()">
@@ -48,13 +42,32 @@
   <div class="map-wrapper">
     <div id="map" class="map-area"></div>
 
+    <!-- This is the container for our marker components -->
+    <div #markerHost class="marker-host"></div>
+
     <!-- Marker Details Overlay -->
     <div class="marker-details-overlay" *ngIf="selectedMarker">
       <app-marker-details
-        [marker]="selectedMarker"
-        (deleteMarker)="onDeleteMarker(selectedMarker)"
+        [marker]="selectedMarker.markerData"
+        (deleteMarker)="onDeleteMarker(selectedMarker.markerData)"
         (save)="onSave()"
       ></app-marker-details>
+    </div>
+
+    <!-- Marker List Overlay -->
+    <div class="marker-list-overlay" *ngIf="showMarkerList">
+      <h5>Assign Label to Markers</h5>
+      <ul>
+        <li *ngFor="let marker of markersWithoutLabel">
+          <input
+            type="checkbox"
+            [id]="'marker-' + marker.markerID"
+            [(ngModel)]="marker.selected"
+          />
+          <label [for]="'marker-' + marker.markerID">{{ marker.markerData.markerName }}</label>
+        </li>
+      </ul>
+      <button class="btn btn-primary mt-2" (click)="assignLabelToMarkers()">Assign Label</button>
     </div>
   </div>
 

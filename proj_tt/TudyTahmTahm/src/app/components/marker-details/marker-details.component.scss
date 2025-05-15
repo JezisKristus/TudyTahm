@@ -93,6 +93,14 @@
     margin-bottom: 0.5rem;
     width: 100%;
     font-family: inherit;
+
+    &::placeholder {
+      color: rgba(209, 185, 127, 0.6);
+    }
+
+    &:focus {
+      outline: 1px solid #d4b87c;
+    }
   }
 
   textarea {
@@ -107,6 +115,34 @@
     margin-bottom: 1rem;
     font-family: inherit;
     min-height: 100px;
+
+    &::placeholder {
+      color: rgba(209, 185, 127, 0.6);
+    }
+
+    &:focus {
+      outline: 1px solid #d4b87c;
+    }
+  }
+
+  select {
+    background: #2a3e2b;
+    color: #d1b97f;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    font-family: inherit;
+
+    &:focus {
+      outline: 1px solid #d4b87c;
+    }
+
+    option {
+      background: #2a3e2b;
+      color: #d1b97f;
+    }
   }
 
   .button-row {
@@ -153,5 +189,26 @@
 
   &.hidden {
     display: none;
+  }
+}
+
+// Responsive adjustments for smaller screens
+@media (max-width: 768px) {
+  .marker-options-panel {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    bottom: 0;
+    top: auto;
+    right: 0;
+    border-radius: 12px 12px 0 0;
+
+    .icon-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    textarea {
+      min-height: 80px;
+    }
   }
 }

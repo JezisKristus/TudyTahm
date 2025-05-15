@@ -29,7 +29,7 @@ export class MarkerService {
     );
   }
 
-  public create(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
+  public createMarker(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
     console.log('Sending create request with data:', createMarkerDto);
     return this.http.post<AppMarker>(`${environment.apiUrl}/Marker`, createMarkerDto).pipe(
       tap(response => {
@@ -39,7 +39,7 @@ export class MarkerService {
     );
   }
 
-  public update(marker: AppMarker): Observable<AppMarker> {
+  public updateMarker(marker: AppMarker): Observable<AppMarker> {
     console.log('Updating marker with data:', marker);
     return this.http.put<AppMarker>(`${environment.apiUrl}/Marker/${marker.markerID}`, marker).pipe(
       tap(response => {
@@ -49,7 +49,7 @@ export class MarkerService {
     );
   }
 
-  public delete(marker: AppMarker): Observable<void> {
+  public deleteMarker(marker: AppMarker): Observable<void> {
     if (!marker.markerID) {
       throw new Error('Marker ID is required to delete a marker.');
     }

@@ -4,7 +4,6 @@ export interface CreateUpdateMarkerDto {
   IDLabel: number;
   markerName: string;
   markerDescription: string;
-  markerIconPath: string;
   latitude: number;
   longitude: number;
 }

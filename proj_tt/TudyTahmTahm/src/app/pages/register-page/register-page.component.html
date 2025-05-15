@@ -1,32 +1,81 @@
-<body>
 <div class="login-container d-flex align-items-center justify-content-center">
-  <div class="card p-4 shadow-lg">
-    <h2 class="text-center">Join us!</h2>
+  <div class="card p-4 shadow-lg custom-bg text-white" style="width: 100%; max-width: 400px;">
+    <h2 class="text-center mb-4">Join us!</h2>
+
     <form [formGroup]="form" (submit)="register()">
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter your email">
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          placeholder="Enter your email"
+          [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched">
+        <div class="invalid-feedback" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+          Valid email is required
+        </div>
       </div>
+
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" id="username" formControlName="username" placeholder="Choose a username">
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          formControlName="username"
+          placeholder="Choose a username"
+          [class.is-invalid]="form.get('username')?.invalid && form.get('username')?.touched">
+        <div class="invalid-feedback" *ngIf="form.get('username')?.invalid && form.get('username')?.touched">
+          Username is required
+        </div>
       </div>
+
       <div class="mb-3">
-        <label for="newPassword" class="form-label">Password</label>
-        <input type="password" class="form-control" id="newPassword" formControlName="password" placeholder="Choose your password">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          placeholder="Choose your password"
+          [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched">
+        <div class="invalid-feedback" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+          Password is required
+        </div>
       </div>
+
       <div class="mb-3">
-        <label for="newPasswordRepeat" class="form-label">Repeat your password</label>
-        <input type="password" class="form-control" id="newPasswordRepeat" formControlName="passwordRepeat" placeholder="Repeat your password">
+        <label for="passwordRepeat" class="form-label">Repeat Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="passwordRepeat"
+          formControlName="passwordRepeat"
+          placeholder="Repeat your password"
+          [class.is-invalid]="form.get('passwordRepeat')?.invalid && form.get('passwordRepeat')?.touched">
+        <div class="invalid-feedback" *ngIf="form.get('passwordRepeat')?.invalid && form.get('passwordRepeat')?.touched">
+          Passwords must match
+        </div>
       </div>
-      <button type="submit" class="btn btn-success w-100">Register</button>
+
+      <div *ngIf="loading" class="d-flex justify-content-center mt-2">
+        <div class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100" [disabled]="loading || form.invalid">Register</button>
     </form>
+
     <div class="alert alert-danger mt-3" *ngIf="errorMessage">
       {{ errorMessage }}
     </div>
-    <div class="text-center mt-2">
-      <a routerLink="/sign-in" routerLinkActive="active" ariaCurrentWhenActive="page" class="text-decoration-none">Already have an account?</a>
+
+    <div class="text-center mt-3">
+      <p>Already have an account?
+        <a routerLink="/sign-in" class="text-decoration-none text-white">Sign in</a>
+      </p>
     </div>
   </div>
 </div>
-</body>

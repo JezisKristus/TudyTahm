@@ -14,17 +14,16 @@ import {Label} from '../../models/label';
     FormsModule,
     CommonModule,
     NgOptimizedImage,
-    // PřIDání CommonModule pro podporu NgIf
   ],
 })
 export class MarkerDetailsComponent implements OnChanges {
-  @Input() marker: AppMarker | null = null;  // Zajistí, že přijímáme AppMarker
+  @Input() marker: AppMarker | null = null;  // Ensure we're receiving AppMarker
   @Input() labels: Label[] = []; // Input for available labels
 
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppMarker>();
-  @Output() deleteMarker = new EventEmitter<AppMarker>(); // Now emits AppMarker
-  @Output() refreshMarkers = new EventEmitter<void>(); // PřIDání nového EventEmitteru
+  @Output() deleteMarker = new EventEmitter<AppMarker>(); // Emits AppMarker
+  @Output() refreshMarkers = new EventEmitter<void>(); // Added new EventEmitter
 
   isVisible = false;
   description: string = '';
@@ -32,12 +31,12 @@ export class MarkerDetailsComponent implements OnChanges {
   selectedIconIndex: number = 0;
   isNewMarker: boolean = true;
 
-
-  // Array of icon URLs for the icon grID
+  // Array of icon URLs for the icon grid
   icons: string[] = [
     'icon1.png'
   ];
-  constructor(private markerService: MarkerService)   {}
+
+  constructor(private markerService: MarkerService) {}
 
   ngOnInit() {
     if (this.marker) {
@@ -55,7 +54,6 @@ export class MarkerDetailsComponent implements OnChanges {
         this.isNewMarker = false;
         this.markerName = this.marker.markerName || '';
         this.description = this.marker.markerDescription || '';  // Ensure description is populated
-        this.selectedIconIndex = this.icons.indexOf(this.marker.markerIconPath || '');
         if (this.selectedIconIndex < 0) this.selectedIconIndex = 0;
       } else {
         // New marker
@@ -63,11 +61,6 @@ export class MarkerDetailsComponent implements OnChanges {
         this.markerName = '';
         this.description = '';  // Clear description for a new marker
         this.selectedIconIndex = 0;
-      }
-
-      // Ensure default icon if markerIconPath is empty
-      if (this.marker && !this.marker.markerIconPath) {
-        this.marker.markerIconPath = 'default-icon.png';
       }
     }
   }
@@ -114,7 +107,7 @@ export class MarkerDetailsComponent implements OnChanges {
 
       if (this.marker.markerID) {
         // Update existing marker
-        this.markerService.update(markerDto).subscribe({
+        this.markerService.updateMarker(markerDto).subscribe({
           next: (updatedMarker) => {
             this.marker = updatedMarker;
             this.save.emit(updatedMarker); // Emit only the updated marker
@@ -124,7 +117,7 @@ export class MarkerDetailsComponent implements OnChanges {
         });
       } else {
         // Create new marker
-        this.markerService.create(markerDto).subscribe({
+        this.markerService.createMarker(markerDto).subscribe({
           next: (createdMarker) => {
             this.marker = createdMarker;
             this.save.emit(createdMarker); // Emit only the created marker

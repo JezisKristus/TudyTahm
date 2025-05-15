@@ -124,6 +124,45 @@ body {
   max-width: 90%;
 }
 
+// Marker List Overlay
+.marker-list-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  width: 350px;
+  max-width: 90%;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+.marker-list-overlay h5 {
+  margin-bottom: 1rem;
+  color: var(--dark-green);
+}
+
+.marker-list-overlay ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.marker-list-overlay li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.marker-list-overlay li label {
+  margin-left: 0.5rem;
+  color: var(--dark-green);
+}
+
 // Modal Styles
 .modal-content {
   background-color: #f8f9fa;
@@ -177,7 +216,21 @@ body {
     color: var(--gold);
   }
 }
+.marker-host {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none; /* Let map events pass through */
+  z-index: 1000; /* Ensure it's on top but doesn't interfere with markers */
+}
 
+/* If needed for debugging */
+.marker-wrapper {
+  display: inline-block;
+  width: 2px;
+  height: 2px;
+  opacity: 0.01; /* Almost invisible but still rendered */
+}
 // Responsive Adjustments
 @media (max-width: 768px) {
   .filter-section {
@@ -206,3 +259,4 @@ body {
     }
   }
 }
+
