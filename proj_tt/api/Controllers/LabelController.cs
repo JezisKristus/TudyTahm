@@ -67,15 +67,7 @@ namespace TT_API.Controllers {
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetByMapID(int mapID) {
 
-            var labels = await context.Markers
-                .Include(m => m.Label)
-                .Where(m => m.GPSPoint.IDMap == mapID)
-                .Select(l => new LabelDTO {
-                    Color = l.Label.Color,
-                    Name = l.Label.Name,
-                })
-                .Distinct()
-                .ToListAsync();
+            var labels = await context.Labels.Where(l => l.IDMap == mapID).ToListAsync();
 
             if (labels == null) return NotFound();
 
@@ -84,16 +76,11 @@ namespace TT_API.Controllers {
 
         [HttpGet("ByMarkerID/{markerID}")]
         public async Task<IActionResult> GetByMarkerID(int markerID) {
-            var label = await context.Markers.Include(m => m.Label).FirstOrDefaultAsync(m => m.MarkerID == markerID);
+            var label = await context.Markers.Include(m => m.Label).Where(l => l.MarkerID == markerID).Select(l => new Label {LabelID = l.Label.LabelID, Name = l.Label.Name, IDMap = l.Label.IDMap, Color = l.Label.Color}).ToListAsync();
 
             if (label == null) return NotFound(); 
 
-            var returnts = new LabelDTO {
-                Color = label.Label.Color,
-                Name = label.Label.Name,
-            };
-
-            return Ok(returnts);
+            return Ok(label);
         }
         
         [HttpGet("{id}")]
