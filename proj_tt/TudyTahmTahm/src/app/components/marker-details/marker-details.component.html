@@ -1,6 +1,4 @@
 <form class="marker-options-panel" *ngIf="marker && isVisible" (ngSubmit)="onSave()">
-  <h6>Marker Options</h6>
-
   <h3>Marker Details</h3>
   <p *ngIf="marker"><strong>Location:</strong> {{ getFormattedCoordinates() }}</p>
 

@@ -1,4 +1,5 @@
 export interface CreateLabelDto {
+  IDMap : number;
   name: string;
   color: string; // Hex color code
-} // MapID zjišťuje přes přiřazený markery
+}

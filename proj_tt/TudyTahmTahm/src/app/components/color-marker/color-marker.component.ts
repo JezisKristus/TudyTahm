@@ -84,7 +84,11 @@ export class ColorMarkerComponent implements OnInit, OnChanges, OnDestroy {
     }).addTo(this.map);
 
   }
-
+  removeFromMap(): void {
+    if (this.leafletMarker) {
+      this.leafletMarker.remove();
+    }
+  }
   private updateColor(): void {
     if (this.leafletMarker) {
       this.leafletMarker.setIcon(this.createPinIcon(this.labelColor));

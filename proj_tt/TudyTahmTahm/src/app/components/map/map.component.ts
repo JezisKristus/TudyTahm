@@ -22,6 +22,7 @@ import { MarkerDetailsComponent } from '../marker-details/marker-details.compone
 import { SearchComponent } from '../search/search.component';
 import { MarkerService } from '../../services/marker.service';
 import { LabelService } from '../../services/label.service';
+import { MapService } from '../../services/map.service';
 import { AppMarker } from '../../models/appMarker';
 import { Label } from '../../models/label';
 import { CreateLabelDto } from '../../models/dtos/create-label.dto';
@@ -32,6 +33,10 @@ interface ExtendedMarker extends L.Marker {
   selected: boolean;
   markerData: AppMarker;
   markerID: number;
+}
+interface MapData {
+  mapID: number;
+  mapName: string;
 }
 
 @Component({
@@ -45,8 +50,6 @@ interface ExtendedMarker extends L.Marker {
     NgForOf,
     FormsModule,
     SearchComponent,
-    MarkerDetailsComponent,
-    ColorMarkerComponent,
   ],
   encapsulation: ViewEncapsulation.None
 })
@@ -61,13 +64,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
   // Map related properties
   map!: L.Map;
+  mapName: string = '';
+  isEditingName: boolean = false;
+  private originalMapName: string = '';
+
   layer: any;
   mapID: number = Number(sessionStorage.getItem('Map.mapID')) || 1;
   private Lmarkers: ExtendedMarker[] = [];
-  private searchMarker: L.Marker | null = null;
   private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
-  searchQuery: string = '';
 
   // Marker related properties
   selectedMarker: ExtendedMarker | null = null;
@@ -89,18 +94,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   showMarkerList: boolean = false;
   markersWithoutLabel: ExtendedMarker[] = [];
 
-  // API base URL
-  private apiBaseUrl: string = 'http://localhost:5010/api';
 
   constructor(
     private viewContainerRef: ViewContainerRef,
     private markerService: MarkerService,
     private labelService: LabelService,
-    private changeDetectorRef: ChangeDetectorRef
+    private mapService: MapService,
   ) {}
 
   ngOnInit(): void {
     const mapID = sessionStorage.getItem('Map.mapID');
+    this.loadMapData();
     if (!mapID) {
       console.error('No mapID found in sessionStorage.');
       sessionStorage.setItem('Map.mapID', '1'); // Default mapID
@@ -393,10 +397,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       next: () => {
         console.log(`Marker with ID ${markerId} deleted successfully.`);
 
-        // Find and remove the marker from the map
-        const markerToRemove = this.Lmarkers.find(m => m.markerID === markerId);
-        if (markerToRemove) {
-          this.removeMarkerFromMap(markerToRemove);
+        // Najít a odstranit ColorMarkerComponent
+        const markerCompIndex = this.colorMarkerRefs.findIndex(ref =>
+          ref.instance.markerData.markerID === markerId
+        );
+
+        if (markerCompIndex !== -1) {
+          // Odstranit marker z mapy
+          this.colorMarkerRefs[markerCompIndex].instance.removeFromMap();
+          // Zničit komponentu
+          this.colorMarkerRefs[markerCompIndex].destroy();
+          // Odstranit referenci z pole
+          this.colorMarkerRefs.splice(markerCompIndex, 1);
         }
 
         this.clearSelectedMarker();
@@ -574,6 +586,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     }
 
     const createLabelDto: CreateLabelDto = {
+      IDMap: this.mapID,
       name: this.newLabel.labelName,
       color: this.newLabel.labelColor
     };
@@ -642,6 +655,128 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       this.markerDetailsRef = undefined;
     }
   }
+
+  onLocationSelected(location: {lat: number, lon: number, name: string}): void {
+    // Zoom to location
+    this.map.setView([location.lat, location.lon], 13);
+
+    // Odstranit starý search marker
+    this.colorMarkerRefs = this.colorMarkerRefs.filter(ref => {
+      if (ref.instance.markerData && ref.instance.markerData.markerID === -9999) {
+        ref.destroy();
+        return false;
+      }
+      return true;
+    });
+
+    // Přidat nový search marker
+    const markerData: AppMarker = {
+      markerID: -9999,
+      IDPoint: -1,
+      IDMap: this.mapID,
+      IDLabel: 0,
+      markerName: 'Search Result',
+      markerDescription: location.name,
+      longitude: location.lon,
+      latitude: location.lat
+    };
+
+    const compRef = this.markerHost.createComponent(ColorMarkerComponent);
+    compRef.instance.map = this.map;
+    compRef.instance.markerData = markerData;
+    compRef.instance.labelColor = '#e53935';
+    this.colorMarkerRefs.push(compRef);
+  };
+
+  private loadMapData(): void {
+    const mapID = sessionStorage.getItem('Map.mapID');
+    if (!mapID) {
+      console.error('No mapID found in sessionStorage.');
+      return;
+    }
+
+    this.mapService.getMapById(Number(mapID)).subscribe({
+      next: (mapData: MapData) => {
+        this.mapName = mapData.mapName;
+        this.originalMapName = mapData.mapName; // Uložení původního názvu
+      },
+      error: (err: Error) => {
+        console.error('Error loading map data:', err);
+        this.mapName = 'Unnamed Map';
+        this.originalMapName = 'Unnamed Map';
+      }
+    });
+  }
+  updateMapName(): void {
+    const trimmedMapName = this.mapName?.trim();
+
+    // 1. Kontrola prázdného názvu
+    if (!trimmedMapName) {
+      this.resetMapName();
+      return;
+    }
+
+    // 2. Pokud se název nezměnil, neprovádíme update
+    if (trimmedMapName === this.originalMapName) {
+      return;
+    }
+
+    // 3. Získání mapID ze sessionStorage
+    const mapID = sessionStorage.getItem('Map.mapID');
+    if (!mapID) {
+      console.error('No mapID found in sessionStorage.');
+      return;
+    }
+
+    const updateData = {
+      mapID: Number(mapID),
+      mapName: trimmedMapName
+    };
+
+    // 4. Volání služby pro aktualizaci názvu mapy
+    this.mapService.updateMap(updateData.mapID, updateData).subscribe({
+      next: (updatedMap) => {
+        const newMapName = updatedMap?.mapName?.trim();
+
+        if (!newMapName) {
+          console.error('API response does not contain valid mapName');
+          return;
+        }
+
+        this.mapName = newMapName;
+        this.originalMapName = newMapName;
+        this.updateInputValue(newMapName);
+        console.log('Map name updated successfully');
+      },
+      error: (err) => {
+        console.error('Error updating map name:', err);
+        this.resetMapName();
+        alert('Failed to update map name');
+      }
+    });
+
+  }
+
+// Pomocné metody
+
+  private resetMapName(): void {
+    this.mapName = this.originalMapName;
+    this.updateInputValue(this.originalMapName);
+  }
+
+  private updateInputValue(value: string): void {
+    console.log('Setting input value to:', value);
+    setTimeout(() => {
+      const inputElement = document.querySelector('.map-title-input') as HTMLInputElement;
+      if (inputElement) {
+        inputElement.value = value;
+      } else {
+        console.warn('Input element .map-title-input not found');
+      }
+    });
+  }
+
+
   ngOnChanges(): void {
     // Update marker visibility when labelFilter changes
     this.Lmarkers.forEach(marker => {

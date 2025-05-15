@@ -81,8 +81,13 @@ export class MarkerDetailsComponent implements OnChanges {
 
   onDelete(): void {
     if (this.marker) {
-      this.deleteMarker.emit(this.marker); // Emit the AppMarker to delete it
-      this.isVisible = false;
+      // Otevři potvrzovací dialog s využitím nativního window.confirm
+      const confirmDelete = window.confirm(`Do you really want to delete the marker "${this.marker.markerName}"?`);
+
+      if (confirmDelete) {
+        this.deleteMarker.emit(this.marker); // Emituj marker ke smazání pouze po potvrzení
+        this.isVisible = false;
+      }
     }
   }
 

@@ -3,11 +3,31 @@
   <!-- Top Navigation and Filters -->
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container-fluid">
+
+      <!-- Map Title -->
+      <div class="map-title me-4">
+        <div class="editable-title">
+          <input
+            type="text"
+            [(ngModel)]="mapName"
+            (blur)="updateMapName()"
+            (keyup.enter)="$any($event.target).blur()"
+            [class.editing]="isEditingName"
+            (focus)="isEditingName = true"
+            (blur)="isEditingName = false"
+            class="map-title-input"
+          >
+        </div>
+      </div>
+
       <!-- Filters and Search -->
       <div class="d-flex align-items-center filter-section flex-wrap w-100">
         <!-- Search Input -->
         <div class="search-wrapper me-3">
-          <app-search (search)="onSearch($event)"></app-search>
+          <app-search
+            (search)="onSearch($event)"
+            (locationSelected)="onLocationSelected($event)">
+          </app-search>
         </div>
 
         <!-- Label Filter Dropdown -->

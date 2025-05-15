@@ -39,10 +39,22 @@ export class MapService {
   }
 
   updateMap(id: number, map: Partial<AppMap>): Observable<AppMap> {
-    return this.http.put<AppMap>(`${this.apiUrl}/Map/${id}`, map)
-      .pipe(
-        catchError(this.handleError)
-      );
+    const options = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    // Obalení názvu do JSON objektu
+    const payload = JSON.stringify(map.mapName);
+
+    return this.http.put<AppMap>(
+      `${this.apiUrl}/Map/RenameMap/${id}`,
+      payload,
+      options
+    ).pipe(
+      catchError(this.handleError)
+    );
   }
 
   deleteMap(id: number): Observable<void> {

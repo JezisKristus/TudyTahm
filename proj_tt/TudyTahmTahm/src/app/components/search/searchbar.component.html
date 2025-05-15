@@ -1,0 +1,19 @@
+<div class="search-container">
+  <input
+    type="text"
+    [(ngModel)]="searchQuery"
+    (input)="onSearchInput()"
+    (focus)="showSuggestions = true"
+    placeholder="Hledat místo..."
+    class="search-input"
+  />
+  <div class="suggestions-container" *ngIf="showSuggestions && suggestions.length > 0">
+    <div
+      *ngFor="let suggestion of suggestions"
+      (click)="selectSuggestion(suggestion)"
+      class="suggestion-item"
+    >
+      {{ suggestion.display_name }}
+    </div>
+  </div>
+</div>

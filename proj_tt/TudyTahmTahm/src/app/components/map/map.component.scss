@@ -37,11 +37,61 @@ body {
   align-items: center;
   flex-wrap: wrap;
 }
+/* Map Title Styles */
+.map-title {
+  .editable-title {
+    position: relative;
+
+    .map-title-input {
+      color: var(--gold);
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      padding: 0.2rem 0.5rem;
+      width: 300px;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      &:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .map-title {
+    .map-title-input {
+      font-size: 1.2rem;
+      width: 200px;
+    }
+  }
+}
+
+/* Update existing media query */
+@media (max-width: 768px) {
+  .map-title {
+    h1 {
+      font-size: 1.2rem;
+      max-width: 200px;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  /* Existing responsive styles... */
+}
 
 /* Search and Filter Styles */
 .search-wrapper {
   flex-grow: 1;
   max-width: 300px;
+  margin-right: 1rem;
 
   app-search {
     display: flex;
