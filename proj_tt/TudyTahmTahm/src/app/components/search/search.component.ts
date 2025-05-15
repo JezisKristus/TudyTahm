@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -22,10 +22,37 @@ export class SearchComponent {
   searchQuery: string = '';
   suggestions: SearchResult[] = [];
   showSuggestions: boolean = false;
+  selectedIndex: number = -1;
   private debounceTimer?: any;
+
+  handleKeydown(event: KeyboardEvent): void {
+    if (!this.showSuggestions) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.selectedIndex = Math.min(this.selectedIndex + 1, this.suggestions.length - 1);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+        break;
+      case 'Enter':
+        event.preventDefault();
+        if (this.selectedIndex >= 0) {
+          this.selectSuggestion(this.suggestions[this.selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        this.showSuggestions = false;
+        this.selectedIndex = -1;
+        break;
+    }
+  }
 
   onSearchInput(): void {
     clearTimeout(this.debounceTimer);
+    this.selectedIndex = -1;
 
     if (this.searchQuery.length < 3) {
       this.suggestions = [];
@@ -44,6 +71,7 @@ export class SearchComponent {
     try {
       const response = await fetch(url);
       this.suggestions = await response.json();
+      this.showSuggestions = true;
     } catch (error) {
       console.error('Chyba při načítání návrhů:', error);
       this.suggestions = [];
@@ -53,10 +81,19 @@ export class SearchComponent {
   selectSuggestion(suggestion: SearchResult): void {
     this.searchQuery = suggestion.display_name;
     this.showSuggestions = false;
+    this.selectedIndex = -1;
     this.locationSelected.emit({
       lat: Number(suggestion.lat),
       lon: Number(suggestion.lon),
       name: suggestion.display_name
     });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: Event): void {
+    if (!(event.target as HTMLElement).closest('.search-container')) {
+      this.showSuggestions = false;
+      this.selectedIndex = -1;
+    }
   }
 }

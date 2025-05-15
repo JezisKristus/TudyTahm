@@ -4,14 +4,16 @@
     [(ngModel)]="searchQuery"
     (input)="onSearchInput()"
     (focus)="showSuggestions = true"
-    placeholder="Hledat místo..."
+    (keydown)="handleKeydown($event)"
+    placeholder="Search for a location"
     class="search-input"
   />
   <div class="suggestions-container" *ngIf="showSuggestions && suggestions.length > 0">
     <div
-      *ngFor="let suggestion of suggestions"
+      *ngFor="let suggestion of suggestions; let i = index"
       (click)="selectSuggestion(suggestion)"
       class="suggestion-item"
+      [class.active]="i === selectedIndex"
     >
       {{ suggestion.display_name }}
     </div>
