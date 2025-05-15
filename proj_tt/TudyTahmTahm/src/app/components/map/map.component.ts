@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ComponentRef,
   EventEmitter,
@@ -55,6 +56,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   private markerHost!: ViewContainerRef;
   private colorMarkerRefs: ComponentRef<ColorMarkerComponent>[] = [];
 
+  @ViewChild('markerDetailsContainer', { read: ViewContainerRef, static: true })
+  private markerDetailsContainer!: ViewContainerRef;
+
   // Map related properties
   map!: L.Map;
   layer: any;
@@ -91,7 +95,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   constructor(
     private viewContainerRef: ViewContainerRef,
     private markerService: MarkerService,
-    private labelService: LabelService
+    private labelService: LabelService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -273,34 +278,54 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   onMarkerClick(markerData: AppMarker): void {
-    // Nastav barvu pouze vybranému markeru na modrou, ostatním vrať jejich barvu podle labelu
+    // Nastavení selectedMarker pro správnou funkci onCancel
+    const selectedColorMarker = this.colorMarkerRefs.find(ref =>
+      ref.instance.markerData.markerID === markerData.markerID
+    );
+    if (selectedColorMarker) {
+      this.selectedMarker = {
+        selected: true,
+        markerData: markerData,
+        markerID: markerData.markerID
+      } as ExtendedMarker;
+    }
+
+    // Změna barev markerů
     this.colorMarkerRefs.forEach(ref => {
       if (ref.instance.markerData.markerID === markerData.markerID) {
-        ref.instance.labelColor = '#4287f5'; // modrá pro vybraný marker
+        ref.instance.labelColor = '#4287f5';
+        ref.changeDetectorRef.detectChanges();
       } else {
         const label = this.labels.find(l => l.labelID === ref.instance.markerData.IDLabel);
         ref.instance.labelColor = label?.labelColor ?? '#d4af37';
+        ref.changeDetectorRef.detectChanges();
       }
     });
 
-    // Destroy existing MarkerDetailsComponent if it exists
+    // Zrušení existujícího detailu
     if (this.markerDetailsRef) {
       this.markerDetailsRef.destroy();
     }
-    this.markerDetailsRef = this.viewContainerRef.createComponent(MarkerDetailsComponent);
 
-    // Set up event handlers
-    this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
-    this.markerDetailsRef.instance.save.subscribe((markerData: AppMarker) => this.onSave(markerData));
-    this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
-    this.markerDetailsRef.instance.refreshMarkers.subscribe(() => {
-      this.refreshMarkers();
-    });
-
-    // Pass the markerData (including id) to the MarkerDetailsComponent
+    /// Vytvoření nového detailu
+    this.markerDetailsRef = this.markerDetailsContainer.createComponent(MarkerDetailsComponent);
     this.markerDetailsRef.instance.marker = markerData;
-    this.markerDetailsRef.instance.show();
-  }
+    this.markerDetailsRef.instance.labels = this.labels;
+
+    // Vynutit detekci změn po nastavení dat
+    this.markerDetailsRef.changeDetectorRef.detectChanges();
+
+    // Přidání třídy visible pro zobrazení containeru
+    const container = document.querySelector('.marker-details-container');
+    if (container) {
+      container.classList.add('visible');
+    }
+
+    // Správné napojení eventů
+    this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
+    this.markerDetailsRef.instance.save.subscribe((updatedMarker: AppMarker) => this.onSave(updatedMarker));
+    this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
+  };
 
   private applyLabelFilter(marker: ExtendedMarker): void {
     const filterID = this.labelFilter !== null ? this.labelFilter : this.selectedLabelFilter;
@@ -317,46 +342,38 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   onCancel(): void {
-    if (this.selectedMarker) {
-
-    }
-    this.selectedMarker = null; // Reset selected marker
-
-    // Clean up the marker details component
-    if (this.markerDetailsRef) {
-      this.markerDetailsRef.destroy();
-      this.markerDetailsRef = undefined;
-    }
+    this.clearSelectedMarker();
   }
 
   onSave(markerData?: AppMarker): void {
     if (!this.selectedMarker || !markerData) {
       console.warn('No marker selected or no marker data provided');
+      this.clearSelectedMarker(); // Zavřeme panel i při chybě
       return;
     }
 
     // Refresh only the saved marker
     this.markerService.getMarkerByMarkerID(markerData.markerID).subscribe({
       next: (updatedMarker) => {
-        if (this.selectedMarker) {
-          this.selectedMarker.markerData = updatedMarker;
-          console.log(`Marker with ID ${markerData.markerID} refreshed.`);
-
-          // Update the markerID property as well
-          this.selectedMarker.markerID = updatedMarker.markerID;
+        if (updatedMarker) {  // Přidaná kontrola null
+          if (this.selectedMarker) {
+            this.selectedMarker.markerData = updatedMarker;
+            console.log(`Marker with ID ${markerData.markerID} refreshed.`);
+          }
+        } else {
+          console.warn('Server returned null for marker update');
+          // Použijeme původní data markeru
+          if (this.selectedMarker) {
+            this.selectedMarker.markerData = markerData;
+          }
         }
+        this.clearSelectedMarker(); // Vždy zavřeme panel
       },
-      error: (err) => console.error('Error refreshing marker:', err)
+      error: (err) => {
+        console.error('Error refreshing marker:', err);
+        this.clearSelectedMarker(); // Zavřeme panel i při chybě
+      }
     });
-
-    this.selectedMarker = null;
-    console.log('Saving changes');
-
-    // Clean up the marker details component
-    if (this.markerDetailsRef) {
-      this.markerDetailsRef.destroy();
-      this.markerDetailsRef = undefined;
-    }
   }
 
   onDeleteMarker(marker: AppMarker | null): void {
@@ -380,24 +397,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
         const markerToRemove = this.Lmarkers.find(m => m.markerID === markerId);
         if (markerToRemove) {
           this.removeMarkerFromMap(markerToRemove);
-        } else {
-          console.warn(`Could not find marker with ID ${markerId} to remove from map`);
         }
 
-        this.resetMarkerDetails();
+        this.clearSelectedMarker();
       },
       error: (err) => console.error('Error deleting marker:', err)
     });
-
-    console.log('Deleting marker:', marker);
-  }
-
-  private resetMarkerDetails(): void {
-    this.selectedMarker = null; // Reset selected marker
-    if (this.markerDetailsRef) {
-      this.markerDetailsRef.destroy(); // Destroy the MarkerDetailsComponent
-      this.markerDetailsRef = undefined;
-    }
   }
 
   private removeMarkerFromMap(marker: ExtendedMarker): void {
@@ -609,53 +614,34 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       console.log('No markers without labels found');
     }
   }
-
-  assignLabelToMarkers(): void {
-    const selectedMarkers = this.markersWithoutLabel.filter(marker => marker.selected);
-    if (selectedMarkers.length === 0) {
-      alert('No markers selected.');
-      return;
+  private clearSelectedMarker(): void {
+    // Změna barvy posledního vybraného markeru
+    if (this.selectedMarker) {
+      const ref = this.colorMarkerRefs.find(ref =>
+        ref.instance.markerData.markerID === this.selectedMarker?.markerData.markerID
+      );
+      if (ref) {
+        const label = this.labels.find(l => l.labelID === ref.instance.markerData.IDLabel);
+        ref.instance.labelColor = label?.labelColor ?? '#d4af37'; // Výchozí barva pokud není label
+        ref.changeDetectorRef.detectChanges();
+      }
     }
 
-    if (!this.newLabel || !this.newLabel.labelID) {
-      alert('No label selected.');
-      return;
+    // Reset selected marker
+    this.selectedMarker = null;
+
+    // Skrytí detailů
+    const container = document.querySelector('.marker-details-container');
+    if (container) {
+      container.classList.remove('visible');
     }
 
-    let processedCount = 0;
-    const totalMarkers = selectedMarkers.length;
-
-    selectedMarkers.forEach(marker => {
-      if (!marker.markerData) return;
-
-      marker.markerData.IDLabel = this.newLabel.labelID;
-
-      this.markerService.updateMarker(marker.markerData).subscribe({
-        next: () => {
-          console.log(`Marker ${marker.markerData.markerID} updated with label ${this.newLabel.labelID}`);
-          marker.setOpacity(1); // Ensure marker is visible
-
-          processedCount++;
-          if (processedCount === totalMarkers) {
-            // All markers processed, refresh the map
-            this.showMarkerList = false; // Hide the marker list
-            this.refreshMarkers(); // Refresh markers on the map
-          }
-        },
-        error: (err) => {
-          console.error('Error updating marker:', err);
-
-          processedCount++;
-          if (processedCount === totalMarkers) {
-            // Still close the list even if some updates failed
-            this.showMarkerList = false;
-            this.refreshMarkers();
-          }
-        }
-      });
-    });
+    // Zrušení reference na marker-details komponentu
+    if (this.markerDetailsRef) {
+      this.markerDetailsRef.destroy();
+      this.markerDetailsRef = undefined;
+    }
   }
-
   ngOnChanges(): void {
     // Update marker visibility when labelFilter changes
     this.Lmarkers.forEach(marker => {

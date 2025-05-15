@@ -4,16 +4,14 @@
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container-fluid">
       <!-- Filters and Search -->
-      <div class="d-flex align-items-center filter-section">
+      <div class="d-flex align-items-center filter-section flex-wrap w-100">
         <!-- Search Input -->
         <div class="search-wrapper me-3">
-          <app-search
-            (search)="onSearch($event)"
-          ></app-search>
+          <app-search (search)="onSearch($event)"></app-search>
         </div>
 
         <!-- Label Filter Dropdown -->
-        <div class="label-filter me-3">
+        <div class="label-filter me-3" *ngIf="labels && labels.length > 0">
           <select
             class="form-select"
             (change)="onLabelFilterChange($event)"
@@ -24,8 +22,11 @@
             </option>
           </select>
         </div>
-        <!-- Add a fallback message if no labels are available -->
-        <p *ngIf="labels && labels.length === 0">No labels available.</p>
+
+        <!-- Fallback if no labels -->
+        <div class="me-3" *ngIf="labels && labels.length === 0">
+          <p class="text-white m-0">No labels available.</p>
+        </div>
 
         <!-- Add Label Button -->
         <div class="me-3">
@@ -33,7 +34,6 @@
             <i class="fas fa-plus"></i> Add Label
           </button>
         </div>
-
       </div>
     </div>
   </nav>
@@ -42,52 +42,50 @@
   <div class="map-wrapper">
     <div id="map" class="map-area"></div>
 
-    <!-- This is the container for our marker components -->
+    <!-- Marker containers -->
     <div #markerHost class="marker-host"></div>
-
-    <!-- Marker Details Overlay -->
-    <div class="marker-details-overlay" *ngIf="selectedMarker">
-      <app-marker-details
-        [marker]="selectedMarker.markerData"
-        (deleteMarker)="onDeleteMarker(selectedMarker.markerData)"
-        (save)="onSave()"
-      ></app-marker-details>
-    </div>
-
-    <!-- Marker List Overlay -->
-    <div class="marker-list-overlay" *ngIf="showMarkerList">
-      <h5>Assign Label to Markers</h5>
-      <ul>
-        <li *ngFor="let marker of markersWithoutLabel">
-          <input
-            type="checkbox"
-            [id]="'marker-' + marker.markerID"
-            [(ngModel)]="marker.selected"
-          />
-          <label [for]="'marker-' + marker.markerID">{{ marker.markerData.markerName }}</label>
-        </li>
-      </ul>
-      <button class="btn btn-primary mt-2" (click)="assignLabelToMarkers()">Assign Label</button>
-    </div>
+    <div #markerDetailsContainer class="marker-details-container"></div>
   </div>
 
   <!-- Add Label Modal -->
-  <div class="modal fade" id="labelModal" tabindex="-1" aria-labelledby="labelModalLabel" aria-hidden="true" [ngClass]="{'show': showLabelModal}" [ngStyle]="{'display': showLabelModal ? 'block' : 'none'}">
+  <div
+    class="modal fade"
+    id="labelModal"
+    tabindex="-1"
+    aria-labelledby="labelModalLabel"
+    aria-hidden="!showLabelModal"
+    [class.show]="showLabelModal"
+    [ngStyle]="{ display: showLabelModal ? 'block' : 'none' }"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="labelModalLabel">Create New Label</h5>
-          <button type="button" class="btn-close" (click)="closeLabelModal()" aria-label="Close"></button>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeLabelModal()"></button>
         </div>
         <div class="modal-body">
           <form>
             <div class="mb-3">
               <label for="labelName" class="form-label">Label Name</label>
-              <input type="text" class="form-control" id="labelName" [(ngModel)]="newLabel.labelName" name="labelName" placeholder="Enter label name">
+              <input
+                type="text"
+                class="form-control"
+                id="labelName"
+                [(ngModel)]="newLabel.labelName"
+                name="labelName"
+                placeholder="Enter label name"
+              />
             </div>
             <div class="mb-3">
               <label for="labelColor" class="form-label">Label Color</label>
-              <input type="color" class="form-control form-control-color" id="labelColor" [(ngModel)]="newLabel.labelColor" name="labelColor" title="Choose label color">
+              <input
+                type="color"
+                class="form-control form-control-color"
+                id="labelColor"
+                [(ngModel)]="newLabel.labelColor"
+                name="labelColor"
+                title="Choose label color"
+              />
             </div>
           </form>
         </div>
@@ -98,8 +96,4 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal Backdrop -->
-  <div class="modal-backdrop fade show" *ngIf="showLabelModal"></div>
-
 </div>

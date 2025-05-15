@@ -1,3 +1,33 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  color: white;
+
+  .marker-details-content {
+    width: 100%;
+    height: 100%;
+    padding: 0; // již nastaveno v :host
+  }
+
+  .form-control,
+  input,
+  textarea {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  label {
+    color: var(--gold, #d4af37);
+  }
+}
+
 .marker-options-panel {
   position: absolute;
   right: 0;
@@ -13,16 +43,15 @@
   font-family: sans-serif;
   z-index: 1000;
 
+  h3 {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.1rem;
+  }
+
   h6 {
     font-size: 0.8rem;
     color: #888;
     margin-bottom: 0.5rem;
-  }
-
-  h3 {
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
   }
 
   .icon-grid {
@@ -36,11 +65,11 @@
       height: 40px;
       background: #2a3e2b;
       border-radius: 4px;
-      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      overflow: hidden;
       transition: transform 0.2s ease;
 
       &:hover {
@@ -49,6 +78,7 @@
 
       &.selected {
         border: 2px solid #d4b87c;
+
         img {
           filter: grayscale(0%);
         }
@@ -84,15 +114,16 @@
     color: #d1b97f;
   }
 
-  input[type="text"] {
+  input[type="text"],
+  select,
+  textarea {
     background: #2a3e2b;
     color: #d1b97f;
     border: none;
     border-radius: 8px;
     padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    width: 100%;
     font-family: inherit;
+    width: 100%;
 
     &::placeholder {
       color: rgba(209, 185, 127, 0.6);
@@ -105,44 +136,14 @@
 
   textarea {
     flex: 1;
-    background: #2a3e2b;
-    color: #d1b97f;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem;
     resize: none;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
-    font-family: inherit;
+    margin: 0.5rem 0 1rem;
     min-height: 100px;
-
-    &::placeholder {
-      color: rgba(209, 185, 127, 0.6);
-    }
-
-    &:focus {
-      outline: 1px solid #d4b87c;
-    }
   }
 
-  select {
+  select option {
     background: #2a3e2b;
     color: #d1b97f;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    width: 100%;
-    font-family: inherit;
-
-    &:focus {
-      outline: 1px solid #d4b87c;
-    }
-
-    option {
-      background: #2a3e2b;
-      color: #d1b97f;
-    }
   }
 
   .button-row {
@@ -192,7 +193,7 @@
   }
 }
 
-// Responsive adjustments for smaller screens
+// Responsive
 @media (max-width: 768px) {
   .marker-options-panel {
     width: 100%;

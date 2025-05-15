@@ -1,4 +1,4 @@
-// Color Variables
+/* Color Variables */
 :root {
   --dark-green: #1a2c1a;
   --gold: #d4af37;
@@ -8,19 +8,21 @@
   --input-text: #ffffff;
 }
 
-// Global Styles
+/* Global Styles */
 body {
   background-color: #f4f4f4;
 }
 
-// Map Container Layout
+/* Map Container Layout */
 .map-container {
+  position: relative;
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-// Navbar Styles
+/* Navbar Styles */
 .custom-navbar {
   background: var(--dark-green);
   border-bottom: 2px solid #476947;
@@ -28,19 +30,19 @@ body {
   padding: 0.5rem 1rem;
 }
 
-// Filter Section Styles
+/* Filter Section Styles */
 .filter-section {
   width: 100%;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-// Search and Filter Styles
+/* Search and Filter Styles */
 .search-wrapper {
   flex-grow: 1;
   max-width: 300px;
 
-  // Style for the search component
   app-search {
     display: flex;
     width: 100%;
@@ -73,6 +75,7 @@ body {
   }
 }
 
+/* Select Styles */
 .form-select {
   background-color: var(--input-bg);
   color: var(--input-text);
@@ -80,18 +83,13 @@ body {
   width: 150px;
 }
 
-.filter-actions {
-  display: flex;
-  align-items: center;
-}
-
-// Add Label Button
+/* Add Label Button */
 .add-label-btn {
   background-color: var(--mid-green);
   color: var(--gold);
   border: 1px solid var(--gold);
   padding: 0.5rem 1rem;
-  margin-left: 0.5rem; // Přidán levý okraj
+  margin-left: 0.5rem;
 
   &:hover {
     background-color: var(--dark-green);
@@ -99,7 +97,7 @@ body {
   }
 }
 
-// Map Wrapper Styles
+/* Map Wrapper */
 .map-wrapper {
   position: relative;
   flex-grow: 1;
@@ -114,17 +112,34 @@ body {
   }
 }
 
-// Marker Details Overlay
-.marker-details-overlay {
+/* Marker Host */
+.marker-host {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  top: 0;
+  left: 0;
+  pointer-events: none;
   z-index: 1000;
-  width: 350px;
-  max-width: 90%;
 }
 
-// Marker List Overlay
+/* Marker Details Panel */
+.marker-details-container {
+  position: fixed; // Změna na fixed pro pozicování vůči viewport
+  top: 60px; // Výška nav baru
+  right: 0;
+  bottom: 0; // Přidáno - ukotvení ke spodku viewport
+  z-index: 1000;
+  width: 230px;
+  background: #1c2e1c;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  display: none; // Výchozí stav - skryto
+
+  &.visible {
+    display: block; // Zobrazí se při přidání třídy visible
+  }
+}
+
+/* Marker Overlay */
 .marker-list-overlay {
   position: absolute;
   top: 20px;
@@ -139,31 +154,31 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   max-height: 50vh;
+
+  h5 {
+    margin-bottom: 1rem;
+    color: var(--dark-green);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    label {
+      margin-left: 0.5rem;
+      color: var(--dark-green);
+    }
+  }
 }
 
-.marker-list-overlay h5 {
-  margin-bottom: 1rem;
-  color: var(--dark-green);
-}
-
-.marker-list-overlay ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.marker-list-overlay li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.marker-list-overlay li label {
-  margin-left: 0.5rem;
-  color: var(--dark-green);
-}
-
-// Modal Styles
+/* Modal Styles */
 .modal-content {
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -203,35 +218,29 @@ body {
   }
 }
 
-// Color picker styles
+/* Color Picker */
 .form-control-color {
   width: 100%;
   height: 38px;
 }
 
-// Hover and Active States
+/* Button Hover States */
 .btn-outline-light {
   &:hover {
     background-color: var(--mid-green);
     color: var(--gold);
   }
 }
-.marker-host {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none; /* Let map events pass through */
-  z-index: 1000; /* Ensure it's on top but doesn't interfere with markers */
-}
 
-/* If needed for debugging */
+/* Debug Marker */
 .marker-wrapper {
   display: inline-block;
   width: 2px;
   height: 2px;
-  opacity: 0.01; /* Almost invisible but still rendered */
+  opacity: 0.01;
 }
-// Responsive Adjustments
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .filter-section {
     flex-direction: column;
@@ -252,11 +261,11 @@ body {
     app-search {
       flex-direction: column;
 
-      input, button {
+      input,
+      button {
         width: 100%;
         margin-bottom: 0.5rem;
       }
     }
   }
 }
-

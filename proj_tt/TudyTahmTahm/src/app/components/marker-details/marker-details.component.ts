@@ -25,11 +25,11 @@ export class MarkerDetailsComponent implements OnChanges {
   @Output() deleteMarker = new EventEmitter<AppMarker>(); // Emits AppMarker
   @Output() refreshMarkers = new EventEmitter<void>(); // Added new EventEmitter
 
-  isVisible = false;
   description: string = '';
   markerName: string = '';
   selectedIconIndex: number = 0;
   isNewMarker: boolean = true;
+  isVisible: boolean = true;
 
   // Array of icon URLs for the icon grid
   icons: string[] = [
@@ -47,20 +47,15 @@ export class MarkerDetailsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['marker'] && changes['marker'].currentValue) {
-      this.isVisible = true;  // Make sure the sidebar is visible
-
+      // Zde už nemanipulujeme s isVisible
       if (this.marker?.markerID) {
-        // Existing marker
         this.isNewMarker = false;
         this.markerName = this.marker.markerName || '';
-        this.description = this.marker.markerDescription || '';  // Ensure description is populated
-        if (this.selectedIconIndex < 0) this.selectedIconIndex = 0;
+        this.description = this.marker.markerDescription || '';
       } else {
-        // New marker
         this.isNewMarker = true;
-        this.markerName = '';
-        this.description = '';  // Clear description for a new marker
-        this.selectedIconIndex = 0;
+        this.markerName = 'New Marker';
+        this.description = '';
       }
     }
   }

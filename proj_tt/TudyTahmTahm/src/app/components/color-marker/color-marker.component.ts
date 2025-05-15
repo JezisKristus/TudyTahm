@@ -20,9 +20,22 @@ import { CommonModule } from '@angular/common';
 export class ColorMarkerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() map!: L.Map;
   @Input() markerData!: AppMarker;       // data from backend
-  @Input() labelColor: string = '#d4af37'; // hex code from label
+  private _labelColor: string = '#d4af37';
 
+  @Input()
+  set labelColor(value: string) {
+    this._labelColor = value;
+    // Vynuťte aktualizaci ikony
+    if (this.leafletMarker) {
+      this.updateColor();
+    }
+  }
+  get labelColor(): string {
+    return this._labelColor;
+  }
   leafletMarker?: L.Marker;
+
+
 
   ngOnInit(): void {
     // Add marker only if we have all required inputs
@@ -70,10 +83,6 @@ export class ColorMarkerComponent implements OnInit, OnChanges, OnDestroy {
       icon: this.createPinIcon(this.labelColor)
     }).addTo(this.map);
 
-    // Add popup with marker name
-    if (this.markerData.markerName) {
-      this.leafletMarker.bindPopup(this.markerData.markerName);
-    }
   }
 
   private updateColor(): void {
