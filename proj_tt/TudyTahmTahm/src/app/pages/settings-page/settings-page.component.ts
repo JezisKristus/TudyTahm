@@ -1,13 +1,131 @@
-import {Component} from '@angular/core';
-import {SidebarComponent} from '../../components/sidebar/sidebar.component';
+/* settings-page.component.ts */
+import { Component, OnInit } from '@angular/core';
+import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { UserSettingsService, UserSettings } from '../../services/user-settings.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { User } from '../../models/user';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ChangeUsernameDialogComponent } from '../../components/settings/change-username-dialog';
+import { ChangeEmailDialogComponent } from '../../components/settings/change-email-dialog';
+import { ChangePasswordDialogComponent } from '../../components/settings/change-password-dialog';
+import { ChangeProfilePictureDialogComponent } from '../../components/settings/change-profile-picture-dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [
+    SidebarComponent,
+    CommonModule,
+    FormsModule,
+    ChangeUsernameDialogComponent,
+    ChangeEmailDialogComponent,
+    ChangePasswordDialogComponent,
+    ChangeProfilePictureDialogComponent
+  ],
   templateUrl: './settings-page.component.html',
-  styleUrl: './settings-page.component.scss'
+  styleUrls: ['./settings-page.component.scss']
 })
-export class SettingsPageComponent {
+export class SettingsPageComponent implements OnInit {
+  currentUser: User | null = null;
+  userSettings: UserSettings | null = null;
 
+  // flags for dialog visibility
+  isUsernameDialogVisible = false;
+  isEmailDialogVisible = false;
+  isPasswordDialogVisible = false;
+  isProfilePictureDialogVisible = false;
+
+  // success message
+  showSuccessMessage = false;
+  successMessage = '';
+
+  constructor(
+    private userSettingsService: UserSettingsService,
+    private authService: AuthenticationService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.currentUser = this.userSettingsService.getCurrentUser();
+    if (!this.currentUser) {
+      console.warn('No authenticated user found');
+      this.router.navigate(['/sign-in']);
+      return;
+    }
+
+    this.userSettingsService.settings$
+      .subscribe(settings => this.userSettings = settings);
+  }
+
+  /* ===== Open dialog methods ===== */
+  openChangeUsernameDialog(): void {
+    this.isUsernameDialogVisible = true;
+  }
+
+  openChangeEmailDialog(): void {
+    this.isEmailDialogVisible = true;
+  }
+
+  openChangePasswordDialog(): void {
+    this.isPasswordDialogVisible = true;
+  }
+
+  openChangeProfilePictureDialog(): void {
+    this.isProfilePictureDialogVisible = true;
+  }
+
+  /* ===== Save handlers ===== */
+  onUsernameSave(newUsername: string): void {
+    this.userSettingsService.updateUsername(newUsername)
+      .subscribe({
+        next: updatedUser => {
+          this.currentUser = updatedUser;
+          this.showSuccess('Username successfully updated');
+        },
+        error: err => console.error('Error updating username:', err)
+      });
+    this.isUsernameDialogVisible = false;
+  }
+
+  onEmailSave(newEmail: string): void {
+    this.userSettingsService.updateEmail(newEmail)
+      .subscribe({
+        next: updatedUser => {
+          this.currentUser = updatedUser;
+          this.showSuccess('Email successfully updated');
+        },
+        error: err => console.error('Error updating email:', err)
+      });
+    this.isEmailDialogVisible = false;
+  }
+
+  onPasswordSave(payload: { currentPassword: string; newPassword: string }): void {
+    this.userSettingsService.updatePassword(payload.currentPassword, payload.newPassword)
+      .subscribe({
+        next: () => this.showSuccess('Password successfully updated'),
+        error: err => console.error('Error updating password:', err)
+      });
+    this.isPasswordDialogVisible = false;
+  }
+
+  onProfilePictureSave(file: File): void {
+    this.userSettingsService.updateProfilePicture(file)
+      .subscribe({
+        next: updatedUser => {
+          this.currentUser = updatedUser;
+          this.showSuccess('Profile picture successfully updated');
+        },
+        error: err => console.error('Error updating profile picture:', err)
+      });
+    this.isProfilePictureDialogVisible = false;
+  }
+
+  /* ===== Helper ===== */
+  private showSuccess(message: string): void {
+    this.successMessage = message;
+    this.showSuccessMessage = true;
+    setTimeout(() => this.showSuccessMessage = false, 3000);
+  }
 }

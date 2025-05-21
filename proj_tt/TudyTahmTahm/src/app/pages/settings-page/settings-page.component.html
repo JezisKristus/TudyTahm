@@ -2,7 +2,6 @@
   <app-sidebar></app-sidebar>
 
   <div class="main-content">
-
     <div class="header">
       <div class="gear-icon">
         <i class="fas fa-gear"></i>
@@ -10,23 +9,53 @@
       <h1 class="page-title">Settings</h1>
     </div>
 
-    <div class="options">
-      <div class="user-section">
-        <div class="user-avatar"></div>
-        <span class="username">USERNAME</span>
-      </div>
-      <div class="user-options">
-        <div class="options-pressable">Change Username</div>
-        <div class="options-pressable">Change Email</div>
-        <div class="options-pressable">Change Password</div>
-        <div class="options-pressable">Change Profile Picture</div>
-      </div>
-      <div class="general-options">
-        <div class="options-pressable">Manage Groups</div>
-        <div class="options-pressable">Manage Labels</div>
-        <div class="options-pressable">Manage Maps</div>
-      </div>
+    <!-- Success message notification -->
+    <div class="success-message" *ngIf="showSuccessMessage">
+      {{ successMessage }}
     </div>
 
+    <div class="options">
+      <!-- User Profile Section -->
+      <div class="user-section">
+        <div class="user-avatar" [style.background-image]="currentUser?.userIconPath ? 'url(' + currentUser?.userIconPath + ')' : 'none'"></div>
+        <span class="username">{{ currentUser?.userName || 'USERNAME' }}</span>
+      </div>
+
+      <!-- User Profile Options -->
+      <div class="section-title">Profile Settings</div>
+      <div class="user-options">
+        <div class="options-pressable" (click)="openChangeUsernameDialog()">Change Username</div>
+        <div class="options-pressable" (click)="openChangeEmailDialog()">Change Email</div>
+        <div class="options-pressable" (click)="openChangePasswordDialog()">Change Password</div>
+        <div class="options-pressable" (click)="openChangeProfilePictureDialog()">Change Profile Picture</div>
+      </div>
+    </div>
   </div>
 </div>
+
+<app-change-username-dialog
+  [isVisible]="isUsernameDialogVisible"
+  [currentUsername]="currentUser?.userName || ''"
+  (cancel)="isUsernameDialogVisible = false"
+  (save)="onUsernameSave($event)"
+></app-change-username-dialog>
+
+<app-change-email-dialog
+  [isVisible]="isEmailDialogVisible"
+  [currentEmail]="currentUser?.userEmail || ''"
+  (cancel)="isEmailDialogVisible = false"
+  (save)="onEmailSave($event)"
+></app-change-email-dialog>
+
+<app-change-password-dialog
+  [isVisible]="isPasswordDialogVisible"
+  (cancel)="isPasswordDialogVisible = false"
+  (save)="onPasswordSave($event)"
+></app-change-password-dialog>
+
+<app-change-profile-picture-dialog
+  [isVisible]="isProfilePictureDialogVisible"
+  [currentImagePath]="currentUser?.userIconPath || ''"
+  (cancel)="isProfilePictureDialogVisible = false"
+  (save)="onProfilePictureSave($event)">
+</app-change-profile-picture-dialog>
