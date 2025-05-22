@@ -1,22 +1,8 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ComponentRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output, ViewChild,
-  ViewContainerRef,
-  ViewEncapsulation
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ComponentRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet';
 import 'leaflet-search';
-
 import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
 import { MarkerDetailsComponent } from '../marker-details/marker-details.component';
 import { SearchComponent } from '../search/search.component';
@@ -27,73 +13,64 @@ import { AppMarker } from '../../models/appMarker';
 import { Label } from '../../models/label';
 import { CreateLabelDto } from '../../models/dtos/create-label.dto';
 import { ColorMarkerComponent} from '../color-marker/color-marker.component';
+import { ExtendedMarker } from '../../models/extended-marker';
 
-// Interface for extended marker with AppMarker properties
-interface ExtendedMarker extends L.Marker {
-  selected: boolean;
-  markerData: AppMarker;
-  markerID: number;
-}
-interface MapData {
-  mapID: number;
-  mapName: string;
+class MapData {
+  mapName?: string
+  mapID?: number
 }
 
+/**
+ * Main map component responsible for displaying and managing interactive map features
+ * Handles markers, labels, and map interactions
+ */
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    NgIf,
-    NgForOf,
-    FormsModule,
-    SearchComponent,
-  ],
+  imports: [CommonModule, NgIf, NgForOf, FormsModule, SearchComponent],
   encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
-  // ViewChild for dynamic component creation
-  @ViewChild('markerHost', { read: ViewContainerRef })
-  private markerHost!: ViewContainerRef;
-  private colorMarkerRefs: ComponentRef<ColorMarkerComponent>[] = [];
+  /** Container reference for dynamic marker components */
+  @ViewChild('markerHost', { read: ViewContainerRef }) private markerHost!: ViewContainerRef;
 
+  /** Container reference for marker details component */
   @ViewChild('markerDetailsContainer', { read: ViewContainerRef, static: true })
   private markerDetailsContainer!: ViewContainerRef;
 
-  // Map related properties
+  /** References to color marker components */
+  private colorMarkerRefs: ComponentRef<ColorMarkerComponent>[] = [];
+
+  /** Interval ID for map change listener */
+  private intervalId?: number;
+
+  /** Main Leaflet map instance */
   map!: L.Map;
   mapName: string = '';
   isEditingName: boolean = false;
   private originalMapName: string = '';
-
   layer: any;
   mapID: number = Number(sessionStorage.getItem('Map.mapID')) || 1;
   private Lmarkers: ExtendedMarker[] = [];
   private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
-
-  // Marker related properties
   selectedMarker: ExtendedMarker | null = null;
-
-  // Label related properties
   @Input() labelFilter: number | null = null;
   selectedLabelFilter: number | null = null;
+  private isInitialLoad: boolean = true;
   labels: Label[] = [];
   showLabelModal: boolean = false;
-  newLabel: Label = {
-    labelID: 0,
-    labelName: '',
-    labelColor: '#3a5a40' // Default color - matches the theme
+  newLabel: CreateLabelDto = {
+    idMap: this.mapID,
+    name: '',
+    color: '#3a5a40'
   };
 
-  // Outputs
   @Output() markerClicked = new EventEmitter<L.Marker<any>>();
-
   showMarkerList: boolean = false;
   markersWithoutLabel: ExtendedMarker[] = [];
-
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -102,20 +79,28 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     private mapService: MapService,
   ) {}
 
+  /**
+   * Initializes the component and loads initial data
+   */
   ngOnInit(): void {
     const mapID = sessionStorage.getItem('Map.mapID');
-    this.loadMapData();
     if (!mapID) {
       console.error('No mapID found in sessionStorage.');
-      sessionStorage.setItem('Map.mapID', '1'); // Default mapID
+      sessionStorage.setItem('Map.mapID', '1');
       console.log('Setting default mapID to 1.');
     } else {
       console.log('Retrieved mapID from sessionStorage:', mapID);
     }
     this.mapID = Number(mapID) || 1;
-    this.labels = []; // Ensure labels array is initialized
+    this.labels = [];
+
+    this.loadMapData();
+    this.initMapChangeListener();
   }
 
+  /**
+   * Sets up the map after view initialization
+   */
   ngAfterViewInit(): void {
     const mapContainer = document.getElementById('map');
     if (!mapContainer) {
@@ -128,14 +113,45 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.loadLabels();
   }
 
+  /**
+   * Handles map instance changes by reloading relevant data
+   */
+  private handleMapChange(): void {
+    this.invalidateLabelsCache();
+    this.loadLabels();
+    this.loadMarkers();
+    this.loadMapData();
+  }
+
+  /**
+   * Initializes map polling to detect active map changes
+   */
+  private initMapChangeListener(): void {
+    let previousMapID = sessionStorage.getItem('Map.mapID');
+
+    const intervalId = setInterval(() => {
+      const currentMapID = sessionStorage.getItem('Map.mapID');
+
+      if (currentMapID && currentMapID !== previousMapID) {
+        previousMapID = currentMapID;
+        this.mapID = Number(currentMapID);
+        this.handleMapChange();
+      }
+    }, 500);
+
+    this.intervalId = intervalId;
+  }
+
+  /**
+   * Initializes the Leaflet map with default settings
+   */
   private initializeMap(): void {
     try {
-      this.map = L.map('map').setView([49.8022514, 15.6252330], 8); // Initialize the map
+      this.map = L.map('map').setView([49.8022514, 15.6252330], 8);
       this.layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(this.map);
 
-      // Add context menu handler for right-click
       this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
         this.showPopup(event.latlng);
       });
@@ -144,28 +160,26 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     }
   }
 
+  /**
+   * Displays marker creation popup at specified coordinates
+   * @param latlng Coordinates where the popup should appear
+   */
   private showPopup(latlng: L.LatLng): void {
-    // Destroy existing popup if it exists
     if (this.popupRef) {
       this.popupRef.destroy();
       this.popupRef = null;
     }
 
-    // Create popup container
-    const popupContainer = L.DomUtil.create('div', 'custom-popup-container');
-
-    // Create component
     this.popupRef = this.viewContainerRef.createComponent(AddMarkerPopupComponent);
-    this.popupRef.instance.latlng = latlng; // Pass coordinates to popup
+    this.popupRef.instance.latlng = latlng;
     this.popupRef.instance.addMarker.subscribe((coordinates: L.LatLng) => {
-      this.addMarker(coordinates); // Add marker to map
+      this.addMarker(coordinates);
       if (this.popupRef) {
-        this.popupRef.destroy(); // Close popup after adding marker
+        this.popupRef.destroy();
         this.popupRef = null;
       }
     });
 
-    // Attach popup to DOM
     document.body.appendChild(this.popupRef.location.nativeElement);
 
     const popupOverlay = L.popup({
@@ -178,26 +192,27 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       .setContent(this.popupRef.location.nativeElement)
       .openOn(this.map);
 
-    // Logic to remove popup when clicking on map
     const removePopup = () => {
       this.map.closePopup(popupOverlay);
       if (this.popupRef) {
         this.popupRef.destroy();
         this.popupRef = null;
       }
-      this.map.off('click', removePopup); // Remove listener
+      this.map.off('click', removePopup);
     };
 
     this.map.on('click', removePopup);
   }
 
-  // For new marker - uloží do backendu a obnoví markery (všechny jako color-marker)
+  /**
+   * Creates and adds a new marker to the map
+   * @param latlng Coordinates for the new marker
+   */
   private addMarker(latlng: L.LatLng): void {
     const markerData: AppMarker = {
       markerID: 0,
-      IDPoint: 0,
-      IDMap: this.mapID,
-      IDLabel: 0,
+      idMap: this.mapID,
+      idLabel: 0,
       markerName: 'New Marker',
       markerDescription: '',
       longitude: latlng.lng,
@@ -205,8 +220,59 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     };
 
     this.markerService.createMarker(markerData).subscribe({
-      next: () => {
-        this.refreshMarkers(); // Po úspěchu načti znovu všechny markery
+      next: (createdMarker) => {
+        try {
+          const compRef = this.markerHost.createComponent(ColorMarkerComponent);
+          compRef.instance.map = this.map;
+          compRef.instance.markerData = createdMarker;
+          compRef.instance.labelColor = '#0000ff';
+
+          // Správně: použijeme markerClick event z komponenty
+          compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
+            this.onColorMarkerClick(clickedMarkerData.markerID);
+          });
+
+          // Vytvoříme ExtendedMarker a přidáme ho do pole Lmarkers
+          setTimeout(() => {
+            if (compRef.instance.leafletMarker) {
+              const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
+              extendedMarker.markerData = createdMarker;
+              extendedMarker.markerID = createdMarker.markerID;
+              extendedMarker.selected = true;
+              this.Lmarkers.push(extendedMarker);
+              this.selectedMarker = extendedMarker;
+            }
+          });
+
+          this.colorMarkerRefs.push(compRef);
+
+          if (this.markerDetailsRef) {
+            this.markerDetailsRef.destroy();
+          }
+
+          this.markerDetailsRef = this.markerDetailsContainer.createComponent(MarkerDetailsComponent);
+          this.markerDetailsRef.instance.marker = { ...createdMarker };
+          this.markerDetailsRef.instance.labels = [...this.labels];
+
+          this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
+          this.markerDetailsRef.instance.save.subscribe((updatedMarker: AppMarker) => this.onSave(updatedMarker));
+          this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
+
+          this.markerDetailsRef.changeDetectorRef.detectChanges();
+
+          const container = document.querySelector('.marker-details-container');
+          if (container) {
+            container.classList.add('visible');
+          }
+
+          if (this.selectedLabelFilter !== null && createdMarker.idLabel !== this.selectedLabelFilter) {
+            compRef.instance.hide();
+          }
+
+        } catch (error) {
+          console.error('Error creating marker component:', error);
+          alert('Nepodařilo se přidat marker - chyba při vytváření komponenty.');
+        }
       },
       error: (err) => {
         console.error('Chyba při přidávání markeru:', err);
@@ -215,57 +281,48 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     });
   }
 
-
+  /**
+   * Adds multiple markers to the map
+   * @param markers Array of marker data to be added
+   */
   private addMarkersToMap(markers: AppMarker[]): void {
     if (!this.markerHost) {
       console.error('markerHost not initialized');
       return;
     }
 
-    // Clear old components
     this.colorMarkerRefs.forEach(ref => ref.destroy());
     this.colorMarkerRefs = [];
 
     markers.forEach(markerData => {
-      // Skip invalid markers
       if (!this.isValidLatLng(markerData.latitude, markerData.longitude)) {
         console.warn('Skipping invalid marker coordinates:', markerData);
         return;
       }
 
-      // Get color from label
-      const label = this.labels.find(l => l.labelID === markerData.IDLabel);
-      const color = label?.labelColor ?? '#d4af37';
-
       try {
-        // Create and insert ColorMarkerComponent
         const compRef = this.markerHost.createComponent(ColorMarkerComponent);
 
-        // Make sure the component instance exists
         if (!compRef || !compRef.instance) {
           console.error('Failed to create ColorMarkerComponent instance');
           return;
         }
 
-        // Set input properties
+        const label = this.labels.find(l => l.labelID === markerData.idLabel);
+        const color = label?.color ?? '#d4af37';
+
         compRef.instance.map = this.map;
         compRef.instance.markerData = markerData;
         compRef.instance.labelColor = color;
 
-        // Add click handler for marker selection
-        if (compRef.instance.leafletMarker) {
-          compRef.instance.leafletMarker.on('click', () => {
-            this.onColorMarkerClick(markerData.markerID);
-          });
-        } else {
-          // We need to wait for the marker to be created
-          setTimeout(() => {
-            if (compRef.instance.leafletMarker) {
-              compRef.instance.leafletMarker.on('click', () => {
-                this.onColorMarkerClick(markerData.markerID);
-              });
-            }
-          }, 100);
+        // Subscribe to marker click events
+        compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
+          console.log('Marker clicked with data:', clickedMarkerData);
+          this.onColorMarkerClick(clickedMarkerData.markerID);
+        });
+
+        if (this.selectedLabelFilter !== null && markerData.idLabel !== this.selectedLabelFilter) {
+          compRef.instance.hide();
         }
 
         this.colorMarkerRefs.push(compRef);
@@ -275,72 +332,89 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     });
   }
 
+  /**
+   * Handles marker click events
+   * @param markerID ID of the clicked marker
+   */
   private onColorMarkerClick(markerID: number): void {
-    const ref = this.colorMarkerRefs.find(ref => ref.instance.markerData.markerID === markerID);
-    if (!ref) return;
+    // Reset previous selection
+    if (this.selectedMarker) {
+      const previousRef = this.colorMarkerRefs.find(ref =>
+          ref.instance.leafletMarker && ref.instance.leafletMarker.markerID === this.selectedMarker?.markerID
+      );
+      if (previousRef) {
+        const label = this.labels.find(l => l.labelID === previousRef.instance.markerData.idLabel);
+        previousRef.instance.labelColor = label?.color ?? '#d4af37';
+      }
+    }
+
+    // Najdi správný marker podle markerID a nastav selectedMarker na jeho ExtendedMarker
+    const ref = this.colorMarkerRefs.find(ref =>
+      ref.instance.leafletMarker && ref.instance.leafletMarker.markerID === markerID
+    );
+
+    if (!ref || !ref.instance.leafletMarker) return;
+
+    // Ulož skutečný ExtendedMarker do selectedMarker
+    this.selectedMarker = ref.instance.leafletMarker;
+    ref.instance.labelColor = '#0000ff';
+
+    // Show marker details
     this.onMarkerClick(ref.instance.markerData);
   }
 
   onMarkerClick(markerData: AppMarker): void {
-    // Nastavení selectedMarker pro správnou funkci onCancel
-    const selectedColorMarker = this.colorMarkerRefs.find(ref =>
-      ref.instance.markerData.markerID === markerData.markerID
-    );
-    if (selectedColorMarker) {
-      this.selectedMarker = {
-        selected: true,
-        markerData: markerData,
-        markerID: markerData.markerID
-      } as ExtendedMarker;
-    }
-
-    // Změna barev markerů
-    this.colorMarkerRefs.forEach(ref => {
-      if (ref.instance.markerData.markerID === markerData.markerID) {
-        ref.instance.labelColor = '#4287f5';
-        ref.changeDetectorRef.detectChanges();
-      } else {
-        const label = this.labels.find(l => l.labelID === ref.instance.markerData.IDLabel);
-        ref.instance.labelColor = label?.labelColor ?? '#d4af37';
-        ref.changeDetectorRef.detectChanges();
+    try {
+      if (this.markerDetailsRef) {
+        this.markerDetailsRef.destroy();
       }
-    });
 
-    // Zrušení existujícího detailu
-    if (this.markerDetailsRef) {
-      this.markerDetailsRef.destroy();
-    }
+      this.markerDetailsRef = this.markerDetailsContainer.createComponent(MarkerDetailsComponent);
 
-    /// Vytvoření nového detailu
-    this.markerDetailsRef = this.markerDetailsContainer.createComponent(MarkerDetailsComponent);
-    this.markerDetailsRef.instance.marker = markerData;
-    this.markerDetailsRef.instance.labels = this.labels;
+      if (!this.markerDetailsRef || !this.markerDetailsRef.instance) {
+        throw new Error('Failed to create MarkerDetails component');
+      }
 
-    // Vynutit detekci změn po nastavení dat
-    this.markerDetailsRef.changeDetectorRef.detectChanges();
+      this.markerDetailsRef.instance.marker = { ...markerData };
+      this.markerDetailsRef.instance.labels = [...this.labels];
 
-    // Přidání třídy visible pro zobrazení containeru
-    const container = document.querySelector('.marker-details-container');
-    if (container) {
-      container.classList.add('visible');
-    }
+      this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
+      this.markerDetailsRef.instance.save.subscribe((updatedMarker: AppMarker) => this.onSave(updatedMarker));
+      this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
+      this.markerDetailsRef.instance.refreshMarkers.subscribe(() => this.refreshMarkers());
 
-    // Správné napojení eventů
-    this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
-    this.markerDetailsRef.instance.save.subscribe((updatedMarker: AppMarker) => this.onSave(updatedMarker));
-    this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
-  };
+      this.markerDetailsRef.changeDetectorRef.detectChanges();
 
-  private applyLabelFilter(marker: ExtendedMarker): void {
-    const filterID = this.labelFilter !== null ? this.labelFilter : this.selectedLabelFilter;
-
-    if (filterID !== null && marker.markerData && marker.markerData.IDLabel !== filterID) {
-      marker.setOpacity(0); // Hide marker
-    } else {
-      marker.setOpacity(1); // Show marker
+      const container = document.querySelector('.marker-details-container');
+      if (container) {
+        container.classList.add('visible');
+      }
+    } catch (error) {
+      console.error('Error creating marker details:', error);
+      this.clearSelectedMarker();
     }
   }
 
+  /**
+   * Updates marker visibility based on label filter
+   * @param marker Marker to be filtered
+   */
+  private applyLabelFilter(marker: ExtendedMarker): void {
+    const filterID = this.labelFilter !== null ? this.labelFilter : this.selectedLabelFilter;
+
+    if (filterID !== null && marker.markerData && marker.markerData.idLabel !== filterID) {
+      marker.setOpacity(0);
+    } else {
+      marker.setOpacity(1);
+    }
+  }
+
+  /**
+   * Validates coordinates
+   * @param lat Latitude value
+   * @param lng Longitude value
+   * @returns boolean indicating if coordinates are valid
+   */
   private isValidLatLng(lat: number, lng: number): boolean {
     return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
   }
@@ -352,30 +426,44 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   onSave(markerData?: AppMarker): void {
     if (!this.selectedMarker || !markerData) {
       console.warn('No marker selected or no marker data provided');
-      this.clearSelectedMarker(); // Zavřeme panel i při chybě
+      this.clearSelectedMarker();
       return;
     }
 
-    // Refresh only the saved marker
-    this.markerService.getMarkerByMarkerID(markerData.markerID).subscribe({
-      next: (updatedMarker) => {
-        if (updatedMarker) {  // Přidaná kontrola null
-          if (this.selectedMarker) {
-            this.selectedMarker.markerData = updatedMarker;
-            console.log(`Marker with ID ${markerData.markerID} refreshed.`);
-          }
-        } else {
-          console.warn('Server returned null for marker update');
-          // Použijeme původní data markeru
-          if (this.selectedMarker) {
-            this.selectedMarker.markerData = markerData;
-          }
+    this.markerService.updateMarker(markerData).subscribe({
+      next: (response) => {
+        const updatedMarker = response || markerData;
+        const markerIndex = this.colorMarkerRefs.findIndex(ref =>
+          ref.instance.markerData.markerID === updatedMarker.markerID
+        );
+        if (markerIndex !== -1) {
+          this.colorMarkerRefs[markerIndex].instance.removeFromMap();
+          this.colorMarkerRefs[markerIndex].destroy();
+          this.colorMarkerRefs.splice(markerIndex, 1);
         }
-        this.clearSelectedMarker(); // Vždy zavřeme panel
+        const compRef = this.markerHost.createComponent(ColorMarkerComponent);
+        compRef.instance.map = this.map;
+        compRef.instance.markerData = updatedMarker;
+        const label = this.labels.find(l => l.labelID === updatedMarker.idLabel);
+        compRef.instance.labelColor = label?.color ?? '#d4af37';
+        // Správně: použijeme markerClick event z komponenty
+        compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
+          this.onColorMarkerClick(clickedMarkerData.markerID);
+        });
+        this.colorMarkerRefs.push(compRef);
+        const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
+        if (extendedMarker) {
+          extendedMarker.markerData = updatedMarker;
+          extendedMarker.markerID = updatedMarker.markerID;
+          extendedMarker.selected = false;
+          this.Lmarkers.push(extendedMarker);
+        }
+        console.log('Marker successfully updated:', updatedMarker);
+        this.clearSelectedMarker();
       },
       error: (err) => {
-        console.error('Error refreshing marker:', err);
-        this.clearSelectedMarker(); // Zavřeme panel i při chybě
+        console.error('Error updating marker:', err);
+        this.clearSelectedMarker();
       }
     });
   }
@@ -397,17 +485,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       next: () => {
         console.log(`Marker with ID ${markerId} deleted successfully.`);
 
-        // Najít a odstranit ColorMarkerComponent
         const markerCompIndex = this.colorMarkerRefs.findIndex(ref =>
           ref.instance.markerData.markerID === markerId
         );
 
         if (markerCompIndex !== -1) {
-          // Odstranit marker z mapy
           this.colorMarkerRefs[markerCompIndex].instance.removeFromMap();
-          // Zničit komponentu
           this.colorMarkerRefs[markerCompIndex].destroy();
-          // Odstranit referenci z pole
           this.colorMarkerRefs.splice(markerCompIndex, 1);
         }
 
@@ -417,26 +501,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     });
   }
 
-  private removeMarkerFromMap(marker: ExtendedMarker): void {
-    if (!marker) return;
-
-    // Remove from map
-    marker.remove();
-    // Remove from our array
-    this.Lmarkers = this.Lmarkers.filter(m => m !== marker);
-
-    // Reset selected marker if it's the one being removed
-    if (this.selectedMarker === marker) {
-      this.selectedMarker = null;
-    }
-  }
-
   private loadMarkers(): void {
-    // Clear existing markers first to prevent duplicates
     this.Lmarkers.forEach(marker => marker.remove());
     this.Lmarkers = [];
 
-    const mapID = sessionStorage.getItem('Map.mapID') || '1'; // Default map ID
+    const mapID = sessionStorage.getItem('Map.mapID') || '1';
 
     if (!mapID) {
       console.error('No mapID found in sessionStorage.');
@@ -457,17 +526,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   private refreshMarkers(): void {
-    // Remove all markers from the map
     this.Lmarkers.forEach(marker => marker.remove());
     this.Lmarkers = [];
 
-    // Reset selected marker
     this.selectedMarker = null;
 
-    // Reload markers
     this.loadMarkers();
   }
 
+  /**
+   * Handles the search functionality
+   * @param query Search query string
+   */
   onSearch(query: string): void {
     if (!query) return;
 
@@ -489,10 +559,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
             return;
           }
 
-          // Zoom to location
           this.map.setView([lat, lon], 13);
 
-          // Odstraň starý search marker (pokud existuje)
           this.colorMarkerRefs = this.colorMarkerRefs.filter(ref => {
             if (ref.instance.markerData && ref.instance.markerData.markerID === -9999) {
               ref.destroy();
@@ -501,12 +569,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
             return true;
           });
 
-          // Přidej nový search marker s červenou barvou
           const markerData: AppMarker = {
-            markerID: -9999, // Speciální ID pro vyhledávací marker
-            IDPoint: -1,
-            IDMap: this.mapID,
-            IDLabel: 0,
+            markerID: -9999,
+            idMap: this.mapID,
+            idLabel: 0,
             markerName: 'Search Result',
             markerDescription: place.display_name,
             longitude: lon,
@@ -515,7 +581,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
           const compRef = this.markerHost.createComponent(ColorMarkerComponent);
           compRef.instance.map = this.map;
           compRef.instance.markerData = markerData;
-          compRef.instance.labelColor = '#e53935'; // červená pro vyhledávání
+          compRef.instance.labelColor = '#e53935';
+
+          // Správně: použijeme markerClick event z komponenty
+          compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
+            this.onColorMarkerClick(clickedMarkerData.markerID);
+          });
+
           this.colorMarkerRefs.push(compRef);
         } else {
           alert('Location not found.');
@@ -527,51 +599,121 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       });
   }
 
+  /**
+   * Updates label filter based on selection
+   * @param event Selection change event
+   */
   onLabelFilterChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const labelID = selectElement.value ? parseInt(selectElement.value, 10) : null;
-    this.selectedLabelFilter = labelID;
-    console.log('Filtering by label ID:', labelID);
 
-    // Update marker visibility when labelFilter changes
-    this.Lmarkers.forEach(marker => {
-      if (labelID !== null && marker.markerData && marker.markerData.IDLabel !== labelID) {
-        marker.setOpacity(0); // Hide marker
-      } else {
-        marker.setOpacity(1); // Show marker
-      }
-    });
-  }
-
-  private loadLabels(): void {
-    const mapID = sessionStorage.getItem('Map.mapID');
-
-    if (!mapID) {
-      console.error('No mapID found in sessionStorage.');
+    if (this.selectedLabelFilter === labelID) {
       return;
     }
 
-    this.labelService.getLabelsByMapID(Number(mapID)).subscribe({
-      next: (labels) => {
-        this.labels = labels || []; // Ensure labels is always an array
-        console.log('Labels loaded:', this.labels);
-      },
-      error: (err) => {
-        console.error('Error loading labels:', err);
-        this.labels = []; // Fallback to an empty array on error
+    this.selectedLabelFilter = labelID;
+    console.log('Filtering by label ID:', labelID);
+
+    this.colorMarkerRefs.forEach(ref => {
+      if (Number.isNaN(labelID) || labelID === null) {
+        ref.instance.show();
+      } else {
+        if (ref.instance.markerData.idLabel === labelID) {
+          ref.instance.show();
+        } else {
+          ref.instance.hide();
+        }
       }
     });
   }
 
+  /**
+   * Loads and caches labels for current map
+   */
+  private loadLabels(): void {
+    const mapID = Number(sessionStorage.getItem('Map.mapID'));
+
+    // Při prvním načtení ignorujeme cache
+    if (!this.isInitialLoad) {
+      const cachedLabels = sessionStorage.getItem(`labels_${mapID}`);
+      if (cachedLabels) {
+        try {
+          this.labels = JSON.parse(cachedLabels);
+          console.log('Načtené štítky z cache:', this.labels);
+          return;
+        } catch (e) {
+          console.warn('Chyba při parsování cache:', e);
+          sessionStorage.removeItem(`labels_${mapID}`);
+        }
+      }
+    }
+
+    this.labelService.getLabelsByMapID(mapID).subscribe({
+      next: (labels) => {
+        this.labels = labels.map(label => ({
+          labelID: label.labelID,
+          idMap: label.idMap,
+          name: label.name,
+          color: label.color
+        }));
+
+        sessionStorage.setItem(`labels_${mapID}`, JSON.stringify(this.labels));
+        console.log('Načtené štítky z API:', this.labels);
+        this.isInitialLoad = false; // Nastavíme příznak na false po prvním načtení
+      },
+      error: (err) => {
+        console.error('Chyba při načítání štítků:', err);
+        this.labels = [];
+        this.isInitialLoad = false;
+      }
+    });
+  }
+
+  /**
+   * Deletes a label and refreshes related data
+   * @param labelID ID of label to delete
+   */
+  deleteLabel(labelID: number): void {
+    this.labelService.deleteLabel(labelID).subscribe({
+      next: () => {
+        console.log('Label deleted successfully');
+        this.invalidateLabelsCache();
+        this.loadLabels();
+        this.refreshMarkers();
+      },
+      error: (err) => {
+        console.error('Error deleting label:', err);
+        alert('Failed to delete label');
+      }
+    });
+  }
+
+  ensureLabelsLoaded(): void {
+    if (this.labels.length === 0) {
+      this.loadLabels();
+    }
+  }
+
+  private invalidateLabelsCache(): void {
+    const mapID = sessionStorage.getItem('Map.mapID');
+    if (mapID) {
+      sessionStorage.removeItem(`labels_${mapID}`);
+    }
+
+    Object.keys(sessionStorage)
+      .filter(key => key.startsWith('labels_'))
+      .forEach(key => sessionStorage.removeItem(key));
+
+    console.log('Labels cache invalidated');
+  }
+
   openLabelModal(): void {
-    // Reset the form
     this.newLabel = {
-      labelID: 0,
-      labelName: '',
-      labelColor: '#3a5a40'
+      idMap: this.mapID,
+      name: '',
+      color: '#3a5a40'
     };
 
-    // Show the modal
     this.showLabelModal = true;
   }
 
@@ -579,29 +721,38 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.showLabelModal = false;
   }
 
+  updateLabel(labelData: Label): void {
+    this.labelService.updateLabel(labelData).subscribe({
+      next: (updatedLabel) => {
+        console.log('Label updated successfully');
+        this.invalidateLabelsCache();
+        this.loadLabels();
+        this.refreshMarkers();
+      },
+      error: (err) => {
+        console.error('Error updating label:', err);
+        alert('Failed to update label');
+      }
+    });
+  }
   saveNewLabel(): void {
-    if (!this.newLabel.labelName.trim()) {
+    if (!this.newLabel.name.trim()) {
       alert('Label name is required');
       return;
     }
 
     const createLabelDto: CreateLabelDto = {
-      IDMap: this.mapID,
-      name: this.newLabel.labelName,
-      color: this.newLabel.labelColor
+      idMap: this.mapID,
+      name: this.newLabel.name,
+      color: this.newLabel.color
     };
 
     this.labelService.createLabel(createLabelDto).subscribe({
       next: (newLabel) => {
         console.log('New label created:', newLabel);
         this.closeLabelModal();
-        this.loadLabels(); // Reload all labels after creating a new label
-
-        // Only show markers without label if we actually have a label to assign
-        if (newLabel && newLabel.labelID) {
-          this.newLabel = newLabel;
-          this.showMarkersWithoutLabel();
-        }
+        this.invalidateLabelsCache();
+        this.loadLabels();
       },
       error: (err) => {
         console.error('Error saving label:', err);
@@ -610,46 +761,25 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     });
   }
 
-  private showMarkersWithoutLabel(): void {
-    // Filter markers without labels
-    this.markersWithoutLabel = this.Lmarkers
-      .filter(marker => marker.markerData && marker.markerData.IDLabel === 0);
-
-    // Reset selected state for all markers
-    this.markersWithoutLabel.forEach(marker => {
-      marker.selected = false;
-    });
-
-    // Only show the dialog if we actually have markers without labels
-    if (this.markersWithoutLabel.length > 0) {
-      this.showMarkerList = true;
-    } else {
-      console.log('No markers without labels found');
-    }
-  }
   private clearSelectedMarker(): void {
-    // Změna barvy posledního vybraného markeru
     if (this.selectedMarker) {
       const ref = this.colorMarkerRefs.find(ref =>
-        ref.instance.markerData.markerID === this.selectedMarker?.markerData.markerID
+        ref.instance.leafletMarker && ref.instance.leafletMarker.markerID === this.selectedMarker?.markerID
       );
       if (ref) {
-        const label = this.labels.find(l => l.labelID === ref.instance.markerData.IDLabel);
-        ref.instance.labelColor = label?.labelColor ?? '#d4af37'; // Výchozí barva pokud není label
+        const label = this.labels.find(l => l.labelID === ref.instance.markerData.idLabel);
+        ref.instance.labelColor = label?.color ?? '#d4af37';
         ref.changeDetectorRef.detectChanges();
       }
     }
 
-    // Reset selected marker
     this.selectedMarker = null;
 
-    // Skrytí detailů
     const container = document.querySelector('.marker-details-container');
     if (container) {
       container.classList.remove('visible');
     }
 
-    // Zrušení reference na marker-details komponentu
     if (this.markerDetailsRef) {
       this.markerDetailsRef.destroy();
       this.markerDetailsRef = undefined;
@@ -657,10 +787,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   onLocationSelected(location: {lat: number, lon: number, name: string}): void {
-    // Zoom to location
     this.map.setView([location.lat, location.lon], 13);
 
-    // Odstranit starý search marker
     this.colorMarkerRefs = this.colorMarkerRefs.filter(ref => {
       if (ref.instance.markerData && ref.instance.markerData.markerID === -9999) {
         ref.destroy();
@@ -669,12 +797,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       return true;
     });
 
-    // Přidat nový search marker
     const markerData: AppMarker = {
       markerID: -9999,
-      IDPoint: -1,
-      IDMap: this.mapID,
-      IDLabel: 0,
+      idMap: this.mapID,
+      idLabel: 0,
       markerName: 'Search Result',
       markerDescription: location.name,
       longitude: location.lon,
@@ -697,8 +823,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
     this.mapService.getMapById(Number(mapID)).subscribe({
       next: (mapData: MapData) => {
-        this.mapName = mapData.mapName;
-        this.originalMapName = mapData.mapName; // Uložení původního názvu
+        if (mapData && mapData.mapName) {
+          this.mapName = mapData.mapName.trim();
+          this.originalMapName = this.mapName;
+          this.updateInputValue(this.mapName);
+        } else {
+          console.warn('Received invalid map data');
+          this.mapName = 'Unnamed Map';
+          this.originalMapName = 'Unnamed Map';
+        }
       },
       error: (err: Error) => {
         console.error('Error loading map data:', err);
@@ -710,18 +843,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   updateMapName(): void {
     const trimmedMapName = this.mapName?.trim();
 
-    // 1. Kontrola prázdného názvu
     if (!trimmedMapName) {
       this.resetMapName();
       return;
     }
 
-    // 2. Pokud se název nezměnil, neprovádíme update
     if (trimmedMapName === this.originalMapName) {
       return;
     }
 
-    // 3. Získání mapID ze sessionStorage
     const mapID = sessionStorage.getItem('Map.mapID');
     if (!mapID) {
       console.error('No mapID found in sessionStorage.');
@@ -733,7 +863,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       mapName: trimmedMapName
     };
 
-    // 4. Volání služby pro aktualizaci názvu mapy
     this.mapService.updateMap(updateData.mapID, updateData).subscribe({
       next: (updatedMap) => {
         const newMapName = updatedMap?.mapName?.trim();
@@ -757,8 +886,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
   }
 
-// Pomocné metody
-
   private resetMapName(): void {
     this.mapName = this.originalMapName;
     this.updateInputValue(this.originalMapName);
@@ -776,20 +903,24 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     });
   }
 
-
   ngOnChanges(): void {
-    // Update marker visibility when labelFilter changes
     this.Lmarkers.forEach(marker => {
       this.applyLabelFilter(marker);
     });
   }
 
+  /**
+   * Handles cleanup when component is destroyed
+   */
   ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+
     if (this.map) {
       this.map.remove();
     }
 
-    // Clean up component references to prevent memory leaks
     if (this.popupRef) {
       this.popupRef.destroy();
       this.popupRef = null;
@@ -800,7 +931,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       this.markerDetailsRef = undefined;
     }
 
-    // Remove all event listeners from markers
     this.Lmarkers.forEach(marker => {
       marker.remove();
       marker.off();

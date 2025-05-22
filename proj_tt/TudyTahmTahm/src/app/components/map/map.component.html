@@ -32,13 +32,12 @@
 
         <!-- Label Filter Dropdown -->
         <div class="label-filter me-3" *ngIf="labels && labels.length > 0">
-          <select
-            class="form-select"
-            (change)="onLabelFilterChange($event)"
-          >
-            <option value="">All Labels</option>
+          <select [(ngModel)]="selectedLabelFilter"
+                  (change)="onLabelFilterChange($event)"
+                  (focus)="ensureLabelsLoaded()"> <!-- Přidáno -->
+            <option [value]="null">All labels</option>
             <option *ngFor="let label of labels" [value]="label.labelID">
-              {{ label.labelName }}
+              {{ label.name }}
             </option>
           </select>
         </div>
@@ -91,7 +90,7 @@
                 type="text"
                 class="form-control"
                 id="labelName"
-                [(ngModel)]="newLabel.labelName"
+                [(ngModel)]="newLabel.name"
                 name="labelName"
                 placeholder="Enter label name"
               />
@@ -102,7 +101,7 @@
                 type="color"
                 class="form-control form-control-color"
                 id="labelColor"
-                [(ngModel)]="newLabel.labelColor"
+                [(ngModel)]="newLabel.color"
                 name="labelColor"
                 title="Choose label color"
               />

@@ -1,5 +1,5 @@
 export interface GroupUser {
-  IDUser: number;
-  IDGroup: number;
-  IDPermission: number;
+  idUser: number;
+  idGroup: number;
+  idPermission: number;
 }

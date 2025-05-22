@@ -1,6 +1,6 @@
 export interface Journey {
   journeyID: number;
-  IDMap: number;
+  idMap: number;
   name: string;
   description: string;
   imagePath: string;

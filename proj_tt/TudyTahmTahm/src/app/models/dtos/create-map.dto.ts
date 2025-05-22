@@ -1,5 +1,5 @@
 export interface CreateMapDto {
-  IDUser: number;
+  idMap: number;
   isCustom: boolean;
   mapName: string;
   mapPath: string;

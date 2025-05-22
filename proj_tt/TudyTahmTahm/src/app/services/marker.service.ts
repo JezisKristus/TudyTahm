@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {AppMarker} from '../models/appMarker';
 import {CreateUpdateMarkerDto} from '../models/dtos/create-marker.dto';
 import {environment} from '../../environments/environment';
-import {tap} from 'rxjs/operators';
+import {map, tap, switchMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -32,9 +32,27 @@ export class MarkerService {
   public createMarker(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
     console.log('Sending create request with data:', createMarkerDto);
     return this.http.post<AppMarker>(`${environment.apiUrl}/Marker`, createMarkerDto).pipe(
-      tap(response => {
-        console.log('Received response from API:', response);
-        return response;
+      switchMap(response => {
+        // When API returns null, we need to fetch the newly created marker
+        if (!response) {
+          return this.getMarkersByMapId(createMarkerDto.idMap).pipe(
+            map(markers => {
+              // Find the marker we just created by matching coordinates
+              const newMarker = markers.find(m =>
+                Math.abs(m.latitude - createMarkerDto.latitude) < 0.0000001 &&
+                Math.abs(m.longitude - createMarkerDto.longitude) < 0.0000001
+              );
+              if (!newMarker) {
+                throw new Error('Created marker not found in the updated list');
+              }
+              return newMarker;
+            })
+          );
+        }
+        return of(response);
+      }),
+      tap(result => {
+        console.log('Final marker data:', result);
       })
     );
   }

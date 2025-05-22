@@ -1,8 +1,7 @@
 export interface AppMarker {
   markerID: number;
-  IDPoint: number;
-  IDMap: number; // Sending IDMap to API, I don't work with gpsPoint at all
-  IDLabel: number;
+  idMap: number; // Sending IDMap to API, I don't work with gpsPoint at all
+  idLabel: number;
   markerName: string;
   markerDescription: string;
   longitude: number; // Musí být platné číslo

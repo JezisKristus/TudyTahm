@@ -1,5 +1,5 @@
 export interface CreateLabelDto {
-  IDMap : number;
+  idMap : number;
   name: string;
   color: string; // Hex color code
 }

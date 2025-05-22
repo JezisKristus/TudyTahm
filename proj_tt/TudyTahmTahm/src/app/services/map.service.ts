@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {catchError} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {AppMap} from '../models/appMap';
 
 @Injectable({
@@ -25,7 +25,7 @@ export class MapService {
     const userId = this.getCurrentUserId();
     return this.http.get<AppMap[]>(`${this.apiUrl}/Map/ByUserID/${userId}`)
       .pipe(
-        catchError(this.handleError)
+        catchError(this.handleError),
       );
   }
 
@@ -45,7 +45,6 @@ export class MapService {
       }
     };
 
-    // Obalení názvu do JSON objektu
     const payload = JSON.stringify(map.mapName);
 
     return this.http.put<AppMap>(

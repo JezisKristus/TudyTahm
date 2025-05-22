@@ -27,14 +27,8 @@ export class MarkerDetailsComponent implements OnChanges {
 
   description: string = '';
   markerName: string = '';
-  selectedIconIndex: number = 0;
   isNewMarker: boolean = true;
   isVisible: boolean = true;
-
-  // Array of icon URLs for the icon grid
-  icons: string[] = [
-    'icon1.png'
-  ];
 
   constructor(private markerService: MarkerService) {}
 
@@ -47,7 +41,6 @@ export class MarkerDetailsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['marker'] && changes['marker'].currentValue) {
-      // Zde už nemanipulujeme s isVisible
       if (this.marker?.markerID) {
         this.isNewMarker = false;
         this.markerName = this.marker.markerName || '';
@@ -65,10 +58,6 @@ export class MarkerDetailsComponent implements OnChanges {
       return 'Coordinates not available';
     }
     return `${this.marker.latitude.toFixed(6)}, ${this.marker.longitude.toFixed(6)}`;
-  }
-
-  selectIcon(index: number): void {
-    this.selectedIconIndex = index;
   }
 
   onCancel(): void {
@@ -93,39 +82,20 @@ export class MarkerDetailsComponent implements OnChanges {
 
   onSave(): void {
     if (this.marker) {
-      const markerDto = {
-        markerID: this.marker.markerID || 0,
-        IDPoint: this.marker.IDPoint || 0,
-        IDMap: this.marker.IDMap || 1,
-        IDLabel: this.marker.IDLabel || 0, // Default 0
-        markerName: this.marker.markerName || 'new marker',
-        markerDescription: this.marker.markerDescription || '',
-        markerIconPath: this.icons[this.selectedIconIndex],
-        latitude: this.marker.latitude,
-        longitude: this.marker.longitude
+      const mapID = Number(sessionStorage.getItem('Map.mapID')) || 0;
+      if (mapID === 0) {
+        console.error('No valid mapID found in sessionStorage');
+        return;
+      }
+
+      const markerDto: AppMarker = {
+        ...this.marker,
+        markerName: this.markerName,
+        markerDescription: this.description
       };
 
-      if (this.marker.markerID) {
-        // Update existing marker
-        this.markerService.updateMarker(markerDto).subscribe({
-          next: (updatedMarker) => {
-            this.marker = updatedMarker;
-            this.save.emit(updatedMarker); // Emit only the updated marker
-            this.isVisible = false;
-          },
-          error: (err) => console.error('Error updating marker:', err)
-        });
-      } else {
-        // Create new marker
-        this.markerService.createMarker(markerDto).subscribe({
-          next: (createdMarker) => {
-            this.marker = createdMarker;
-            this.save.emit(createdMarker); // Emit only the created marker
-            this.isVisible = false;
-          },
-          error: (err) => console.error('Error creating marker:', err)
-        });
-      }
+      this.save.emit(markerDto);
+      this.isVisible = false;
     }
   }
 

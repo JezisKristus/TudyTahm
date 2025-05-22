@@ -37,6 +37,54 @@ body {
   align-items: center;
   flex-wrap: wrap;
 }
+/* Label Filter Dropdown Styles */
+.label-filter {
+  select {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    font-size: 0.9rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d4af37' d='M2.5 4L6 7.5 9.5 4 10.5 5 6 9.5 1.5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    cursor: pointer;
+    min-width: 180px;
+    transition: all 0.3s ease;
+
+    &:hover, &:focus {
+      background-color: var(--mid-green);
+      border-color: var(--gold);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+    }
+
+    option {
+      background-color: var(--dark-green);
+      color: var(--input-text);
+      padding: 8px;
+
+      &:hover {
+        background-color: var(--mid-green);
+      }
+
+      &:checked {
+        background-color: var(--mid-green);
+        color: var(--gold);
+      }
+    }
+  }
+
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    select {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+}
 /* Map Title Styles */
 .map-title {
   .editable-title {

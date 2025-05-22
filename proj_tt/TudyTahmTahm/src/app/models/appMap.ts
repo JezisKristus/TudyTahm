@@ -1,6 +1,6 @@
 export interface AppMap {
   mapID: number;
-  IDUser: number;
+  idUser: number;
   isCustom: boolean;
   mapName: string;
   mapPath: string;

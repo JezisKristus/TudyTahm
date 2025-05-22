@@ -1,31 +1,35 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   SimpleChanges
 } from '@angular/core';
 import * as L from 'leaflet';
 import { AppMarker } from '../../models/appMarker';
 import { CommonModule } from '@angular/common';
+import { ExtendedMarker } from '../../models/extended-marker';
 
 @Component({
   selector: 'app-color-marker',
-  // We need a minimal template to create a DOM element
   template: '<div class="marker-wrapper"></div>',
   standalone: true,
   imports: [CommonModule]
 })
 export class ColorMarkerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() map!: L.Map;
-  @Input() markerData!: AppMarker;       // data from backend
+  @Input() markerData!: AppMarker;
+  @Output() markerClick = new EventEmitter<AppMarker>();
+
+  leafletMarker?: ExtendedMarker;
   private _labelColor: string = '#d4af37';
 
   @Input()
   set labelColor(value: string) {
     this._labelColor = value;
-    // Vynuťte aktualizaci ikony
     if (this.leafletMarker) {
       this.updateColor();
     }
@@ -33,45 +37,36 @@ export class ColorMarkerComponent implements OnInit, OnChanges, OnDestroy {
   get labelColor(): string {
     return this._labelColor;
   }
-  leafletMarker?: L.Marker;
-
-
 
   ngOnInit(): void {
-    // Add marker only if we have all required inputs
     if (this.map && this.markerData) {
       this.addMarker();
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // If map or markerData changes, recreate the marker
     if ((changes['map'] && !changes['map'].firstChange) ||
       (changes['markerData'] && !changes['markerData'].firstChange)) {
       this.addMarker();
     }
-    // Color change
     if (changes['labelColor'] && !changes['labelColor'].firstChange && this.leafletMarker) {
       this.updateColor();
     }
   }
 
   private addMarker(): void {
-    // Skip if we don't have required data
     if (!this.map || !this.markerData) {
       console.error('Missing map or marker data in ColorMarkerComponent');
       return;
     }
 
-    // Validate coordinates
     if (!this.isValidLatLng(this.markerData.latitude, this.markerData.longitude)) {
       console.error('Invalid marker coordinates:', this.markerData);
       return;
     }
 
-    // Remove old marker if it exists
     if (this.leafletMarker) {
-      this.map.removeLayer(this.leafletMarker);
+      this.leafletMarker.remove();
     }
 
     const coords: L.LatLngExpression = [
@@ -79,11 +74,25 @@ export class ColorMarkerComponent implements OnInit, OnChanges, OnDestroy {
       this.markerData.longitude
     ];
 
-    this.leafletMarker = L.marker(coords, {
-      icon: this.createPinIcon(this.labelColor)
-    }).addTo(this.map);
+    const marker = L.marker(coords, {
+      icon: this.createPinIcon(this.labelColor),
+      interactive: true,
+      draggable: false
+    }).on('click', () => {
+      console.log('Marker clicked in component:', this.markerData);
+      this.markerClick.emit(this.markerData);
+    });
 
+    // Extend the marker with our custom properties
+    const extendedMarker = marker as ExtendedMarker;
+    extendedMarker.selected = false;
+    extendedMarker.markerData = this.markerData;
+    extendedMarker.markerID = this.markerData.markerID;
+
+    this.leafletMarker = extendedMarker;
+    this.leafletMarker.addTo(this.map);
   }
+
   removeFromMap(): void {
     if (this.leafletMarker) {
       this.leafletMarker.remove();
@@ -117,9 +126,28 @@ export class ColorMarkerComponent implements OnInit, OnChanges, OnDestroy {
       lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
   }
 
+  public refreshMarker(): void {
+    if (this.leafletMarker) {
+      this.leafletMarker.remove();
+    }
+    this.addMarker();
+  }
+
   ngOnDestroy(): void {
     if (this.leafletMarker) {
       this.map.removeLayer(this.leafletMarker);
+    }
+  }
+
+  hide(): void {
+    if (this.leafletMarker) {
+      this.leafletMarker.setOpacity(0);
+    }
+  }
+
+  show(): void {
+    if (this.leafletMarker) {
+      this.leafletMarker.setOpacity(1);
     }
   }
 }

@@ -14,7 +14,12 @@ export class LabelService{
   public constructor(private http: HttpClient) {}
   public getLabelsByMapID(id: number): Observable<Label[]> {
     console.log('Sending request with id:' + id);
-    return this.http.get<Label[]>(`${environment.apiUrl}/Label/ByMapID/${id}`); // Ready for multiple maps
+    return this.http.get<Label[]>(`${environment.apiUrl}/Label/ByMapID/${id}`).pipe(
+      tap(response => {
+        console.log('Received response from API:', response);
+        return response;
+      })
+    ); // Ready for multiple maps
   }
   public getLabelByLabelID(id: number): Observable<Label> {
     console.log('Sending request with id:' + id);
@@ -43,14 +48,14 @@ export class LabelService{
       })
     );
   }
-  public deleteLabel(label: Label): Observable<void> {
-    if (!label.labelID) {
+  public deleteLabel(labelID : number): Observable<void> {
+    if (labelID) {
       throw new Error('Label ID is required to delete a label.');
     }
-    const url = `${environment.apiUrl}/Label/${label.labelID}`;
+    const url = `${environment.apiUrl}/Label/${labelID}`;
     console.log(`Sending DELETE request to: ${url}`);
     return this.http.delete<void>(url).pipe(
-      tap(() => console.log(`Label with ID ${label.labelID} deleted successfully.`))
+      tap(() => console.log(`Label with ID ${labelID} deleted successfully.`))
     );
   }
 }
