@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TT_API.Models {
-    public class JourneyPoint {
+    public class JourneyPoint
+    {
 
         [Key]
         public int PointID { get; set; }
@@ -11,9 +12,10 @@ namespace TT_API.Models {
         public float Latitude { get; set; }
         public float Longitude { get; set; }
 
-        [ForeignKey("JourneyID")]
+        [ForeignKey("IDJourney")]
         public Journey Journey { get; set; }
 
     }
+
 
 }

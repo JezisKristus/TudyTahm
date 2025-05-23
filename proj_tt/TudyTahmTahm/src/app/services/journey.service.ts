@@ -44,7 +44,7 @@ export class JourneyService {
   }
 
   public removePointFromJourney(jourID: number, pointID: number): Observable<any> {
-    return this.http.delete<any>(`${environment.apiUrl}/Journey/PointFromJourney/${jourID}?pointID=${pointID}`)
+    return this.http.request<any>('delete', `${environment.apiUrl}/Journey/PointFromJourney/${jourID}`, { body: pointID })
       .pipe(
         tap((response) => console.log('Removed Point from Journey:', response))
       );

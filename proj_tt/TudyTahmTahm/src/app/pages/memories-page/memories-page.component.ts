@@ -61,11 +61,13 @@ export class MemoriesPageComponent implements OnInit {
       });
   }
 
-
   onJourneyClick(journey: Journey): void {
+    // Save the entire journey object to sessionStorage
     sessionStorage.setItem('Journey', JSON.stringify(journey));
     sessionStorage.setItem('Journey.journeyID', journey.journeyID.toString());
     console.log('Storing journey data into sessionStorage:', journey);
+    // Redirect to journey page
+    this.router.navigate(['/journey', journey.journeyID]);
   }
 
   // Delete journey functionality
