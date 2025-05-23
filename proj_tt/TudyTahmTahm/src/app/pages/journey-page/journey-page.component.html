@@ -7,9 +7,8 @@
     <!-- Points/info panel on the right -->
     <div class="journey-info-panel">
       <div class="header">
-        <i class="fas fa-arrow-circle-left" routerLink="/memories"></i>
         <input class="journey-name" placeholder="Journey name..." [(ngModel)]="journeyName" />
-      </div>
+      </div> <!-- TODO add description field -->
 
       <div *ngIf="loading" class="loading-indicator">
         <i class="fas fa-spinner fa-spin"></i> Loading journey...

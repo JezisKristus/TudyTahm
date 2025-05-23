@@ -122,7 +122,7 @@ export class JourneyPageComponent implements OnInit {
     const latlngs = visiblePoints.map(p => L.latLng(p.lat, p.lng));
     this.mapLayers = [
       L.polyline(latlngs, { color: 'red', weight: 4 }),
-      ...latlngs.map(p => L.circleMarker(p, { radius: 5, color: 'red' }))
+      ...latlngs.map(p => L.circleMarker(p, { radius: 3, color: 'red' }))
     ];
     this.distance = this.calculateDistance(latlngs);
   }
