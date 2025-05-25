@@ -5,4 +5,12 @@ export interface AppMap {
   mapName: string;
   mapPath: string;
   mapPreviewPath: string;
+  description: string;
+  sharedWith: SharedUser[];
+}
+
+export interface SharedUser {
+  userId: number;
+  userName: string;
+  accessLevel: 'read' | 'write' | 'owner';
 }

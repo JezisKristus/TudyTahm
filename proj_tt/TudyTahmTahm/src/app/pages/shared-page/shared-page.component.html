@@ -5,33 +5,101 @@
     <!-- Header -->
     <div class="content-header">
       <div class="share-icon-large"></div>
-      <h1>Shared</h1>
+      <h1>Shared Maps</h1>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="search-container">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (ngModelChange)="applyFilters()"
+          placeholder="Search shared maps..."
+          class="search-input"
+        >
+      </div>
+      <div class="filter-container">
+        <select [(ngModel)]="selectedOwner" (ngModelChange)="applyFilters()" class="filter-select">
+          <option value="">All Owners</option>
+          <option *ngFor="let owner of uniqueOwners" [ngValue]="owner.id">
+            {{ owner.name }}
+          </option>
+        </select>
+        <select [(ngModel)]="selectedAccessLevel" (ngModelChange)="applyFilters()" class="filter-select">
+          <option value="">All Access Levels</option>
+          <option value="read">Read Only</option>
+          <option value="write">Write Access</option>
+          <option value="owner">Owner</option>
+        </select>
+      </div>
     </div>
 
     <!-- Two-column layout -->
     <div class="content-body">
-      <!-- Left column - Groups -->
+      <!-- Left column - Groups/Categories -->
       <div class="groups-panel">
-        <div class="group-item">Group 1</div>
-        <div class="group-item">Group 2</div>
+        <div class="panel-title">Categories</div>
+        <div 
+          class="group-item" 
+          [class.active]="selectedCategory === 'all'"
+          (click)="selectCategory('all')"
+        >
+          All Maps
+        </div>
+        <div 
+          class="group-item" 
+          [class.active]="selectedCategory === 'owned'"
+          (click)="selectCategory('owned')"
+        >
+          Maps I Own
+        </div>
+        <div 
+          class="group-item" 
+          [class.active]="selectedCategory === 'shared'"
+          (click)="selectCategory('shared')"
+        >
+          Shared with Me
+        </div>
+        <div 
+          class="group-item" 
+          [class.active]="selectedCategory === 'recent'"
+          (click)="selectCategory('recent')"
+        >
+          Recently Accessed
+        </div>
       </div>
 
       <!-- Right column - Map items -->
       <div class="maps-panel">
-        <div class="map-item">
-          <div class="map-thumbnail"></div>
-          <div class="map-details">
-            <h2 class="map-title">Journey to the marketplace</h2>
-            <p class="map-author">By Petr Svab</p>
-            <p class="map-description">Exploring the world with Filip Nprune</p>
-          </div>
+        <div *ngIf="filteredMaps.length === 0" class="no-maps-message">
+          <div class="no-maps-icon"></div>
+          <h3>No shared maps found</h3>
+          <p>Try adjusting your search or filter criteria</p>
         </div>
 
-        <div class="map-item">
-          <div class="map-thumbnail"></div>
+        <div *ngFor="let map of filteredMaps" class="map-item" (click)="openMap(map)">
+          <div class="map-thumbnail" [style.background-image]="getMapThumbnail(map)"></div>
           <div class="map-details">
-            <h2 class="map-title">Journey to Trosky</h2>
-            <p class="map-author">By Jan Novak</p>
+            <h2 class="map-title">{{ map.mapName }}</h2>
+            <p class="map-author">By {{ getOwnerName(map.idUser) }}</p>
+            <p class="map-description" *ngIf="map.description">{{ map.description }}</p>
+            <div class="map-meta">
+              <span class="access-badge" [class]="getAccessLevel(map)">
+                {{ getAccessLevelText(map) }}
+              </span>
+              <span class="shared-count" *ngIf="map.sharedWith && map.sharedWith.length > 0">
+                Shared with {{ map.sharedWith.length }} user{{ map.sharedWith.length > 1 ? 's' : '' }}
+              </span>
+            </div>
+          </div>
+          <div class="map-actions">
+            <button class="action-btn" (click)="$event.stopPropagation(); openMapDetails(map)" title="Map Details">
+              <span class="info-icon"></span>
+            </button>
+            <button class="action-btn" (click)="$event.stopPropagation(); shareMap(map)" title="Share Map">
+              <span class="share-icon"></span>
+            </button>
           </div>
         </div>
       </div>
@@ -39,12 +107,13 @@
 
     <!-- Footer with action buttons -->
     <div class="content-footer">
-      <button class="add-users-btn">
-        Add Users
-        <span class="plus-icon">+</span>
+      <button class="footer-btn secondary" (click)="refreshMaps()">
+        <span class="refresh-icon"></span>
+        Refresh
       </button>
-      <button class="settings-btn">
-        <span class="gear-icon"></span>
+      <button class="footer-btn primary" (click)="openShareDialog()">
+        <span class="plus-icon">+</span>
+        Share New Map
       </button>
     </div>
   </div>

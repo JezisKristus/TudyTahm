@@ -1,0 +1,68 @@
+<form class="map-options-panel" *ngIf="map && isOpen">
+  <h3>Map Details</h3>
+
+  <label class="label">Name</label>
+  <input
+    type="text"
+    [(ngModel)]="editedName"
+    name="mapName"
+    required
+    #mapNameModel="ngModel"
+    [class.invalid]="mapNameModel.invalid && mapNameModel.touched"
+    (blur)="onNameChange()"
+  />
+  <div *ngIf="mapNameModel.invalid && mapNameModel.touched" class="error">
+    Name is required.
+  </div>
+
+  <label class="label">Description</label>
+  <textarea 
+    [(ngModel)]="editedDescription" 
+    name="description" 
+    placeholder="Add description"
+    (blur)="onDescriptionChange()"
+  ></textarea>
+
+  <hr>
+
+  <div class="sharing-section">
+    <div class="section-title">Shared With</div>
+    <div class="shared-users" *ngIf="map && map.sharedWith && map.sharedWith.length > 0; else noSharedUsers">
+      <div *ngFor="let user of map?.sharedWith" class="shared-user">
+        <div class="user-info">
+          <span class="user-name">{{ user.userName }}</span>
+          <span class="access-level" [class]="user.accessLevel">{{ user.accessLevel }}</span>
+        </div>
+        <button *ngIf="canRemoveUser(user)" (click)="onRemoveUser(user)" class="remove-btn">
+          Remove
+        </button>
+      </div>
+    </div>
+    <ng-template #noSharedUsers>
+      <div class="no-shared-users">This map is not shared with anyone</div>
+    </ng-template>
+
+    <div class="share-form" *ngIf="isOwner">
+      <label class="label">Share with User</label>
+      <div class="input-group">
+        <input 
+          type="text" 
+          [(ngModel)]="newUserId" 
+          name="userId"
+          placeholder="Enter user ID"
+        >
+        <select [(ngModel)]="selectedAccessLevel" name="accessLevel">
+          <option value="read">Read Only</option>
+          <option value="write">Write</option>
+        </select>
+      </div>
+      <div class="button-row">
+        <button type="button" (click)="onShare()" class="share-btn">Share</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-row">
+    <button type="button" class="cancel" (click)="onClose()">Close</button>
+  </div>
+</form>

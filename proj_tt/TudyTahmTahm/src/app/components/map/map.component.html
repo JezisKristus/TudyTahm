@@ -34,7 +34,7 @@
         <div class="label-filter me-3" *ngIf="labels && labels.length > 0">
           <select [(ngModel)]="selectedLabelFilter"
                   (change)="onLabelFilterChange($event)"
-                  (focus)="ensureLabelsLoaded()"> <!-- Přidáno -->
+                  (focus)="ensureLabelsLoaded()">
             <option [value]="null">All labels</option>
             <option *ngFor="let label of labels" [value]="label.labelID">
               {{ label.name }}
@@ -53,6 +53,13 @@
             <i class="fas fa-plus"></i> Add Label
           </button>
         </div>
+
+        <!-- Details Button -->
+        <div class="ms-auto">
+          <button class="btn btn-outline-light details-btn" (click)="toggleDetailsPanel()">
+            <i class="fas fa-info-circle"></i> Details
+          </button>
+        </div>
       </div>
     </div>
   </nav>
@@ -63,8 +70,20 @@
 
     <!-- Marker containers -->
     <div #markerHost class="marker-host"></div>
-    <div #markerDetailsContainer class="marker-details-container"></div>
+    <div #markerDetailsContainer class="marker-details-container">
+      <div class="details-panel"></div>
+    </div>
   </div>
+
+  <!-- Map Details Panel -->
+  <app-map-details-panel
+    [map]="currentMap"
+    [isOpen]="isDetailsPanelOpen"
+    (close)="closeDetailsPanel()"
+    (share)="onShare($event)"
+    (removeUser)="onRemoveUser($event)"
+    (updateMap)="onUpdateMap($event)">
+  </app-map-details-panel>
 
   <!-- Add Label Modal -->
   <div
@@ -110,7 +129,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeLabelModal()">Cancel</button>
-          <button type="button" class="btn btn-primary" (click)="saveNewLabel()">Save Label</button>
+          <button type="button" class="btn btn-primary" (click)="createLabel()">Create Label</button>
         </div>
       </div>
     </div>

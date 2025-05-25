@@ -11,12 +11,14 @@
 /* Global Styles */
 body {
   background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Map Container Layout */
 .map-container {
-  position: relative;
-  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -24,22 +26,95 @@ body {
 
 /* Navbar Styles */
 .custom-navbar {
+  flex: 0 0 auto;
   background: var(--dark-green);
   border-bottom: 2px solid #476947;
   color: var(--gold);
   padding: 0.5rem 1rem;
+  z-index: 1000;
+  position: relative;
+}
+
+.container-fluid {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem;
 }
 
 /* Filter Section Styles */
 .filter-section {
-  width: 100%;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  gap: 1rem;
+  flex: 1;
 }
+
+/* Map Title Styles */
+.map-title {
+  min-width: 200px;
+  
+  .editable-title {
+    position: relative;
+
+    .map-title-input {
+      color: var(--gold);
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      padding: 0.2rem 0.5rem;
+      width: 100%;
+      min-width: 200px;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      &:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+/* Search and Filter Styles */
+.search-wrapper {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+
+  app-search {
+    display: flex;
+    width: 100%;
+
+    input {
+      flex-grow: 1;
+      background-color: var(--input-bg);
+      border: none;
+      color: var(--input-text);
+      padding: 0.5rem;
+      outline: none;
+      border-radius: 4px;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+}
+
 /* Label Filter Dropdown Styles */
 .label-filter {
+  min-width: 180px;
+  
   select {
+    width: 100%;
     background-color: var(--input-bg);
     color: var(--input-text);
     border: 1px solid var(--gold);
@@ -51,7 +126,6 @@ body {
     background-repeat: no-repeat;
     background-position: right 1rem center;
     cursor: pointer;
-    min-width: 180px;
     transition: all 0.3s ease;
 
     &:hover, &:focus {
@@ -76,109 +150,6 @@ body {
       }
     }
   }
-
-  /* Responsive styles */
-  @media (max-width: 768px) {
-    select {
-      width: 100%;
-      min-width: unset;
-    }
-  }
-}
-/* Map Title Styles */
-.map-title {
-  .editable-title {
-    position: relative;
-
-    .map-title-input {
-      color: var(--gold);
-      font-size: 1.5rem;
-      font-weight: 600;
-      background: transparent;
-      border: none;
-      padding: 0.2rem 0.5rem;
-      width: 300px;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-
-      &:focus {
-        outline: none;
-        background-color: rgba(255, 255, 255, 0.15);
-        border-radius: 4px;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .map-title {
-    .map-title-input {
-      font-size: 1.2rem;
-      width: 200px;
-    }
-  }
-}
-
-/* Update existing media query */
-@media (max-width: 768px) {
-  .map-title {
-    h1 {
-      font-size: 1.2rem;
-      max-width: 200px;
-      margin-bottom: 0.5rem;
-    }
-  }
-
-  /* Existing responsive styles... */
-}
-
-/* Search and Filter Styles */
-.search-wrapper {
-  flex-grow: 1;
-  max-width: 300px;
-  margin-right: 1rem;
-
-  app-search {
-    display: flex;
-    width: 100%;
-
-    input {
-      flex-grow: 1;
-      background-color: var(--input-bg);
-      border: none;
-      color: var(--input-text);
-      padding: 0.5rem;
-      outline: none;
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.7);
-      }
-    }
-
-    button {
-      background-color: var(--mid-green);
-      border: none;
-      color: var(--gold);
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: var(--dark-green);
-      }
-    }
-  }
-}
-
-/* Select Styles */
-.form-select {
-  background-color: var(--input-bg);
-  color: var(--input-text);
-  border: none;
-  width: 150px;
 }
 
 /* Add Label Button */
@@ -187,7 +158,8 @@ body {
   color: var(--gold);
   border: 1px solid var(--gold);
   padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
 
   &:hover {
     background-color: var(--dark-green);
@@ -197,44 +169,44 @@ body {
 
 /* Map Wrapper */
 .map-wrapper {
+  flex: 1 1 auto;
   position: relative;
-  flex-grow: 1;
+  display: flex;
   overflow: hidden;
-
-  .map-area {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
 }
 
-/* Marker Host */
-.marker-host {
+/* Samotná oblast mapy Leaflet */
+.map-area {
+  flex: 1 1 auto;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  pointer-events: none;
-  z-index: 1000;
+  width: 100%;
 }
 
-/* Marker Details Panel */
+/* Host pro dynamicky přidávané markery */
+.marker-host,
 .marker-details-container {
-  position: fixed; // Změna na fixed pro pozicování vůči viewport
-  top: 60px; // Výška nav baru
-  right: 0;
-  bottom: 0; // Přidáno - ukotvení ke spodku viewport
-  z-index: 1000;
-  width: 230px;
-  background: #1c2e1c;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
-  overflow-y: auto;
-  display: none; // Výchozí stav - skryto
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 400;
+}
 
-  &.visible {
-    display: block; // Zobrazí se při přidání třídy visible
-  }
+/* Pokud chcete, aby detaily měly ještě vyšší prioritu */
+.marker-details-container {
+  z-index: 500;
+}
+
+/* Příklad: pokud máte v panelu konkrétní šířku */
+.marker-details-container .details-panel {
+  width: 300px;
+  right: 0;
+  pointer-events: auto;
 }
 
 /* Marker Overlay */
@@ -338,32 +310,36 @@ body {
   opacity: 0.01;
 }
 
-/* Responsive Adjustments */
+/* Responsive Styles */
 @media (max-width: 768px) {
-  .filter-section {
-    flex-direction: column;
-    align-items: stretch;
+  .container-fluid {
+    padding: 0.5rem;
+  }
 
-    .search-wrapper,
-    .label-filter,
-    .filter-actions {
-      margin-bottom: 10px;
-      max-width: 100%;
-    }
-
-    .form-select,
-    .search-wrapper {
+  .map-title {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    
+    .map-title-input {
+      font-size: 1.2rem;
       width: 100%;
     }
+  }
 
-    app-search {
-      flex-direction: column;
+  .filter-section {
+    width: 100%;
+  }
 
-      input,
-      button {
-        width: 100%;
-        margin-bottom: 0.5rem;
-      }
-    }
+  .search-wrapper {
+    width: 100%;
+    max-width: none;
+  }
+
+  .label-filter {
+    width: 100%;
+  }
+
+  .add-label-btn {
+    width: 100%;
   }
 }

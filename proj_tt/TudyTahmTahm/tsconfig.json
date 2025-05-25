@@ -21,7 +21,8 @@
     "module": "ES2022"
   },
   "include": [
-    "src/leaflet.d.ts"
+    "src/leaflet.d.ts",
+    "src/environments/environment.development.ts"
   ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

@@ -9,11 +9,13 @@ import { SearchComponent } from '../search/search.component';
 import { MarkerService } from '../../services/marker.service';
 import { LabelService } from '../../services/label.service';
 import { MapService } from '../../services/map.service';
+import { AppMap, SharedUser } from '../../models/appMap';
 import { AppMarker } from '../../models/appMarker';
 import { Label } from '../../models/label';
 import { CreateLabelDto } from '../../models/dtos/create-label.dto';
 import { ColorMarkerComponent} from '../color-marker/color-marker.component';
 import { ExtendedMarker } from '../../models/extended-marker';
+import { MapDetailsPanelComponent } from '../map-details-panel/map-details-panel.component';
 
 class MapData {
   mapName?: string
@@ -29,7 +31,7 @@ class MapData {
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   standalone: true,
-  imports: [CommonModule, NgIf, NgForOf, FormsModule, SearchComponent],
+  imports: [CommonModule, NgIf, NgForOf, FormsModule, SearchComponent, MapDetailsPanelComponent],
   encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
@@ -71,6 +73,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   @Output() markerClicked = new EventEmitter<L.Marker<any>>();
   showMarkerList: boolean = false;
   markersWithoutLabel: ExtendedMarker[] = [];
+
+  @Output() detailsPanelToggle = new EventEmitter<void>();
+
+  isDetailsPanelOpen = false;
+  currentMap: AppMap | null = null;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -735,7 +742,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       }
     });
   }
-  saveNewLabel(): void {
+
+  createLabel(): void {
     if (!this.newLabel.name.trim()) {
       alert('Label name is required');
       return;
@@ -937,5 +945,37 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     });
     this.Lmarkers = [];
     this.colorMarkerRefs.forEach(ref => ref.destroy());
+  }
+
+  toggleDetailsPanel(): void {
+    this.isDetailsPanelOpen = !this.isDetailsPanelOpen;
+  }
+
+  closeDetailsPanel(): void {
+    this.isDetailsPanelOpen = false;
+  }
+
+  onShare(data: { userId: string; accessLevel: string }): void {
+    // TODO: Implement sharing functionality
+    console.log('Sharing map with:', data);
+  }
+
+  onRemoveUser(user: SharedUser): void {
+    // TODO: Implement remove user functionality
+    console.log('Removing user:', user);
+  }
+
+  onUpdateMap(updates: { name?: string; description?: string }): void {
+    if (!this.currentMap) return;
+
+    if (updates.name) {
+      this.currentMap.mapName = updates.name;
+    }
+    if (updates.description) {
+      this.currentMap.description = updates.description;
+    }
+
+    // TODO: Call API to update map
+    console.log('Updating map:', this.currentMap);
   }
 }
