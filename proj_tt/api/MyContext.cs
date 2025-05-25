@@ -13,12 +13,11 @@ namespace TT_API {
         public DbSet<Marker> Markers { get; set; }
         public DbSet<Overlay> Overlays { get; set; }
         public DbSet<Permission> Permissions { get; set; }
-        public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GPSPoint> GPSPoints { get; set; }
-
         public DbSet<JourneyPoint> JourneyPoints { get; set; }
-        public DbSet<GroupUsers> GroupUsers { get; set; }
+
+        public DbSet<MapPermission> MapPermissions {  get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

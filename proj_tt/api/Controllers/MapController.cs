@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 using Microsoft.Build.Framework;
 using Org.BouncyCastle.Asn1;
+using System.Runtime.CompilerServices;
+using TT_API.Attributes;
 
 
 namespace TT_API.Controllers {
@@ -20,7 +22,6 @@ namespace TT_API.Controllers {
 
         MyContext context = new MyContext();
 
-
         [HttpGet("ByUserID/{userID}")]
         public async Task<IActionResult> GetMapsByUser(int userID) {
             var maps = await context.Maps
@@ -30,18 +31,45 @@ namespace TT_API.Controllers {
             return Ok(maps);
         }
 
+        [HttpGet("SharedMaps/{userID}")]
+        public async Task<IActionResult> GetSharedMaps(int userID) {
+            var maps = await context.MapPermissions
+                .Include(r => r.Map)
+                .Where(r => r.IDUser == userID)
+                .Select(r => r.Map).ToListAsync();
+
+            if (maps == null) return NotFound();
+
+            return Ok(maps);
+        }
+
+        [HttpGet("SharedUsers/{mapID}")]
+        public async Task<IActionResult> GetSharedUsers(int mapID) {
+            var users = await context.MapPermissions
+                .Include(r => r.User)
+                .Where(r => r.IDMap == mapID)
+                .Select(r => new { 
+                    r.User.UserID,
+                    r.User.UserName,
+                    r.Permission
+                }).ToListAsync();
+
+            if (users == null) return NotFound();
+
+            return Ok(users);
+        }
+
         [HttpGet("ByMapID/{mapID}")]
 
         public async Task<IActionResult> GetMap(int mapID) {
             var map = await context.Maps
                 .FindAsync(mapID);
-
-            return Ok(map);
+              return Ok(map);
         }
 
 
         [HttpPost]
-        //potrebuje jeste implementaci custom map obrazku, zatim predavej nejakej string do MapPath
+        //potrebuje jeste implementaci custom map o  brazku, zatim predavej nejakej string do MapPath
         public async Task<IActionResult> AddMap([FromBody] CreateMapDTO dto) {
             Map map = new Map() {
 
@@ -56,10 +84,10 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
+            context.MapPermissions.Add(new MapPermission { IDMap = map.MapID, IDUser = map.IDUser, Permission = "owner"});
+
             return Ok(map.MapID);
         }
-
-        
 
         [HttpDelete("{mapID}")]
 
@@ -67,8 +95,11 @@ namespace TT_API.Controllers {
 
             var mapToDelete = await context.Maps.FindAsync(mapID);
 
+            var perissionsToDelete = await context.MapPermissions.Where(p => p.IDMap == mapID).ToListAsync();
+
             try {
                 context.Maps.Remove(mapToDelete);
+                context.MapPermissions.RemoveRange(perissionsToDelete);
             } catch {
                 return NotFound();
             }
