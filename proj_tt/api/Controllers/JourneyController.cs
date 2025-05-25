@@ -65,7 +65,7 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(point);
         }
 
         [HttpDelete("{id}")]
@@ -85,7 +85,7 @@ namespace TT_API.Controllers {
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(journey);
         }
 
 

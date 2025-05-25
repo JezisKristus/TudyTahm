@@ -72,7 +72,7 @@ namespace TT_API.Controllers
             context.Labels.Remove(label);
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(label.LabelID);
         }
 
         [HttpGet("ByMapID/{mapID}")]
