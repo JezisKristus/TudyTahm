@@ -161,7 +161,7 @@ namespace TT_API.Controllers
 
             await context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(marker.MarkerID);
         }
 
     }
