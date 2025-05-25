@@ -25,8 +25,11 @@ $sidebar-hover: #335033; // Zelená hover
     .user-avatar {
       width: 40px;
       height: 40px;
-      background-color: #ccc;
       border-radius: 50%;
+      background-color: #ccc;
+      background-size: cover;
+      background-position: center;
+      border: 2px solid var(--gold);
       cursor: pointer;
     }
 

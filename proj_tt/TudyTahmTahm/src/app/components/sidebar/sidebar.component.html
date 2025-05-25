@@ -2,8 +2,8 @@
   <!-- Uživatelská sekce -->
   <div>
     <div class="user-section" (click)="toggleSignOutPopup()" ariaCurrentWhenActive="page">
-        <div class="user-avatar"></div>
-        <span class="username">USERNAME</span>
+        <div class="user-avatar" [style.background-image]="currentUser?.userIconPath ? 'url(' + getProfilePictureUrl(currentUser.userIconPath) + ')' : 'none'"></div>
+        <span class="username" >{{currentUser?.userName}}</span>
     </div>
 
     <!-- Sign-out popup -->

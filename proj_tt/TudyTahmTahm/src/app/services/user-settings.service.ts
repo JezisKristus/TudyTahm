@@ -6,21 +6,13 @@ import { User } from '../models/user';
 import { AuthenticationService } from './authentication.service';
 import { environment } from '../../environments/environment.development';
 
-export interface UserSettings {
-  theme: 'light' | 'dark' | 'system';
-  notifications: boolean;
-  language: string;
-  fontSize: 'small' | 'medium' | 'large';
-  // Add other settings as needed
-}
 
 export interface UserUpdateRequest {
   userID?: number;
-  userName?: string;
-  userEmail?: string;
-  userPassword?: string;
-  newPassword?: string;
-  userIconPath?: string;
+  UserName?: string;
+  UserEmail?: string;
+  UserPassword?: string;
+  UserIconPath?: string;
 }
 
 @Injectable({
@@ -28,43 +20,14 @@ export interface UserUpdateRequest {
 })
 export class UserSettingsService {
   private settingsKey = 'userSettings';
-  private defaultSettings: UserSettings = {
-    theme: 'system',
-    notifications: true,
-    language: 'en',
-    fontSize: 'medium'
-  };
 
-  private settingsSubject = new BehaviorSubject<UserSettings>(this.loadSettings());
-  public settings$ = this.settingsSubject.asObservable();
+
 
   constructor(
     private http: HttpClient,
     private authService: AuthenticationService
   ) { }
 
-  private loadSettings(): UserSettings {
-    try {
-      const storedSettings = localStorage.getItem(this.settingsKey);
-      return storedSettings ? JSON.parse(storedSettings) : this.defaultSettings;
-    } catch (error) {
-      console.error('Error loading settings:', error);
-      return this.defaultSettings;
-    }
-  }
-
-  updateSettings(newSettings: Partial<UserSettings>): void {
-    const currentSettings = this.settingsSubject.getValue();
-    const updatedSettings = { ...currentSettings, ...newSettings };
-
-    localStorage.setItem(this.settingsKey, JSON.stringify(updatedSettings));
-    this.settingsSubject.next(updatedSettings);
-  }
-
-  resetSettings(): void {
-    localStorage.removeItem(this.settingsKey);
-    this.settingsSubject.next(this.defaultSettings);
-  }
 
   // User profile update methods
   updateUsername(newUsername: string): Observable<User> {
@@ -74,7 +37,7 @@ export class UserSettingsService {
     }
 
     const updateRequest: UserUpdateRequest = {
-      userName: newUsername
+      UserName: newUsername
     };
 
     return this.http.put<User>(`${environment.apiUrl}/Authentication/UpdateUser/${userId}`, updateRequest)
@@ -96,7 +59,7 @@ export class UserSettingsService {
     }
 
     const updateRequest: UserUpdateRequest = {
-      userEmail: newEmail
+      UserEmail: newEmail
     };
 
     return this.http.put<User>(`${environment.apiUrl}/Authentication/UpdateUser/${userId}`, updateRequest)
@@ -117,9 +80,8 @@ export class UserSettingsService {
       return throwError(() => new Error('User is not authenticated'));
     }
 
-    // API očekává pouze nové heslo, pokud je potřeba i staré, přidejte jej do těla
     const updateRequest: UserUpdateRequest = {
-      userPassword: newPassword
+      UserPassword: newPassword
     };
 
     return this.http.put<User>(`${environment.apiUrl}/Authentication/UpdateUser/${userId}`, updateRequest)

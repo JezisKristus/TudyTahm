@@ -58,15 +58,28 @@ namespace TT_API.Controllers {
 
         [HttpPut("UpdateUser/{userID}")]
         public async Task<IActionResult> UpdateUser([FromBody] CreateUpdateUserDTO dto, int userID) {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var user = await context.Users.FindAsync(userID);
+            if (user == null) return NotFound();
 
-            user.UserName = dto.UserName;
-            user.UserPassword = HashHelper.Hash(dto.UserPassword);
-            user.UserEmail = dto.UserEmail;
+            if (!string.IsNullOrEmpty(dto.UserName)) user.UserName = dto.UserName;
+            if (!string.IsNullOrEmpty(dto.UserPassword)) user.UserPassword = HashHelper.Hash(dto.UserPassword);
+            if (!string.IsNullOrEmpty(dto.UserEmail)) user.UserEmail = dto.UserEmail;
+            if (!string.IsNullOrEmpty(dto.UserIconPath)) user.UserIconPath = dto.UserIconPath;
 
-            await context.SaveChangesAsync();
-
-            return Ok();
+            try 
+            {
+                await context.SaveChangesAsync();
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Failed to update user", error = ex.Message });
+            }
         }
 
         [HttpPut("UploadPFP/{userID}")]

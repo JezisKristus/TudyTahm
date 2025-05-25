@@ -17,7 +17,7 @@
     <div class="options">
       <!-- User Profile Section -->
       <div class="user-section">
-        <div class="user-avatar" [style.background-image]="currentUser?.userIconPath ? 'url(' + currentUser?.userIconPath + ')' : 'none'"></div>
+        <div class="user-avatar" [style.background-image]="currentUser?.userIconPath ? 'url(' + getProfilePictureUrl(currentUser?.userIconPath) + ')' : 'none'"></div>
         <span class="username">{{ currentUser?.userName || 'USERNAME' }}</span>
       </div>
 

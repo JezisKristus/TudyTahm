@@ -1,7 +1,7 @@
 /* settings-page.component.ts */
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { UserSettingsService, UserSettings } from '../../services/user-settings.service';
+import { UserSettingsService } from '../../services/user-settings.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { User } from '../../models/user';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { ChangeEmailDialogComponent } from '../../components/settings/change-ema
 import { ChangePasswordDialogComponent } from '../../components/settings/change-password-dialog';
 import { ChangeProfilePictureDialogComponent } from '../../components/settings/change-profile-picture-dialog';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-settings-page',
@@ -29,7 +30,6 @@ import { Router } from '@angular/router';
 })
 export class SettingsPageComponent implements OnInit {
   currentUser: User | null = null;
-  userSettings: UserSettings | null = null;
 
   // flags for dialog visibility
   isUsernameDialogVisible = false;
@@ -54,9 +54,11 @@ export class SettingsPageComponent implements OnInit {
       this.router.navigate(['/sign-in']);
       return;
     }
+  }
 
-    this.userSettingsService.settings$
-      .subscribe(settings => this.userSettings = settings);
+  getProfilePictureUrl(path: string | undefined): string {
+    if (!path) return '';
+    return `${environment.apiUrl}/Image/${encodeURIComponent(path)}`;
   }
 
   /* ===== Open dialog methods ===== */
