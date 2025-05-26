@@ -19,11 +19,11 @@ namespace TT_API.Controllers {
 
         private MyContext context = new MyContext();
 
-        [HttpPost("AddUserToMap{mapID}")]
-        public async Task<IActionResult> AddUserToMap([FromBody] UserPermissionDTO dto, int mapID) {
+        [HttpPost("AddUserToMap")]
+        public async Task<IActionResult> AddUserToMap([FromBody] UserPermissionDTO dto) {
 
             MapPermission perm = new MapPermission() {
-                IDMap = mapID,
+                IDMap = dto.MapID,
                 IDUser = dto.UserID,
                 Permission = dto.Permission
             };
@@ -36,8 +36,8 @@ namespace TT_API.Controllers {
         }
 
         [HttpPut("EditUserPermissionOnMap{mapID}")]
-        public async Task<IActionResult> EditPerm([FromBody] UserPermissionDTO dto, int mapID) {
-            var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDMap == mapID && p.IDUser == dto.UserID);
+        public async Task<IActionResult> EditPerm([FromBody] UserPermissionDTO dto) {
+            var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDMap == dto.MapID && p.IDUser == dto.UserID);
 
             if (perm == null) { return NotFound(); }
 
@@ -49,8 +49,8 @@ namespace TT_API.Controllers {
         }
 
         [HttpDelete("RemoveUserFromMap{mapID}")]
-        public async Task<IActionResult> RemoveUser([FromBody] int userID, int mapID) {
-            var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDUser == userID && p.IDMap == mapID);
+        public async Task<IActionResult> RemoveUser([FromBody] UserPermissionDTO dto) {
+            var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDUser == dto.UserID && p.IDMap == dto.MapID);
 
             if (perm == null) { return NotFound(); };
 
