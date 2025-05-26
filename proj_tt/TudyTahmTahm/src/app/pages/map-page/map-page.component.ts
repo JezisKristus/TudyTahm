@@ -30,7 +30,7 @@ export class MapPageComponent {
       mapPreviewPath: '/assets/previews/my-map.png',
       description: 'A beautiful map of my journey',
       sharedWith: [
-        { userId: 2, userName: 'John Doe', accessLevel: 'read' }
+        { userId: 2, userName: 'John Doe', permission: 'read' }
       ]
     };
   }

@@ -37,8 +37,8 @@ export class SharedPageComponent implements OnInit {
         mapPreviewPath: '/assets/previews/marketplace.png',
         description: 'Exploring the world with Filip Nprune and discovering hidden treasures along the way.',
         sharedWith: [
-          { userId: 1, userName: 'Current User', accessLevel: 'write' },
-          { userId: 3, userName: 'John Doe', accessLevel: 'read' }
+          { userId: 1, userName: 'Current User', permission: 'write' },
+          { userId: 3, userName: 'John Doe', permission: 'read' }
         ]
       },
       {
@@ -50,7 +50,7 @@ export class SharedPageComponent implements OnInit {
         mapPreviewPath: '/assets/previews/trosky.png',
         description: 'A beautiful journey to Trosky castle through scenic routes.',
         sharedWith: [
-          { userId: 1, userName: 'Current User', accessLevel: 'read' }
+          { userId: 1, userName: 'Current User', permission: 'read' }
         ]
       },
       {
@@ -62,9 +62,9 @@ export class SharedPageComponent implements OnInit {
         mapPreviewPath: '/assets/previews/city-tour.png',
         description: 'A comprehensive walking tour of the historic city center.',
         sharedWith: [
-          { userId: 2, userName: 'Petr Svab', accessLevel: 'write' },
-          { userId: 3, userName: 'Jan Novak', accessLevel: 'read' },
-          { userId: 4, userName: 'Marie Svoboda', accessLevel: 'read' }
+          { userId: 2, userName: 'Petr Svab', permission: 'write' },
+          { userId: 3, userName: 'Jan Novak', permission: 'read' },
+          { userId: 4, userName: 'Marie Svoboda', permission: 'read' }
         ]
       }
     ];
@@ -78,8 +78,8 @@ export class SharedPageComponent implements OnInit {
     this.maps.forEach(map => {
       if (!owners.has(map.idUser)) {
         // TODO: Replace with actual user names from API
-        const userName = map.idUser === 1 ? 'You' : 
-                        map.idUser === 2 ? 'Petr Svab' : 
+        const userName = map.idUser === 1 ? 'You' :
+                        map.idUser === 2 ? 'Petr Svab' :
                         map.idUser === 3 ? 'Jan Novak' : `User ${map.idUser}`;
         owners.set(map.idUser, userName);
       }
@@ -101,8 +101,8 @@ export class SharedPageComponent implements OnInit {
         filtered = filtered.filter(map => map.idUser === this.currentUserId);
         break;
       case 'shared':
-        filtered = filtered.filter(map => 
-          map.idUser !== this.currentUserId && 
+        filtered = filtered.filter(map =>
+          map.idUser !== this.currentUserId &&
           map.sharedWith?.some(user => user.userId === this.currentUserId)
         );
         break;
@@ -115,7 +115,7 @@ export class SharedPageComponent implements OnInit {
     // Apply search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(map => 
+      filtered = filtered.filter(map =>
         map.mapName.toLowerCase().includes(query) ||
         (map.description && map.description.toLowerCase().includes(query)) ||
         this.getOwnerName(map.idUser).toLowerCase().includes(query)
@@ -134,7 +134,7 @@ export class SharedPageComponent implements OnInit {
           return this.selectedAccessLevel === 'owner';
         }
         const userAccess = map.sharedWith?.find(user => user.userId === this.currentUserId);
-        return userAccess?.accessLevel === this.selectedAccessLevel;
+        return userAccess?.permission === this.selectedAccessLevel;
       });
     }
 
@@ -151,7 +151,7 @@ export class SharedPageComponent implements OnInit {
       return 'owner';
     }
     const userAccess = map.sharedWith?.find(user => user.userId === this.currentUserId);
-    return userAccess?.accessLevel || 'none';
+    return userAccess?.permission || 'none';
   }
 
   getAccessLevelText(map: AppMap): string {

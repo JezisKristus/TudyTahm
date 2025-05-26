@@ -55,7 +55,7 @@ export class MapDetailsPanelComponent implements OnChanges {
 
   onRemoveUser(user: SharedUser): void {
     const confirmRemove = window.confirm(`Do you really want to remove "${user.userName}" from this map?`);
-    
+
     if (confirmRemove) {
       this.removeUser.emit(user);
     }
@@ -74,6 +74,6 @@ export class MapDetailsPanelComponent implements OnChanges {
   }
 
   canRemoveUser(user: SharedUser): boolean {
-    return this.isOwner && user.accessLevel !== 'owner';
+    return this.isOwner && user.permission !== 'owner';
   }
 }

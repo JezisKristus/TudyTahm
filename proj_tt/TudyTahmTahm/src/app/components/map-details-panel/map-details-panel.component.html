@@ -16,9 +16,9 @@
   </div>
 
   <label class="label">Description</label>
-  <textarea 
-    [(ngModel)]="editedDescription" 
-    name="description" 
+  <textarea
+    [(ngModel)]="editedDescription"
+    name="description"
     placeholder="Add description"
     (blur)="onDescriptionChange()"
   ></textarea>
@@ -31,7 +31,7 @@
       <div *ngFor="let user of map?.sharedWith" class="shared-user">
         <div class="user-info">
           <span class="user-name">{{ user.userName }}</span>
-          <span class="access-level" [class]="user.accessLevel">{{ user.accessLevel }}</span>
+          <span class="access-level" [class]="user.permission">{{ user.permission }}</span>
         </div>
         <button *ngIf="canRemoveUser(user)" (click)="onRemoveUser(user)" class="remove-btn">
           Remove
@@ -45,9 +45,9 @@
     <div class="share-form" *ngIf="isOwner">
       <label class="label">Share with User</label>
       <div class="input-group">
-        <input 
-          type="text" 
-          [(ngModel)]="newUserId" 
+        <input
+          type="text"
+          [(ngModel)]="newUserId"
           name="userId"
           placeholder="Enter user ID"
         >

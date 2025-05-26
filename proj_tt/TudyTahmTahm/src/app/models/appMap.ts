@@ -12,5 +12,5 @@ export interface AppMap {
 export interface SharedUser {
   userId: number;
   userName: string;
-  accessLevel: 'read' | 'write' | 'owner';
+  permission: 'read' | 'write' | 'owner';
 }

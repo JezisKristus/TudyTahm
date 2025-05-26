@@ -30,10 +30,15 @@ export class SidebarComponent implements OnInit {
 
   getProfilePictureUrl(path: string | undefined): string {
     if (!path) return '';
-    
+
     // Remove the 'L\' prefix if it exists and encode the path
     const cleanPath = path.startsWith('L\\') ? path.substring(2) : path;
     return `${environment.apiUrl}/Image/${encodeURIComponent(cleanPath)}`;
+  }
+
+  get userBackgroundImage(): string {
+    const path = this.currentUser?.userIconPath;
+    return path ? `url(${this.getProfilePictureUrl(path)})` : 'none';
   }
 
   toggleSignOutPopup(): void {
