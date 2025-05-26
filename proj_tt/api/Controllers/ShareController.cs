@@ -35,7 +35,7 @@ namespace TT_API.Controllers {
             return Ok(perm);
         }
 
-        [HttpPut("EditUserPermissionOnMap{mapID}")]
+        [HttpPut("EditUserPermissionOnMap/{mapID}")]
         public async Task<IActionResult> EditPerm([FromBody] UserPermissionDTO dto) {
             var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDMap == dto.MapID && p.IDUser == dto.UserID);
 
@@ -48,7 +48,7 @@ namespace TT_API.Controllers {
             return Ok(perm);
         }
 
-        [HttpDelete("RemoveUserFromMap{mapID}")]
+        [HttpDelete("RemoveUserFromMap/{mapID}")]
         public async Task<IActionResult> RemoveUser([FromBody] UserPermissionDTO dto) {
             var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDUser == dto.UserID && p.IDMap == dto.MapID);
 
