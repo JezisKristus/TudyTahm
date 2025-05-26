@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
@@ -18,15 +19,14 @@ namespace TT_API.Attributes {
             var httpContext = context.HttpContext;
             var db = httpContext.RequestServices.GetService<MyContext>();
 
-            var userIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == "userID");
+            var userIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if (userIdClaim == null) {
-                context.Result = new UnauthorizedResult();
+                context.Result = new BadRequestObjectResult("No userID claim");
                 return;
             }
 
             var userID = int.Parse(userIdClaim.Value);
 
-            // Get mapID from route
             var mapIDStr = context.RouteData.Values["mapID"]?.ToString();
             if (mapIDStr == null || !int.TryParse(mapIDStr, out int mapID)) {
                 context.Result = new BadRequestObjectResult("Map ID is missing or invalid.");
@@ -37,7 +37,7 @@ namespace TT_API.Attributes {
                 .FirstOrDefaultAsync(p => p.IDUser == userID && p.IDMap == mapID);
 
             if (permission == null || !HasSufficientPermission(permission.Permission, _requiredPermission)) {
-                context.Result = new ForbidResult();
+                context.Result = new BadRequestObjectResult("Invalid permission");
             }
         }
 

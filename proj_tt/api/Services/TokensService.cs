@@ -1,4 +1,5 @@
-﻿using JWT.Algorithms;
+﻿using System.Security.Claims;
+using JWT.Algorithms;
 using JWT.Builder;
 using Org.BouncyCastle.Crypto;
 using TT_API.Models;
@@ -15,7 +16,7 @@ namespace TT_API.Services {
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(PASSWORD)
                 .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-                .AddClaim("userID", user.UserID)
+                .AddClaim(ClaimTypes.NameIdentifier, user.UserID.ToString())
                 .AddClaim("user", user.UserName)
                 .Encode();
         }

@@ -48,7 +48,7 @@ namespace TT_API.Controllers {
             var users = await context.MapPermissions
                 .Include(r => r.User)
                 .Where(r => r.IDMap == mapID)
-                .Select(r => new { 
+                .Select(r => new {
                     r.User.UserID,
                     r.User.UserName,
                     r.Permission
@@ -59,8 +59,9 @@ namespace TT_API.Controllers {
             return Ok(users);
         }
 
-        [HttpGet("ByMapID/{mapID}")]
 
+        [HasMapPermission("owner")]
+        [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetMap(int mapID) {
             var map = await context.Maps
                 .FindAsync(mapID);
