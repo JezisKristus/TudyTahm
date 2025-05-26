@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace TT_API.DTOs {
     public class CreateMapDTO {
@@ -6,6 +7,8 @@ namespace TT_API.DTOs {
         public bool IsCustom { get; set; }
         public string MapName { get; set; }
         public string MapPath { get; set; }
+
+        public string MapDescription { get; set; }
 
     }
 }

@@ -60,7 +60,7 @@ namespace TT_API.Controllers {
         }
 
 
-        [HasMapPermission("owner")]
+        //[HasMapPermission("owner")]
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetMap(int mapID) {
             var map = await context.Maps
@@ -78,7 +78,8 @@ namespace TT_API.Controllers {
                 IsCustom = dto.IsCustom,
                 MapName = dto.MapName,
                 MapPath = dto.MapPath,
-                MapPreviewPath = @"bg.jpg"
+                MapPreviewPath = @"bg.jpg",
+                MapDescription = dto.MapDescription,
             };
 
             context.Maps.Add(map);
@@ -86,6 +87,8 @@ namespace TT_API.Controllers {
             await context.SaveChangesAsync();
 
             context.MapPermissions.Add(new MapPermission { IDMap = map.MapID, IDUser = map.IDUser, Permission = "owner"});
+
+            await context.SaveChangesAsync();
 
             return Ok(map.MapID);
         }
@@ -111,16 +114,17 @@ namespace TT_API.Controllers {
         }
 
         [HttpPut("RenameMap/{mapID}")]
-        public async Task<IActionResult> UpdateMapInfo([FromBody] string mapName, int mapID) {
+        public async Task<IActionResult> UpdateMapInfo([FromBody] CreateMapDTO dto, int mapID) {
             var map = await context.Maps.FindAsync(mapID);
 
             if (map == null) return NotFound();
 
-            map.MapName = mapName;
+            map.MapName = dto.MapName;
+            map.MapDescription = dto.MapDescription;
 
             await context.SaveChangesAsync();
 
-            return Ok(map.MapID);
+            return Ok(map);
         }
 
         //[HttpPut("UploadMapPreview/{mapID}")]

@@ -12,7 +12,6 @@ namespace TT_API {
         public DbSet<Journey> Journeys { get; set; }
         public DbSet<Marker> Markers { get; set; }
         public DbSet<Overlay> Overlays { get; set; }
-        public DbSet<Permission> Permissions { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GPSPoint> GPSPoints { get; set; }
         public DbSet<JourneyPoint> JourneyPoints { get; set; }

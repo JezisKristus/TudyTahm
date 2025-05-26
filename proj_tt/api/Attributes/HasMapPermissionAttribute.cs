@@ -19,6 +19,10 @@ namespace TT_API.Attributes {
             var httpContext = context.HttpContext;
             var db = httpContext.RequestServices.GetService<MyContext>();
 
+            foreach (var claim in httpContext.User.Claims) {
+                Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+            }
+
             var userIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if (userIdClaim == null) {
                 context.Result = new BadRequestObjectResult("No userID claim");

@@ -17,6 +17,8 @@ namespace TT_API.Models
 
         public string MapPreviewPath { get; set; }
 
+        public string MapDescription { get; set; }
+
 
         [ForeignKey("IDUser")]
         public User User { get; set; }
