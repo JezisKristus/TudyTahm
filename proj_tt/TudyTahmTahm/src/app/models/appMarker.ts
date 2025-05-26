@@ -7,6 +7,18 @@ export interface AppMarker {
   longitude: number; // Musí být platné číslo
   latitude: number;  // Musí být platné číslo
 }
+export interface BackendMarker {
+  markerID: number;
+  idMap: number;
+  idLabel: number;
+  markerName: string;
+  markerDescription: string;
+  gpsPoint: {
+    latitude: number;
+    longitude: number;
+  };
+}
+
 
 
 

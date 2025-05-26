@@ -19,51 +19,6 @@ export class MapPageComponent {
   isDetailsPanelOpen = false;
   currentMap: AppMap | null = null;
 
-  constructor() {
-    // TODO: Replace with actual map data from service
-    this.currentMap = {
-      mapID: 1,
-      idUser: 1,
-      isCustom: true,
-      mapName: 'My Map',
-      mapPath: '/maps/my-map',
-      mapPreviewPath: '/assets/previews/my-map.png',
-      description: 'A beautiful map of my journey',
-      sharedWith: [
-        { userId: 2, userName: 'John Doe', permission: 'read' }
-      ]
-    };
-  }
+  constructor() {}
 
-  toggleDetailsPanel() {
-    this.isDetailsPanelOpen = !this.isDetailsPanelOpen;
-  }
-
-  closeDetailsPanel() {
-    this.isDetailsPanelOpen = false;
-  }
-
-  onShare(data: { userId: string; accessLevel: string }) {
-    // TODO: Implement sharing functionality
-    console.log('Sharing map with:', data);
-  }
-
-  onRemoveUser(user: SharedUser) {
-    // TODO: Implement remove user functionality
-    console.log('Removing user:', user);
-  }
-
-  onUpdateMap(updates: { name?: string; description?: string }) {
-    if (!this.currentMap) return;
-
-    if (updates.name) {
-      this.currentMap.mapName = updates.name;
-    }
-    if (updates.description) {
-      this.currentMap.description = updates.description;
-    }
-
-    // TODO: Call API to update map
-    console.log('Updating map:', this.currentMap);
-  }
 }

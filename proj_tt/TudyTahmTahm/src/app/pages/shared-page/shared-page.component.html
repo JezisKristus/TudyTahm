@@ -11,9 +11,9 @@
     <!-- Filters Section -->
     <div class="filters-section">
       <div class="search-container">
-        <input 
-          type="text" 
-          [(ngModel)]="searchQuery" 
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
           (ngModelChange)="applyFilters()"
           placeholder="Search shared maps..."
           class="search-input"
@@ -22,8 +22,8 @@
       <div class="filter-container">
         <select [(ngModel)]="selectedOwner" (ngModelChange)="applyFilters()" class="filter-select">
           <option value="">All Owners</option>
-          <option *ngFor="let owner of uniqueOwners" [ngValue]="owner.id">
-            {{ owner.name }}
+          <option *ngFor="let owner of sharedUsers" [ngValue]="owner.userId">
+            {{ owner.userName }}
           </option>
         </select>
         <select [(ngModel)]="selectedAccessLevel" (ngModelChange)="applyFilters()" class="filter-select">
@@ -40,29 +40,29 @@
       <!-- Left column - Groups/Categories -->
       <div class="groups-panel">
         <div class="panel-title">Categories</div>
-        <div 
-          class="group-item" 
+        <div
+          class="group-item"
           [class.active]="selectedCategory === 'all'"
           (click)="selectCategory('all')"
         >
           All Maps
         </div>
-        <div 
-          class="group-item" 
+        <div
+          class="group-item"
           [class.active]="selectedCategory === 'owned'"
           (click)="selectCategory('owned')"
         >
           Maps I Own
         </div>
-        <div 
-          class="group-item" 
+        <div
+          class="group-item"
           [class.active]="selectedCategory === 'shared'"
           (click)="selectCategory('shared')"
         >
           Shared with Me
         </div>
-        <div 
-          class="group-item" 
+        <div
+          class="group-item"
           [class.active]="selectedCategory === 'recent'"
           (click)="selectCategory('recent')"
         >
@@ -97,9 +97,6 @@
             <button class="action-btn" (click)="$event.stopPropagation(); openMapDetails(map)" title="Map Details">
               <span class="info-icon"></span>
             </button>
-            <button class="action-btn" (click)="$event.stopPropagation(); shareMap(map)" title="Share Map">
-              <span class="share-icon"></span>
-            </button>
           </div>
         </div>
       </div>
@@ -110,10 +107,6 @@
       <button class="footer-btn secondary" (click)="refreshMaps()">
         <span class="refresh-icon"></span>
         Refresh
-      </button>
-      <button class="footer-btn primary" (click)="openShareDialog()">
-        <span class="plus-icon">+</span>
-        Share New Map
       </button>
     </div>
   </div>

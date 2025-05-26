@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { AppMap, SharedUser } from '../../models/appMap';
+import {AuthenticationService} from '../../services/authentication.service';
+import {MapService} from '../../services/map.service';
+import {SharingService} from '../../services/sharing.service';
 
 @Component({
   selector: 'app-shared-page',
@@ -11,81 +14,41 @@ import { AppMap, SharedUser } from '../../models/appMap';
   templateUrl: './shared-page.component.html',
   styleUrls: ['./shared-page.component.scss']
 })
+
 export class SharedPageComponent implements OnInit {
   maps: AppMap[] = [];
   filteredMaps: AppMap[] = [];
+  sharedUsers: SharedUser[] = [];
   searchQuery = '';
   selectedOwner = '';
   selectedAccessLevel = '';
   selectedCategory = 'all';
-  uniqueOwners: { id: number; name: string }[] = [];
-  currentUserId = 1; // TODO: Replace with actual current user id
+  currentUserId:number | null = 1;
+
+  constructor(
+    private mapService: MapService,
+    private authService: AuthenticationService,
+    private shareService: SharingService
+  ) {
+    this.currentUserId = authService.getCurrentUserID();
+  }
+
 
   ngOnInit(): void {
     this.loadSharedMaps();
   }
 
   loadSharedMaps(): void {
-    // TODO: Replace with actual API call
-    this.maps = [
-      {
-        mapID: 1,
-        idUser: 2,
-        isCustom: true,
-        mapName: 'Journey to the marketplace',
-        mapPath: '/maps/marketplace',
-        mapPreviewPath: '/assets/previews/marketplace.png',
-        description: 'Exploring the world with Filip Nprune and discovering hidden treasures along the way.',
-        sharedWith: [
-          { userId: 1, userName: 'Current User', permission: 'write' },
-          { userId: 3, userName: 'John Doe', permission: 'read' }
-        ]
-      },
-      {
-        mapID: 2,
-        idUser: 3,
-        isCustom: true,
-        mapName: 'Journey to Trosky',
-        mapPath: '/maps/trosky',
-        mapPreviewPath: '/assets/previews/trosky.png',
-        description: 'A beautiful journey to Trosky castle through scenic routes.',
-        sharedWith: [
-          { userId: 1, userName: 'Current User', permission: 'read' }
-        ]
-      },
-      {
-        mapID: 3,
-        idUser: 1,
-        isCustom: true,
-        mapName: 'City Walking Tour',
-        mapPath: '/maps/city-tour',
-        mapPreviewPath: '/assets/previews/city-tour.png',
-        description: 'A comprehensive walking tour of the historic city center.',
-        sharedWith: [
-          { userId: 2, userName: 'Petr Svab', permission: 'write' },
-          { userId: 3, userName: 'Jan Novak', permission: 'read' },
-          { userId: 4, userName: 'Marie Svoboda', permission: 'read' }
-        ]
-      }
-    ];
+    this.mapService.getSharedMaps().subscribe((maps: AppMap[]) => {
+      this.maps = maps;
 
-    this.updateUniqueOwners();
-    this.applyFilters();
-  }
-
-  updateUniqueOwners(): void {
-    const owners = new Map<number, string>();
-    this.maps.forEach(map => {
-      if (!owners.has(map.idUser)) {
-        // TODO: Replace with actual user names from API
-        const userName = map.idUser === 1 ? 'You' :
-                        map.idUser === 2 ? 'Petr Svab' :
-                        map.idUser === 3 ? 'Jan Novak' : `User ${map.idUser}`;
-        owners.set(map.idUser, userName);
-      }
+      this.shareService.getSharedUsers().subscribe((users: SharedUser[]) => {
+        this.sharedUsers = users;
+        this.applyFilters();
+      });
     });
-    this.uniqueOwners = Array.from(owners.entries()).map(([id, name]) => ({ id, name }));
   }
+
 
   selectCategory(category: string): void {
     this.selectedCategory = category;
@@ -142,8 +105,8 @@ export class SharedPageComponent implements OnInit {
   }
 
   getOwnerName(userId: number): string {
-    const owner = this.uniqueOwners.find(o => o.id === userId);
-    return owner ? owner.name : `User ${userId}`;
+    const owner = this.sharedUsers.find(o => o.userId === userId);
+    return owner ? owner.userName : `User ${userId}`;
   }
 
   getAccessLevel(map: AppMap): string {
@@ -176,16 +139,6 @@ export class SharedPageComponent implements OnInit {
   openMapDetails(map: AppMap): void {
     // TODO: Open map details panel
     console.log('Opening map details:', map);
-  }
-
-  shareMap(map: AppMap): void {
-    // TODO: Open share dialog
-    console.log('Sharing map:', map);
-  }
-
-  openShareDialog(): void {
-    // TODO: Open dialog to share new map
-    console.log('Opening share dialog');
   }
 
   refreshMaps(): void {

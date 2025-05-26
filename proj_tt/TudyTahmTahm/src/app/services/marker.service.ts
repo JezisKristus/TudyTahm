@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {AppMarker} from '../models/appMarker';
+import {AppMarker, BackendMarker} from '../models/appMarker';
 import {CreateUpdateMarkerDto} from '../models/dtos/create-marker.dto';
 import {environment} from '../../environments/environment';
 import {map, tap, switchMap} from 'rxjs/operators';
@@ -31,13 +31,12 @@ export class MarkerService {
 
   public createMarker(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
     console.log('Sending create request with data:', createMarkerDto);
-    return this.http.post<AppMarker>(`${environment.apiUrl}/Marker`, createMarkerDto).pipe(
+    return this.http.post<BackendMarker | null>(`${environment.apiUrl}/Marker`, createMarkerDto).pipe(
       switchMap(response => {
-        // When API returns null, we need to fetch the newly created marker
         if (!response) {
+          // fallback, unchanged
           return this.getMarkersByMapId(createMarkerDto.idMap).pipe(
             map(markers => {
-              // Find the marker we just created by matching coordinates
               const newMarker = markers.find(m =>
                 Math.abs(m.latitude - createMarkerDto.latitude) < 0.0000001 &&
                 Math.abs(m.longitude - createMarkerDto.longitude) < 0.0000001
@@ -49,13 +48,26 @@ export class MarkerService {
             })
           );
         }
-        return of(response);
+
+        // Map BackendMarker to AppMarker here
+        const normalizedMarker: AppMarker = {
+          markerID: response.markerID,
+          idMap: response.idMap,
+          idLabel: response.idLabel,
+          markerName: response.markerName,
+          markerDescription: response.markerDescription,
+          latitude: response.gpsPoint.latitude,
+          longitude: response.gpsPoint.longitude,
+        };
+
+        return of(normalizedMarker);
       }),
       tap(result => {
         console.log('Final marker data:', result);
       })
     );
   }
+
 
   public updateMarker(marker: AppMarker): Observable<AppMarker> {
     console.log('Updating marker with data:', marker);

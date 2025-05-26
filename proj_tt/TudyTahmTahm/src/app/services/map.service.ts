@@ -29,7 +29,13 @@ export class MapService {
       );
   }
 
-  createMap(map: Partial<AppMap>): Observable<AppMap> {
+  getSharedMaps(): Observable<AppMap[]>{
+    const userId = this.getCurrentUserId();
+    return this.http.get<AppMap[]>(`${this.apiUrl}/Map/SharedMaps/${userId}`)
+  }
+
+
+    createMap(map: Partial<AppMap>): Observable<AppMap> {
     const userId = this.getCurrentUserId();
     const payload = {...map, idUser: userId};
     return this.http.post<AppMap>(`${this.apiUrl}/Map`, payload)
@@ -66,6 +72,7 @@ export class MapService {
         catchError(this.handleError)
       );
   }
+
 
   private getCurrentUserId(): number {
     const user = sessionStorage.getItem('user');

@@ -1,4 +1,4 @@
-<form class="map-options-panel" *ngIf="map && isOpen">
+<div class="panel-content">
   <h3>Map Details</h3>
 
   <label class="label">Name</label>
@@ -23,12 +23,13 @@
     (blur)="onDescriptionChange()"
   ></textarea>
 
-  <hr>
+  <hr />
 
+  <!-- Sharing Section -->
   <div class="sharing-section">
     <div class="section-title">Shared With</div>
-    <div class="shared-users" *ngIf="map && map.sharedWith && map.sharedWith.length > 0; else noSharedUsers">
-      <div *ngFor="let user of map?.sharedWith" class="shared-user">
+    <div *ngIf="map && map.sharedWith && map.sharedWith.length > 0; else noSharedUsers">
+      <div *ngFor="let user of map.sharedWith" class="shared-user">
         <div class="user-info">
           <span class="user-name">{{ user.userName }}</span>
           <span class="access-level" [class]="user.permission">{{ user.permission }}</span>
@@ -42,7 +43,7 @@
       <div class="no-shared-users">This map is not shared with anyone</div>
     </ng-template>
 
-    <div class="share-form" *ngIf="isOwner">
+    <div *ngIf="isOwner" class="share-form">
       <label class="label">Share with User</label>
       <div class="input-group">
         <input
@@ -50,19 +51,19 @@
           [(ngModel)]="newUserId"
           name="userId"
           placeholder="Enter user ID"
-        >
+        />
         <select [(ngModel)]="selectedAccessLevel" name="accessLevel">
           <option value="read">Read Only</option>
           <option value="write">Write</option>
         </select>
       </div>
-      <div class="button-row">
-        <button type="button" (click)="onShare()" class="share-btn">Share</button>
-      </div>
+    </div>
+    <div class="button-row">
+      <button type="button" (click)="onShare()" class="share-btn">Share</button>
     </div>
   </div>
 
   <div class="button-row">
     <button type="button" class="cancel" (click)="onClose()">Close</button>
   </div>
-</form>
+</div>

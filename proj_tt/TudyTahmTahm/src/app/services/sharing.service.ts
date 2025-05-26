@@ -4,15 +4,17 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {catchError, map, tap} from 'rxjs/operators';
 import {AppMap, SharedUser} from '../models/appMap';
+import {User} from '../models/user';
+import {AuthenticationService} from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SharingService{
-  constructor(private http:HttpClient) {
+  constructor(private http:HttpClient, private authService: AuthenticationService) {
   }
   public addUserToMap(sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap`, sharedUser)
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/`, sharedUser)
       .pipe(
         map(user => {
           console.log("Sharing ", user);
@@ -20,8 +22,12 @@ export class SharingService{
         })
       );
   }
+  getSharedUsers(): Observable<SharedUser[]>{
+    const userId = this.authService.getCurrentUserID();
+    return this.http.get<SharedUser[]>(`${environment.apiUrl}/Map/SharedUsers/${userId}`)
+  }
   public editUserPermission(sharedUser: SharedUser): Observable<SharedUser>{
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap`, sharedUser)
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap/`, sharedUser)
       .pipe(
         map(user => {
           console.log("Editing share ", user);

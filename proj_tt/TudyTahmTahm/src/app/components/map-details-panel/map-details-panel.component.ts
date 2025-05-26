@@ -8,7 +8,10 @@ import { AppMap, SharedUser } from '../../models/appMap';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './map-details-panel.component.html',
-  styleUrls: ['./map-details-panel.component.scss']
+  styleUrls: ['./map-details-panel.component.scss'],
+  host: {
+    'class': 'map-details-panel'
+  }
 })
 export class MapDetailsPanelComponent implements OnChanges {
   @Input() map: AppMap | null = null;

@@ -54,7 +54,7 @@ namespace TT_API.Controllers
             await context.SaveChangesAsync();
 
             // Return the new MarkerID
-            return Ok(new { markerID = marker.MarkerID });
+            return Ok(marker);
         }
 
 

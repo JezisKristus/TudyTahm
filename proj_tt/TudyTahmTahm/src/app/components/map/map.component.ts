@@ -146,7 +146,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       }
     }, 500);
 
-    this.intervalId = intervalId;
   }
 
   /**
@@ -229,27 +228,36 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.markerService.createMarker(markerData).subscribe({
       next: (createdMarker) => {
         try {
+          // Map response to AppMarker shape:
+          const normalizedMarker: AppMarker = {
+            markerID: createdMarker.markerID,
+            idMap: createdMarker.idMap,
+            idLabel: createdMarker.idLabel,
+            markerName: createdMarker.markerName,
+            markerDescription: createdMarker.markerDescription,
+            latitude: createdMarker.latitude ?? 0,   // fallback if missing
+            longitude: createdMarker.longitude ?? 0, // fallback if missing
+          };
+
+          this.onCancel();
+
           const compRef = this.markerHost.createComponent(ColorMarkerComponent);
           compRef.instance.map = this.map;
-          compRef.instance.markerData = createdMarker;
+          compRef.instance.markerData = normalizedMarker;
           compRef.instance.labelColor = '#0000ff';
 
-          // Správně: použijeme markerClick event z komponenty
           compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
             this.onColorMarkerClick(clickedMarkerData.markerID);
           });
 
-          // Vytvoříme ExtendedMarker a přidáme ho do pole Lmarkers
-          setTimeout(() => {
-            if (compRef.instance.leafletMarker) {
-              const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
-              extendedMarker.markerData = createdMarker;
-              extendedMarker.markerID = createdMarker.markerID;
-              extendedMarker.selected = true;
-              this.Lmarkers.push(extendedMarker);
-              this.selectedMarker = extendedMarker;
-            }
-          });
+          if (compRef.instance.leafletMarker) {
+            const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
+            extendedMarker.markerData = normalizedMarker;
+            extendedMarker.markerID = normalizedMarker.markerID;
+            extendedMarker.selected = true;
+            this.Lmarkers.push(extendedMarker);
+            this.selectedMarker = extendedMarker;
+          }
 
           this.colorMarkerRefs.push(compRef);
 
@@ -258,7 +266,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
           }
 
           this.markerDetailsRef = this.markerDetailsContainer.createComponent(MarkerDetailsComponent);
-          this.markerDetailsRef.instance.marker = { ...createdMarker };
+          this.markerDetailsRef.instance.marker = { ...normalizedMarker };
           this.markerDetailsRef.instance.labels = [...this.labels];
 
           this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
@@ -272,7 +280,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
             container.classList.add('visible');
           }
 
-          if (this.selectedLabelFilter !== null && createdMarker.idLabel !== this.selectedLabelFilter) {
+          if (this.selectedLabelFilter !== null && normalizedMarker.idLabel !== this.selectedLabelFilter) {
             compRef.instance.hide();
           }
 
@@ -427,6 +435,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   onCancel(): void {
+    if (this.selectedMarker?.markerID == null)
+    {
+
+    }
     this.clearSelectedMarker();
   }
 
