@@ -84,21 +84,28 @@ namespace TT_API.Controllers {
 
 
         [HttpPut("ChangePassword/{userID}")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, int userID) {
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, int userID)
+        {
             var user = await context.Users.FindAsync(userID);
 
             if (user == null) return NotFound();
 
-            if (HashHelper.Verify(dto.NewPassword, user.UserPassword)) { return BadRequest("68"); }
+            if (HashHelper.Verify(dto.NewPassword, user.UserPassword))
+            {
+                return BadRequest(new { code = 68, message = "Password is already in use." });
+            }
 
-            if (!HashHelper.Verify(dto.OldPassword, user.UserPassword)) { return BadRequest("69"); }
+            if (!HashHelper.Verify(dto.OldPassword, user.UserPassword))
+            {
+                return BadRequest(new { code = 69, message = "Old password is incorrect." });
+            }
 
             user.UserPassword = HashHelper.Hash(dto.NewPassword);
-
             await context.SaveChangesAsync();
 
             return Ok(user);
         }
+
 
 
         [HttpPut("UploadPFP/{userID}")]

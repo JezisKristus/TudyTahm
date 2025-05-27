@@ -1,21 +1,34 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { CommonModule, NgForOf, NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  ComponentRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewContainerRef,
+  ViewEncapsulation
+} from '@angular/core';
+import {CommonModule, NgForOf, NgIf} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import * as L from 'leaflet';
 import 'leaflet-search';
-import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
-import { MarkerDetailsComponent } from '../marker-details/marker-details.component';
-import { SearchComponent } from '../search/search.component';
-import { MarkerService } from '../../services/marker.service';
-import { LabelService } from '../../services/label.service';
-import { MapService } from '../../services/map.service';
-import { AppMap, SharedUser } from '../../models/appMap';
-import { AppMarker } from '../../models/appMarker';
-import { Label } from '../../models/label';
-import { CreateLabelDto } from '../../models/dtos/create-label.dto';
-import { ColorMarkerComponent} from '../color-marker/color-marker.component';
-import { ExtendedMarker } from '../../models/extended-marker';
-import { MapDetailsPanelComponent } from '../map-details-panel/map-details-panel.component';
+import {AddMarkerPopupComponent} from './add-marker-popup/add-marker-popup.component';
+import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
+import {SearchComponent} from '../search/search.component';
+import {MarkerService} from '../../services/marker.service';
+import {LabelService} from '../../services/label.service';
+import {MapService} from '../../services/map.service';
+import {AppMap, SharedUser} from '../../models/appMap';
+import {AppMarker} from '../../models/appMarker';
+import {Label} from '../../models/label';
+import {CreateLabelDto} from '../../models/dtos/create-label.dto';
+import {ColorMarkerComponent} from '../color-marker/color-marker.component';
+import {ExtendedMarker} from '../../models/extended-marker';
+import {MapDetailsPanelComponent} from '../map-details-panel/map-details-panel.component';
 
 class MapData {
   mapName?: string
@@ -100,9 +113,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     }
     this.mapID = Number(mapID) || 1;
     this.labels = [];
-
     this.loadMapData();
-    this.initMapChangeListener();
   }
 
   /**
@@ -128,25 +139,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.loadLabels();
     this.loadMarkers();
     this.loadMapData();
-  }
-
-  /**
-   * Initializes map polling to detect active map changes
-   */
-  private initMapChangeListener(): void {
-    let previousMapID = sessionStorage.getItem('Map.mapID');
-
-    const intervalId = setInterval(() => {
-      const currentMapID = sessionStorage.getItem('Map.mapID');
-
-      if (currentMapID && currentMapID !== previousMapID) {
-        previousMapID = currentMapID;
-        this.mapID = Number(currentMapID);
-        this.handleMapChange();
-      }
-    }, 500);
-
-    this.intervalId = intervalId;
   }
 
   /**

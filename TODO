@@ -2,20 +2,19 @@ Všici
 Vymyslet uživatele kterej bude na ukazování
 Co mělo bějt Memories? Přejmenovat na Journeys nebo sme zapoměli celou jednu featuru?
 
-JSON používá camelCase, to trošku rozbijí všechno a nepřišel sem na to jak to udělat aby nic neměnil
 
 D
-přidání mapy + groups
-Upravit graficky placeholdery v marker-details
+Dostat data do databáze
+
 
 ŠVP
-Změnit use API - heslo musíš zadat i starý
-nevim jak chceš jestli aby to bylo každý separátně nebo ne, to je mi asi jedno z frontendu, ale heslo separátně určitě
-sdílení a groups - propojeno s journey
-custom mapy API
-obrázky předělat
+úpravy sharingu API
+pomoct deltovi s jeho potebami
 
 JK
-Labels přidávání doladit
-Journey page, chceme teda přejmenovat z memories na journeys?
-s journey asi stejně potřebuju počkat až delta uvaří získávání dat
+Udělat error handeling u settings např. stejný password apod.
+předělat UX u journeys
+udělat clickable pointy v journeys aby se daly pointy upravovat
+Předělat requesty na API na úpravu účtu aby odpovídaly
+Unifikovat UI hlavně nav bary
+více journeys v jednom

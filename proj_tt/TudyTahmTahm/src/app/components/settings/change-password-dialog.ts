@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-change-password-dialog',
@@ -39,12 +39,13 @@ import { FormsModule } from '@angular/forms';
               type="password"
               [(ngModel)]="newPassword"
               required
-              minlength="6"
+              minlength="3"
               #newPasswordInput="ngModel"
               [class.invalid]="newPasswordInput.invalid && (newPasswordInput.dirty || newPasswordInput.touched)"
             >
-            <div class="error-message" *ngIf="newPasswordInput.invalid && (newPasswordInput.dirty || newPasswordInput.touched)">
-              Password must be at least 6 characters long
+            <div class="error-message"
+                 *ngIf="newPasswordInput.invalid && (newPasswordInput.dirty || newPasswordInput.touched)">
+              Password must be at least 3 characters long
             </div>
           </div>
 
@@ -68,9 +69,10 @@ import { FormsModule } from '@angular/forms';
           <button class="cancel-btn" (click)="onCancel()">Cancel</button>
           <button
             class="save-btn"
-            [disabled]="!currentPassword || !newPassword || newPassword.length < 6 || newPassword !== confirmPassword"
+            [disabled]="!currentPassword || !newPassword || newPassword.length < 3 || newPassword !== confirmPassword"
             (click)="onSave()"
-          >Save</button>
+          >Save
+          </button>
         </div>
       </div>
     </div>
@@ -214,7 +216,7 @@ export class ChangePasswordDialogComponent implements OnInit {
   }
 
   onSave(): void {
-    if (this.currentPassword && this.newPassword && this.newPassword.length >= 6 && this.newPassword === this.confirmPassword) {
+    if (this.currentPassword && this.newPassword && this.newPassword.length >= 3 && this.newPassword === this.confirmPassword) {
       this.save.emit({
         currentPassword: this.currentPassword,
         newPassword: this.newPassword
