@@ -140,6 +140,13 @@ namespace TT_API.Controllers {
             return BadRequest();
         }
 
+        //[HttpPut("SetDefaultPFP/{userID}")]
+        //public async Task<IActionResult> DefaultPFP(int userID) {
+        //    var user = await context.Users.FindAsync(userID);
+
+            
+        //}
+
         //[Authorize]
         //[HttpGet("UserIDByToken")]
         //public async Task<IActionResult> GetUserInfoByToken() {
