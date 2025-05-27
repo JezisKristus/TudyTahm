@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using TT_API.HelperClasses;
+using System.Net.WebSockets;
 
 namespace TT_API.Controllers {
     [ApiController]
@@ -81,6 +82,25 @@ namespace TT_API.Controllers {
                 return BadRequest(new { message = "Failed to update user", error = ex.Message });
             }
         }
+
+
+        [HttpPut("ChangePassword/{userID}")]
+        public async Task<IActionResult> UpdateUser([FromBody] ChangePasswordDTO dto, int userID) {
+            var user = await context.Users.FindAsync(userID);
+
+            if (user == null) return NotFound();
+
+            if (HashHelper.Verify(dto.NewPassword, user.UserPassword)) return BadRequest("68");
+
+            if (!HashHelper.Verify(dto.OldPassword, user.UserPassword)) return BadRequest("69");
+
+            user.UserPassword = HashHelper.Hash(dto.NewPassword);
+
+            await context.SaveChangesAsync();
+
+            return Ok(user);
+        }
+
 
         [HttpPut("UploadPFP/{userID}")]
         public async Task<IActionResult> UploadPFP(IFormFile image, int userID) {
