@@ -68,7 +68,6 @@ namespace TT_API.Controllers {
             if (user == null) return NotFound();
 
             if (!string.IsNullOrEmpty(dto.UserName)) user.UserName = dto.UserName;
-            if (!string.IsNullOrEmpty(dto.UserPassword)) user.UserPassword = HashHelper.Hash(dto.UserPassword);
             if (!string.IsNullOrEmpty(dto.UserEmail)) user.UserEmail = dto.UserEmail;
             if (!string.IsNullOrEmpty(dto.UserIconPath)) user.UserIconPath = dto.UserIconPath;
 
@@ -85,14 +84,14 @@ namespace TT_API.Controllers {
 
 
         [HttpPut("ChangePassword/{userID}")]
-        public async Task<IActionResult> UpdateUser([FromBody] ChangePasswordDTO dto, int userID) {
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, int userID) {
             var user = await context.Users.FindAsync(userID);
 
             if (user == null) return NotFound();
 
-            if (HashHelper.Verify(dto.NewPassword, user.UserPassword)) return BadRequest("68");
+            if (HashHelper.Verify(dto.NewPassword, user.UserPassword)) { return BadRequest("68"); }
 
-            if (!HashHelper.Verify(dto.OldPassword, user.UserPassword)) return BadRequest("69");
+            if (!HashHelper.Verify(dto.OldPassword, user.UserPassword)) { return BadRequest("69"); }
 
             user.UserPassword = HashHelper.Hash(dto.NewPassword);
 
