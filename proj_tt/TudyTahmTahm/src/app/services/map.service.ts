@@ -29,6 +29,12 @@ export class MapService {
       );
   }
 
+  public getSharedMaps(): Observable<AppMap[]> {
+    const userId = this.getCurrentUserId();
+    return this.http.get<AppMap[]>(`${this.apiUrl}/Map/SharedMaps/${userId}`)
+  }
+
+
   createMap(map: Partial<AppMap>): Observable<AppMap> {
     const userId = this.getCurrentUserId();
     const payload = {...map, idUser: userId};
@@ -87,6 +93,7 @@ export class MapService {
       return 0; // Return 0 if parsing fails
     }
   }
+
 
   private handleError(error: any) {
     console.error('An error occurred:', error);

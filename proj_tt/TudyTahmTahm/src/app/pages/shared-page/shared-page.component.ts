@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { AppMap, SharedUser } from '../../models/appMap';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {SidebarComponent} from '../../components/sidebar/sidebar.component';
+import {AppMap, SharedUser} from '../../models/appMap';
+import {SharingService} from '../../services/sharing.service';
+import {MapService} from '../../services/map.service';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-shared-page',
@@ -18,56 +21,27 @@ export class SharedPageComponent implements OnInit {
   selectedOwner = '';
   selectedAccessLevel = '';
   selectedCategory = 'all';
-  uniqueOwners: { id: number; name: string }[] = [];
+  uniqueOwners: SharedUser[] = [];
   currentUserId = 1; // TODO: Replace with actual current user id
+
+  constructor(
+    private sharingService: SharingService,
+    private mapService: MapService
+  ) {
+  }
 
   ngOnInit(): void {
     this.loadSharedMaps();
   }
 
   loadSharedMaps(): void {
-    // TODO: Replace with actual API call
-    this.maps = [
-      {
-        mapID: 1,
-        idUser: 2,
-        isCustom: true,
-        mapName: 'Journey to the marketplace',
-        mapPath: '/maps/marketplace',
-        mapPreviewPath: '/assets/previews/marketplace.png',
-        description: 'Exploring the world with Filip Nprune and discovering hidden treasures along the way.',
-        sharedWith: [
-          { userId: 1, userName: 'Current User', permission: 'write' },
-          { userId: 3, userName: 'John Doe', permission: 'read' }
-        ]
-      },
-      {
-        mapID: 2,
-        idUser: 3,
-        isCustom: true,
-        mapName: 'Journey to Trosky',
-        mapPath: '/maps/trosky',
-        mapPreviewPath: '/assets/previews/trosky.png',
-        description: 'A beautiful journey to Trosky castle through scenic routes.',
-        sharedWith: [
-          { userId: 1, userName: 'Current User', permission: 'read' }
-        ]
-      },
-      {
-        mapID: 3,
-        idUser: 1,
-        isCustom: true,
-        mapName: 'City Walking Tour',
-        mapPath: '/maps/city-tour',
-        mapPreviewPath: '/assets/previews/city-tour.png',
-        description: 'A comprehensive walking tour of the historic city center.',
-        sharedWith: [
-          { userId: 2, userName: 'Petr Svab', permission: 'write' },
-          { userId: 3, userName: 'Jan Novak', permission: 'read' },
-          { userId: 4, userName: 'Marie Svoboda', permission: 'read' }
-        ]
-      }
-    ];
+    this.mapService.getSharedMaps()
+      .pipe()
+      .subscribe({
+        next: (maps) => {
+          this.maps = maps;
+        }
+      });
 
     this.updateUniqueOwners();
     this.applyFilters();
@@ -75,16 +49,11 @@ export class SharedPageComponent implements OnInit {
 
   updateUniqueOwners(): void {
     const owners = new Map<number, string>();
-    this.maps.forEach(map => {
-      if (!owners.has(map.idUser)) {
-        // TODO: Replace with actual user names from API
-        const userName = map.idUser === 1 ? 'You' :
-                        map.idUser === 2 ? 'Petr Svab' :
-                        map.idUser === 3 ? 'Jan Novak' : `User ${map.idUser}`;
-        owners.set(map.idUser, userName);
+    this.sharingService.getSharedUsers().subscribe({
+      next: (users) => {
+        this.uniqueOwners = users;
       }
     });
-    this.uniqueOwners = Array.from(owners.entries()).map(([id, name]) => ({ id, name }));
   }
 
   selectCategory(category: string): void {
@@ -142,8 +111,8 @@ export class SharedPageComponent implements OnInit {
   }
 
   getOwnerName(userId: number): string {
-    const owner = this.uniqueOwners.find(o => o.id === userId);
-    return owner ? owner.name : `User ${userId}`;
+    const owner = this.uniqueOwners.find(o => o.userId === userId);
+    return owner ? owner.userName : `User ${userId}`;
   }
 
   getAccessLevel(map: AppMap): string {
