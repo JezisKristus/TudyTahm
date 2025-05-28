@@ -11,6 +11,7 @@ using Microsoft.Build.Framework;
 using Org.BouncyCastle.Asn1;
 using System.Runtime.CompilerServices;
 using TT_API.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace TT_API.Controllers {
@@ -59,8 +60,8 @@ namespace TT_API.Controllers {
             return Ok(users);
         }
 
-
-        //[HasMapPermission("owner")]
+        [Authorize]
+        [HasMapPermission("owner")]
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetMap(int mapID) {
             var map = await context.Maps
