@@ -78,9 +78,12 @@
           <p>Try adjusting your search or filter criteria</p>
         </div>
 
-        <div *ngFor="let map of filteredMaps" class="map-item" (click)="openMap(map)">
+        <div (click)="openMap(map) " *ngFor="let map of filteredMaps" class="map-item">
           <div class="map-thumbnail" [style.background-image]="getMapThumbnail(map)"></div>
-          <div class="map-details">
+          <div (click)="openMap(map)"
+               [routerLink]="['', map.mapID]"
+               class="map-details"
+               routerLinkActive="active">
             <h2 class="map-title">{{ map.mapName }}</h2>
             <p class="map-author">By {{ getOwnerName(map.idUser) }}</p>
             <p class="map-description" *ngIf="map.description">{{ map.description }}</p>

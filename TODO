@@ -10,6 +10,7 @@ Dostat data do databáze
 ŠVP
 úpravy sharingu API
 pomoct deltovi s jeho potebami
+Sharing bude podle emailu - předělat API
 
 JK
 Udělat error handeling u settings např. stejný password apod.

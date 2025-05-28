@@ -6,11 +6,12 @@ import {AppMap, SharedUser} from '../../models/appMap';
 import {SharingService} from '../../services/sharing.service';
 import {MapService} from '../../services/map.service';
 import {finalize} from 'rxjs/operators';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 
 @Component({
   selector: 'app-shared-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, SidebarComponent, RouterLinkActive, RouterLink],
   templateUrl: './shared-page.component.html',
   styleUrls: ['./shared-page.component.scss']
 })
@@ -137,10 +138,7 @@ export class SharedPageComponent implements OnInit {
     return map.mapPreviewPath ? `url(${map.mapPreviewPath})` : '';
   }
 
-  openMap(map: AppMap): void {
-    // TODO: Navigate to map page
-    console.log('Opening map:', map);
-  }
+  protected readonly open = open;
 
   openMapDetails(map: AppMap): void {
     // TODO: Open map details panel
@@ -159,5 +157,14 @@ export class SharedPageComponent implements OnInit {
 
   refreshMaps(): void {
     this.loadSharedMaps();
+  }
+
+  openMap(map: AppMap): void {
+    sessionStorage.setItem('Map', JSON.stringify(map));
+    sessionStorage.setItem('Map.mapID', map.mapID.toString()); // Store mapID separately
+    console.log('Storing map data into sessionStorage:', map);
+    console.log('Storing mapID into sessionStorage:', map.mapID); // Log mapID
+
+
   }
 }
