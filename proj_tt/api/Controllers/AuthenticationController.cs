@@ -144,16 +144,16 @@ namespace TT_API.Controllers {
         //public async Task<IActionResult> DefaultPFP(int userID) {
         //    var user = await context.Users.FindAsync(userID);
 
-            
+
         //}
 
-        //[Authorize]
-        //[HttpGet("UserIDByToken")]
-        //public async Task<IActionResult> GetUserInfoByToken() {
-        //    var identity = User.Identity as ClaimsIdentity;
+        [Authorize]
+        [HttpGet("UserIDByToken")]
+        public async Task<IActionResult> GetUserInfoByToken() {
+            var identity = User.Identity as ClaimsIdentity;
 
-        //    return Ok(identity.FindFirst("userID").Value);
-        //}
+            return Ok(identity.FindFirst("userID").Value);
+        }
 
         [HttpGet("UserInfoByID/{id}")]
         public async Task<IActionResult> GetUserInfoByID(int id) {
