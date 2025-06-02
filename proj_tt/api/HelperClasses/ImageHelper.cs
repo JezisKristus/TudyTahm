@@ -10,5 +10,12 @@ namespace TT_API.HelperClasses
                 await image.CopyToAsync(stream);
             }
         }
+
+        public async void DeleteImageLocal(string filename) {
+
+            if (!filename.StartsWith(@"L\")) { return; }
+
+            
+        }
     }
 }

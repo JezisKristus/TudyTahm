@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using TT_API.HelperClasses;
+using System.Net.WebSockets;
 
 namespace TT_API.Controllers {
     [ApiController]
@@ -67,7 +68,6 @@ namespace TT_API.Controllers {
             if (user == null) return NotFound();
 
             if (!string.IsNullOrEmpty(dto.UserName)) user.UserName = dto.UserName;
-            if (!string.IsNullOrEmpty(dto.UserPassword)) user.UserPassword = HashHelper.Hash(dto.UserPassword);
             if (!string.IsNullOrEmpty(dto.UserEmail)) user.UserEmail = dto.UserEmail;
             if (!string.IsNullOrEmpty(dto.UserIconPath)) user.UserIconPath = dto.UserIconPath;
 
@@ -81,6 +81,32 @@ namespace TT_API.Controllers {
                 return BadRequest(new { message = "Failed to update user", error = ex.Message });
             }
         }
+
+
+        [HttpPut("ChangePassword/{userID}")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, int userID)
+        {
+            var user = await context.Users.FindAsync(userID);
+
+            if (user == null) return NotFound();
+
+            if (HashHelper.Verify(dto.NewPassword, user.UserPassword))
+            {
+                return BadRequest(new { code = 68, message = "Password is already in use." });
+            }
+
+            if (!HashHelper.Verify(dto.OldPassword, user.UserPassword))
+            {
+                return BadRequest(new { code = 69, message = "Old password is incorrect." });
+            }
+
+            user.UserPassword = HashHelper.Hash(dto.NewPassword);
+            await context.SaveChangesAsync();
+
+            return Ok(user);
+        }
+
+
 
         [HttpPut("UploadPFP/{userID}")]
         public async Task<IActionResult> UploadPFP(IFormFile image, int userID) {
@@ -113,6 +139,13 @@ namespace TT_API.Controllers {
 
             return BadRequest();
         }
+
+        //[HttpPut("SetDefaultPFP/{userID}")]
+        //public async Task<IActionResult> DefaultPFP(int userID) {
+        //    var user = await context.Users.FindAsync(userID);
+
+            
+        //}
 
         //[Authorize]
         //[HttpGet("UserIDByToken")]

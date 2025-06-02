@@ -1,21 +1,34 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { CommonModule, NgForOf, NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  ComponentRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewContainerRef,
+  ViewEncapsulation
+} from '@angular/core';
+import {CommonModule, NgForOf, NgIf} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import * as L from 'leaflet';
 import 'leaflet-search';
-import { AddMarkerPopupComponent } from './add-marker-popup/add-marker-popup.component';
-import { MarkerDetailsComponent } from '../marker-details/marker-details.component';
-import { SearchComponent } from '../search/search.component';
-import { MarkerService } from '../../services/marker.service';
-import { LabelService } from '../../services/label.service';
-import { MapService } from '../../services/map.service';
-import { AppMap, SharedUser } from '../../models/appMap';
-import { AppMarker } from '../../models/appMarker';
-import { Label } from '../../models/label';
-import { CreateLabelDto } from '../../models/dtos/create-label.dto';
-import { ColorMarkerComponent} from '../color-marker/color-marker.component';
-import { ExtendedMarker } from '../../models/extended-marker';
-import { MapDetailsPanelComponent } from '../map-details-panel/map-details-panel.component';
+import {AddMarkerPopupComponent} from './add-marker-popup/add-marker-popup.component';
+import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
+import {SearchComponent} from '../search/search.component';
+import {MarkerService} from '../../services/marker.service';
+import {LabelService} from '../../services/label.service';
+import {MapService} from '../../services/map.service';
+import {AppMap, SharedUser} from '../../models/appMap';
+import {AppMarker} from '../../models/appMarker';
+import {Label} from '../../models/label';
+import {CreateLabelDto} from '../../models/dtos/create-label.dto';
+import {ColorMarkerComponent} from '../color-marker/color-marker.component';
+import {ExtendedMarker} from '../../models/extended-marker';
+import {MapDetailsPanelComponent} from '../map-details-panel/map-details-panel.component';
 
 class MapData {
   mapName?: string
@@ -100,9 +113,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     }
     this.mapID = Number(mapID) || 1;
     this.labels = [];
-
     this.loadMapData();
-    this.initMapChangeListener();
   }
 
   /**
@@ -128,24 +139,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.loadLabels();
     this.loadMarkers();
     this.loadMapData();
-  }
-
-  /**
-   * Initializes map polling to detect active map changes
-   */
-  private initMapChangeListener(): void {
-    let previousMapID = sessionStorage.getItem('Map.mapID');
-
-    const intervalId = setInterval(() => {
-      const currentMapID = sessionStorage.getItem('Map.mapID');
-
-      if (currentMapID && currentMapID !== previousMapID) {
-        previousMapID = currentMapID;
-        this.mapID = Number(currentMapID);
-        this.handleMapChange();
-      }
-    }, 500);
-
   }
 
   /**
@@ -228,36 +221,27 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.markerService.createMarker(markerData).subscribe({
       next: (createdMarker) => {
         try {
-          // Map response to AppMarker shape:
-          const normalizedMarker: AppMarker = {
-            markerID: createdMarker.markerID,
-            idMap: createdMarker.idMap,
-            idLabel: createdMarker.idLabel,
-            markerName: createdMarker.markerName,
-            markerDescription: createdMarker.markerDescription,
-            latitude: createdMarker.latitude ?? 0,   // fallback if missing
-            longitude: createdMarker.longitude ?? 0, // fallback if missing
-          };
-
-          this.onCancel();
-
           const compRef = this.markerHost.createComponent(ColorMarkerComponent);
           compRef.instance.map = this.map;
-          compRef.instance.markerData = normalizedMarker;
+          compRef.instance.markerData = createdMarker;
           compRef.instance.labelColor = '#0000ff';
 
+          // Správně: použijeme markerClick event z komponenty
           compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
             this.onColorMarkerClick(clickedMarkerData.markerID);
           });
 
-          if (compRef.instance.leafletMarker) {
-            const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
-            extendedMarker.markerData = normalizedMarker;
-            extendedMarker.markerID = normalizedMarker.markerID;
-            extendedMarker.selected = true;
-            this.Lmarkers.push(extendedMarker);
-            this.selectedMarker = extendedMarker;
-          }
+          // Vytvoříme ExtendedMarker a přidáme ho do pole Lmarkers
+          setTimeout(() => {
+            if (compRef.instance.leafletMarker) {
+              const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
+              extendedMarker.markerData = createdMarker;
+              extendedMarker.markerID = createdMarker.markerID;
+              extendedMarker.selected = true;
+              this.Lmarkers.push(extendedMarker);
+              this.selectedMarker = extendedMarker;
+            }
+          });
 
           this.colorMarkerRefs.push(compRef);
 
@@ -266,7 +250,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
           }
 
           this.markerDetailsRef = this.markerDetailsContainer.createComponent(MarkerDetailsComponent);
-          this.markerDetailsRef.instance.marker = { ...normalizedMarker };
+          this.markerDetailsRef.instance.marker = { ...createdMarker };
           this.markerDetailsRef.instance.labels = [...this.labels];
 
           this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
@@ -280,7 +264,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
             container.classList.add('visible');
           }
 
-          if (this.selectedLabelFilter !== null && normalizedMarker.idLabel !== this.selectedLabelFilter) {
+          if (this.selectedLabelFilter !== null && createdMarker.idLabel !== this.selectedLabelFilter) {
             compRef.instance.hide();
           }
 
@@ -435,10 +419,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   onCancel(): void {
-    if (this.selectedMarker?.markerID == null)
-    {
-
-    }
     this.clearSelectedMarker();
   }
 

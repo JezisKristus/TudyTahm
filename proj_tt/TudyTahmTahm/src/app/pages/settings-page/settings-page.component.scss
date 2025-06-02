@@ -104,6 +104,12 @@
     font-weight: bold;
     color: var(--gold);
   }
+
+  .email {
+    margin-left: 25px;
+    font-size: 16px;
+    color: var(--gold);
+  }
 }
 
 .options {
@@ -174,6 +180,22 @@
     color: var(--dark-green);
     font-weight: bold;
   }
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
 // Toggle switch styles

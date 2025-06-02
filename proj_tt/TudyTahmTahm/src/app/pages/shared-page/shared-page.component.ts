@@ -1,54 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { AppMap, SharedUser } from '../../models/appMap';
-import {AuthenticationService} from '../../services/authentication.service';
-import {MapService} from '../../services/map.service';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {SidebarComponent} from '../../components/sidebar/sidebar.component';
+import {AppMap, SharedUser} from '../../models/appMap';
 import {SharingService} from '../../services/sharing.service';
+import {MapService} from '../../services/map.service';
+import {finalize} from 'rxjs/operators';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 
 @Component({
   selector: 'app-shared-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, SidebarComponent, RouterLinkActive, RouterLink],
   templateUrl: './shared-page.component.html',
   styleUrls: ['./shared-page.component.scss']
 })
-
 export class SharedPageComponent implements OnInit {
   maps: AppMap[] = [];
   filteredMaps: AppMap[] = [];
-  sharedUsers: SharedUser[] = [];
   searchQuery = '';
   selectedOwner = '';
   selectedAccessLevel = '';
   selectedCategory = 'all';
-  currentUserId:number | null = 1;
+  uniqueOwners: SharedUser[] = [];
+  currentUserId = 1; // TODO: Replace with actual current user id
 
   constructor(
-    private mapService: MapService,
-    private authService: AuthenticationService,
-    private shareService: SharingService
+    private sharingService: SharingService,
+    private mapService: MapService
   ) {
-    this.currentUserId = authService.getCurrentUserID();
   }
-
 
   ngOnInit(): void {
     this.loadSharedMaps();
   }
 
   loadSharedMaps(): void {
-    this.mapService.getSharedMaps().subscribe((maps: AppMap[]) => {
-      this.maps = maps;
-
-      this.shareService.getSharedUsers().subscribe((users: SharedUser[]) => {
-        this.sharedUsers = users;
-        this.applyFilters();
+    this.mapService.getSharedMaps()
+      .pipe()
+      .subscribe({
+        next: (maps) => {
+          this.maps = maps;
+        }
       });
-    });
+
+    this.updateUniqueOwners();
+    this.applyFilters();
   }
 
+  updateUniqueOwners(): void {
+    const owners = new Map<number, string>();
+    this.sharingService.getSharedUsers().subscribe({
+      next: (users) => {
+        this.uniqueOwners = users;
+      }
+    });
+  }
 
   selectCategory(category: string): void {
     this.selectedCategory = category;
@@ -105,7 +112,7 @@ export class SharedPageComponent implements OnInit {
   }
 
   getOwnerName(userId: number): string {
-    const owner = this.sharedUsers.find(o => o.userId === userId);
+    const owner = this.uniqueOwners.find(o => o.userId === userId);
     return owner ? owner.userName : `User ${userId}`;
   }
 
@@ -131,17 +138,33 @@ export class SharedPageComponent implements OnInit {
     return map.mapPreviewPath ? `url(${map.mapPreviewPath})` : '';
   }
 
-  openMap(map: AppMap): void {
-    // TODO: Navigate to map page
-    console.log('Opening map:', map);
-  }
+  protected readonly open = open;
 
   openMapDetails(map: AppMap): void {
     // TODO: Open map details panel
     console.log('Opening map details:', map);
   }
 
+  shareMap(map: AppMap): void {
+    // TODO: Open share dialog
+    console.log('Sharing map:', map);
+  }
+
+  openShareDialog(): void {
+    // TODO: Open dialog to share new map
+    console.log('Opening share dialog');
+  }
+
   refreshMaps(): void {
     this.loadSharedMaps();
+  }
+
+  openMap(map: AppMap): void {
+    sessionStorage.setItem('Map', JSON.stringify(map));
+    sessionStorage.setItem('Map.mapID', map.mapID.toString()); // Store mapID separately
+    console.log('Storing map data into sessionStorage:', map);
+    console.log('Storing mapID into sessionStorage:', map.mapID); // Log mapID
+
+
   }
 }

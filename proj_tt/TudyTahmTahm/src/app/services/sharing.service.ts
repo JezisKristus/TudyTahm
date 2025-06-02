@@ -1,20 +1,23 @@
 import {Injectable} from '@angular/core';
-import {Observable, share, throwError} from 'rxjs';
+import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {catchError, map, tap} from 'rxjs/operators';
-import {AppMap, SharedUser} from '../models/appMap';
-import {User} from '../models/user';
+import {map, tap} from 'rxjs/operators';
+import {SharedUser} from '../models/appMap';
 import {AuthenticationService} from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SharingService{
-  constructor(private http:HttpClient, private authService: AuthenticationService) {
+export class SharingService {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthenticationService
+  ) {
   }
+
   public addUserToMap(sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/`, sharedUser)
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap`, sharedUser)
       .pipe(
         map(user => {
           console.log("Sharing ", user);
@@ -22,12 +25,14 @@ export class SharingService{
         })
       );
   }
-  getSharedUsers(): Observable<SharedUser[]>{
+
+  public getSharedUsers(): Observable<SharedUser[]> {
     const userId = this.authService.getCurrentUserID();
     return this.http.get<SharedUser[]>(`${environment.apiUrl}/Map/SharedUsers/${userId}`)
   }
-  public editUserPermission(sharedUser: SharedUser): Observable<SharedUser>{
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap/`, sharedUser)
+
+  public editUserPermission(sharedUser: SharedUser): Observable<SharedUser> {
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap`, sharedUser)
       .pipe(
         map(user => {
           console.log("Editing share ", user);
@@ -42,9 +47,6 @@ export class SharingService{
       .pipe(
         tap(user => console.log("Removed user from map", user))
       );
-}
-
-
-
+  }
 
 }

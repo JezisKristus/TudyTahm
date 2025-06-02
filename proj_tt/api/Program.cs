@@ -1,5 +1,8 @@
 
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json;
 
 namespace TT_API {
@@ -60,6 +63,14 @@ namespace TT_API {
                 });
             });
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters() {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ForzaFerrariSempre1950"))
+                    };
+                });
+
             var app = builder.Build();
 
             app.UseCors("AllowAll"); // Needs to be right after build
@@ -69,6 +80,9 @@ namespace TT_API {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

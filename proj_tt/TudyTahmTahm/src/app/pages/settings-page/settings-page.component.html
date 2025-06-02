@@ -19,6 +19,7 @@
       <div class="user-section">
         <div class="user-avatar" [style.background-image]="currentUser?.userIconPath ? 'url(' + getProfilePictureUrl(currentUser?.userIconPath) + ')' : 'none'"></div>
         <span class="username">{{ currentUser?.userName || 'USERNAME' }}</span>
+        <span class="email">{{ currentUser?.userEmail || 'EMAIL' }}</span>
       </div>
 
       <!-- User Profile Options -->
@@ -60,3 +61,13 @@
   (cancel)="isProfilePictureDialogVisible = false"
   (save)="onProfilePictureSave($event)">
 </app-change-profile-picture-dialog>
+
+<!-- Success message notification -->
+<div *ngIf="showSuccessMessage" class="success-message">
+  {{ successMessage }}
+</div>
+
+<!-- Error message notification -->
+<div *ngIf="errorMessage" class="error-message">
+  {{ errorMessage }}
+</div>

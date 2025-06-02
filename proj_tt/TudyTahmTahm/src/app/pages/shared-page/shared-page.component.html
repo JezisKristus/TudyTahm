@@ -12,8 +12,8 @@
     <div class="filters-section">
       <div class="search-container">
         <input
-          type="text"
           [(ngModel)]="searchQuery"
+          type="text"
           (ngModelChange)="applyFilters()"
           placeholder="Search shared maps..."
           class="search-input"
@@ -22,7 +22,7 @@
       <div class="filter-container">
         <select [(ngModel)]="selectedOwner" (ngModelChange)="applyFilters()" class="filter-select">
           <option value="">All Owners</option>
-          <option *ngFor="let owner of sharedUsers" [ngValue]="owner.userId">
+          <option *ngFor="let owner of uniqueOwners" [ngValue]="owner.userId">
             {{ owner.userName }}
           </option>
         </select>
@@ -78,9 +78,12 @@
           <p>Try adjusting your search or filter criteria</p>
         </div>
 
-        <div *ngFor="let map of filteredMaps" class="map-item" (click)="openMap(map)">
+        <div (click)="openMap(map) " *ngFor="let map of filteredMaps" class="map-item">
           <div class="map-thumbnail" [style.background-image]="getMapThumbnail(map)"></div>
-          <div class="map-details">
+          <div (click)="openMap(map)"
+               [routerLink]="['', map.mapID]"
+               class="map-details"
+               routerLinkActive="active">
             <h2 class="map-title">{{ map.mapName }}</h2>
             <p class="map-author">By {{ getOwnerName(map.idUser) }}</p>
             <p class="map-description" *ngIf="map.description">{{ map.description }}</p>
@@ -97,6 +100,9 @@
             <button class="action-btn" (click)="$event.stopPropagation(); openMapDetails(map)" title="Map Details">
               <span class="info-icon"></span>
             </button>
+            <button class="action-btn" (click)="$event.stopPropagation(); shareMap(map)" title="Share Map">
+              <span class="share-icon"></span>
+            </button>
           </div>
         </div>
       </div>
@@ -107,6 +113,10 @@
       <button class="footer-btn secondary" (click)="refreshMaps()">
         <span class="refresh-icon"></span>
         Refresh
+      </button>
+      <button class="footer-btn primary" (click)="openShareDialog()">
+        <span class="plus-icon">+</span>
+        Share New Map
       </button>
     </div>
   </div>

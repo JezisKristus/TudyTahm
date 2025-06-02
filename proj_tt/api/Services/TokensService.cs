@@ -9,7 +9,7 @@ namespace TT_API.Services {
     public class TokensService {
 
         //I aint hearing any of yall out tohle je nas secure string
-        private readonly string PASSWORD = "ForzaFerrariSempre1950";
+        public readonly string PASSWORD = "ForzaFerrariSempre1950";
         
         public string Create(User user) {
             return JwtBuilder.Create()
