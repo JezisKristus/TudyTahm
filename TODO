@@ -1,16 +1,16 @@
 Všici
 Vymyslet uživatele kterej bude na ukazování
-Co mělo bějt Memories? Přejmenovat na Journeys nebo sme zapoměli celou jednu featuru?
-
 
 D
 Dostat data do databáze
-
 
 ŠVP
 úpravy sharingu API
 pomoct deltovi s jeho potebami
 Sharing bude podle emailu - předělat API
+Změnit use API - heslo musíš zadat i starý
+custom mapy API
+obrázky předělat
 
 JK
 Udělat error handeling u settings např. stejný password apod.
@@ -18,4 +18,6 @@ předělat UX u journeys
 udělat clickable pointy v journeys aby se daly pointy upravovat
 Předělat requesty na API na úpravu účtu aby odpovídaly
 Unifikovat UI hlavně nav bary
-více journeys v jednom
+Bude se dát mergnout více cest do jedný aby se jich na mapě dalo ukázat víc
+editovat jednotlivý pointy po nakliknutí, nějakej dialog
+fixnout map-details-panel

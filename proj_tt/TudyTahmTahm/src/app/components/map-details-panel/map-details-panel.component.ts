@@ -1,82 +1,152 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AppMap, SharedUser } from '../../models/appMap';
+
+export interface AppMap {
+  mapID: number;
+  idUser: number;
+  isCustom: boolean;
+  mapName: string;
+  mapPath: string;
+  mapPreviewPath: string;
+  description: string;
+  sharedWith: SharedUser[];
+}
+
+export interface SharedUser {
+  userId: number;
+  mapId: number;
+  userName: string;
+  permission: 'read' | 'write' | 'owner';
+}
 
 @Component({
   selector: 'app-map-details-panel',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './map-details-panel.component.html',
-  styleUrls: ['./map-details-panel.component.scss'],
-  host: {
-    'class': 'map-details-panel'
-  }
+  styleUrls: ['./map-details-panel.component.css']
 })
-export class MapDetailsPanelComponent implements OnChanges {
+export class MapDetailsPanelComponent implements OnInit {
   @Input() map: AppMap | null = null;
-  @Input() isOpen = false;
-  @Output() close = new EventEmitter<void>();
-  @Output() share = new EventEmitter<{userId: string, accessLevel: string}>();
-  @Output() removeUser = new EventEmitter<SharedUser>();
-  @Output() updateMap = new EventEmitter<{name?: string, description?: string}>();
+  @Input() isVisible: boolean = false;
+  @Input() currentUserId: number = 0;
 
-  @HostBinding('class.open') get isPanelOpen() {
-    return this.isOpen;
-  }
+  @Output() closePanel = new EventEmitter<void>();
+  @Output() shareMap = new EventEmitter<string>();
+  @Output() removeSharedUser = new EventEmitter<number>();
+  @Output() updateMapDescription = new EventEmitter<string>();
 
-  newUserId = '';
-  selectedAccessLevel = 'read';
-  editedName = '';
-  editedDescription = '';
+  showShareModal: boolean = false;
+  shareEmail: string = '';
+  emailError: string = '';
+  isEditingDescription: boolean = false;
+  tempDescription: string = '';
 
-  get isOwner(): boolean {
-    return this.map?.idUser === /* current user id */ 1; // TODO: Replace with actual current user id
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['map'] && changes['map'].currentValue) {
-      this.editedName = this.map?.mapName || '';
-      this.editedDescription = this.map?.description || '';
+  ngOnInit() {
+    if (this.map) {
+      this.tempDescription = this.map.description || '';
     }
   }
 
-  onClose(): void {
-    this.close.emit();
-  }
-
-  onShare(): void {
-    if (this.newUserId.trim()) {
-      this.share.emit({
-        userId: this.newUserId,
-        accessLevel: this.selectedAccessLevel
-      });
-      this.newUserId = '';
-      this.selectedAccessLevel = 'read';
+  ngOnChanges() {
+    if (this.map) {
+      this.tempDescription = this.map.description || '';
     }
   }
 
-  onRemoveUser(user: SharedUser): void {
-    const confirmRemove = window.confirm(`Do you really want to remove "${user.userName}" from this map?`);
+  closeDetails() {
+    this.closePanel.emit();
+  }
 
-    if (confirmRemove) {
-      this.removeUser.emit(user);
+  openShareModal() {
+    this.showShareModal = true;
+    this.shareEmail = '';
+    this.emailError = '';
+  }
+
+  closeShareModal() {
+    this.showShareModal = false;
+    this.shareEmail = '';
+    this.emailError = '';
+  }
+
+  onShareSubmit() {
+    if (!this.shareEmail.trim()) {
+      this.emailError = 'Email is required';
+      return;
+    }
+
+    if (!this.isValidEmail(this.shareEmail)) {
+      this.emailError = 'Please enter a valid email address';
+      return;
+    }
+
+    // Check if user is already shared with
+    if (this.map?.sharedWith.some(user => user.userName.toLowerCase() === this.shareEmail.toLowerCase())) {
+      this.emailError = 'Map is already shared with this user';
+      return;
+    }
+
+    this.shareMap.emit(this.shareEmail);
+    this.closeShareModal();
+  }
+
+  removeUser(userId: number) {
+    if (confirm('Are you sure you want to remove this user\'s access?')) {
+      this.removeSharedUser.emit(userId);
     }
   }
 
-  onNameChange(): void {
-    if (this.editedName.trim() !== this.map?.mapName) {
-      this.updateMap.emit({ name: this.editedName.trim() });
+  startEditingDescription() {
+    this.isEditingDescription = true;
+    this.tempDescription = this.map?.description || '';
+  }
+
+  saveDescription() {
+    this.isEditingDescription = false;
+    if (this.tempDescription.trim() !== this.map?.description) {
+      this.updateMapDescription.emit(this.tempDescription.trim());
     }
   }
 
-  onDescriptionChange(): void {
-    if (this.editedDescription !== this.map?.description) {
-      this.updateMap.emit({ description: this.editedDescription });
+  cancelEditDescription() {
+    this.isEditingDescription = false;
+    this.tempDescription = this.map?.description || '';
+  }
+
+  getPermissionBadgeClass(permission: string): string {
+    switch (permission) {
+      case 'owner':
+        return 'badge-owner';
+      case 'write':
+        return 'badge-write';
+      case 'read':
+        return 'badge-read';
+      default:
+        return 'badge-read';
+    }
+  }
+
+  getPermissionIcon(permission: string): string {
+    switch (permission) {
+      case 'owner':
+        return 'fas fa-crown';
+      case 'write':
+        return 'fas fa-edit';
+      case 'read':
+        return 'fas fa-eye';
+      default:
+        return 'fas fa-eye';
     }
   }
 
   canRemoveUser(user: SharedUser): boolean {
-    return this.isOwner && user.permission !== 'owner';
+    return user.permission !== 'owner' && user.userId !== this.currentUserId;
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
   }
 }

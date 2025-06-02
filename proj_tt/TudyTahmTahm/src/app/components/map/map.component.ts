@@ -29,6 +29,7 @@ import {CreateLabelDto} from '../../models/dtos/create-label.dto';
 import {ColorMarkerComponent} from '../color-marker/color-marker.component';
 import {ExtendedMarker} from '../../models/extended-marker';
 import {MapDetailsPanelComponent} from '../map-details-panel/map-details-panel.component';
+import {SharingService} from '../../services/sharing.service';
 
 class MapData {
   mapName?: string
@@ -75,6 +76,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   @Input() labelFilter: number | null = null;
   selectedLabelFilter: number | null = null;
   private isInitialLoad: boolean = true;
+
+  showDetailsPanel: boolean = false;
+  currentMap: AppMap | null = null;
+  currentUserId: number = 1;
+
   labels: Label[] = [];
   showLabelModal: boolean = false;
   newLabel: CreateLabelDto = {
@@ -89,14 +95,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
   @Output() detailsPanelToggle = new EventEmitter<void>();
 
-  isDetailsPanelOpen = false;
-  currentMap: AppMap | null = null;
-
   constructor(
     private viewContainerRef: ViewContainerRef,
     private markerService: MarkerService,
     private labelService: LabelService,
     private mapService: MapService,
+    private sharingService: SharingService
   ) {}
 
   /**
@@ -939,35 +943,46 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.colorMarkerRefs.forEach(ref => ref.destroy());
   }
 
-  toggleDetailsPanel(): void {
-    this.isDetailsPanelOpen = !this.isDetailsPanelOpen;
+
+  toggleDetailsPanel() {
+    this.showDetailsPanel = !this.showDetailsPanel;
   }
 
-  closeDetailsPanel(): void {
-    this.isDetailsPanelOpen = false;
+  onShareMap(email: string) {
+    // Call your sharing service here
+    console.log('Sharing map with:', email);
+    // Example:
+    // this.mapSharingService.shareMap(this.currentMap.mapID, email).subscribe(
+    //   response => {
+    //     // Update the map's sharedWith array
+    //     this.currentMap.sharedWith.push(response);
+    //   }
+    // );
   }
 
-  onShare(data: { userId: string; accessLevel: string }): void {
-    // TODO: Implement sharing functionality
-    console.log('Sharing map with:', data);
+  onRemoveSharedUser(userId: number) {
+    // Call your service to remove shared user
+    console.log('Removing user:', userId);
+    // Example:
+    // this.mapSharingService.removeSharedUser(this.currentMap.mapID, userId).subscribe(
+    //   () => {
+    //     // Remove user from the sharedWith array
+    //     this.currentMap.sharedWith = this.currentMap.sharedWith.filter(user => user.userId !== userId);
+    //   }
+    // );
   }
 
-  onRemoveUser(user: SharedUser): void {
-    // TODO: Implement remove user functionality
-    console.log('Removing user:', user);
-  }
-
-  onUpdateMap(updates: { name?: string; description?: string }): void {
-    if (!this.currentMap) return;
-
-    if (updates.name) {
-      this.currentMap.mapName = updates.name;
+  onUpdateMapDescription(description: string) {
+    // Call your service to update map description
+    console.log('Updating description:', description);
+    if (this.currentMap) {
+      this.currentMap.description = description;
     }
-    if (updates.description) {
-      this.currentMap.description = updates.description;
-    }
+    // Example:
+    // this.mapService.updateMapDescription(this.currentMap.mapID, description).subscribe();
+  }
 
-    // TODO: Call API to update map
-    console.log('Updating map:', this.currentMap);
+  onClosePanelDetails() {
+    this.showDetailsPanel = false;
   }
 }

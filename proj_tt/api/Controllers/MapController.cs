@@ -60,8 +60,8 @@ namespace TT_API.Controllers {
             return Ok(users);
         }
 
-        [Authorize]
-        [HasMapPermission("owner")]
+        //[Authorize]
+        //[HasMapPermission("owner")]
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetMap(int mapID) {
             var map = await context.Maps

@@ -32,14 +32,12 @@ export class SharingService {
   }
 
   public editUserPermission(sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap`, sharedUser)
-      .pipe(
-        map(user => {
-          console.log("Editing share ", user);
-          return user;
-        })
-      );
+    return this.http.put<SharedUser>(
+      `${environment.apiUrl}/Share/EditUserPermissionOnMap/${sharedUser.mapId}`,
+      sharedUser
+    );
   }
+
 
 
   public removeUserFromMap(sharedUser: SharedUser): Observable<SharedUser> {

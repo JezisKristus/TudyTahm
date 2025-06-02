@@ -11,6 +11,7 @@ export interface AppMap {
 
 export interface SharedUser {
   userId: number;
+  mapId: number;
   userName: string;
   permission: 'read' | 'write' | 'owner';
 }
