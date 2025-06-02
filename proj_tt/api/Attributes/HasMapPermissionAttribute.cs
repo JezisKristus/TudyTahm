@@ -17,13 +17,13 @@ namespace TT_API.Attributes {
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context) {
             var httpContext = context.HttpContext;
-            var db = httpContext.RequestServices.GetService<MyContext>();
+            var db = new MyContext();
 
             foreach (var claim in httpContext.User.Claims) {
                 Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
             }
 
-            var userIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            var userIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == "userID");
             if (userIdClaim == null) {
                 context.Result = new BadRequestObjectResult("No userID claim");
                 return;
