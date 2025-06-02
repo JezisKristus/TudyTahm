@@ -28,6 +28,9 @@ namespace TT_API {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<MapLabel>().HasNoKey();
             modelBuilder.Entity<MarkerLabel>().HasNoKey();
+            modelBuilder.Entity<User>()
+        .HasIndex(e => e.UserEmail)
+        .IsUnique();
         }
 
     }
