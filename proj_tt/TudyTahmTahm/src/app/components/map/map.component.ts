@@ -30,6 +30,7 @@ import {ColorMarkerComponent} from '../color-marker/color-marker.component';
 import {ExtendedMarker} from '../../models/extended-marker';
 import {MapDetailsPanelComponent} from '../map-details-panel/map-details-panel.component';
 import {SharingService} from '../../services/sharing.service';
+import {share} from 'rxjs';
 
 class MapData {
   mapName?: string
@@ -65,7 +66,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   /** Main Leaflet map instance */
   map!: L.Map;
   mapName: string = '';
-  isEditingName: boolean = false;
   private originalMapName: string = '';
   layer: any;
   mapID: number = Number(sessionStorage.getItem('Map.mapID')) || 1;
@@ -90,8 +90,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   };
 
   @Output() markerClicked = new EventEmitter<L.Marker<any>>();
-  showMarkerList: boolean = false;
-  markersWithoutLabel: ExtendedMarker[] = [];
 
   @Output() detailsPanelToggle = new EventEmitter<void>();
 
@@ -134,17 +132,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.loadMarkers();
     this.loadLabels();
   }
-
-  /**
-   * Handles map instance changes by reloading relevant data
-   */
-  private handleMapChange(): void {
-    this.invalidateLabelsCache();
-    this.loadLabels();
-    this.loadMarkers();
-    this.loadMapData();
-  }
-
   /**
    * Initializes the Leaflet map with default settings
    */
@@ -844,51 +831,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       }
     });
   }
-  updateMapName(): void {
-    const trimmedMapName = this.mapName?.trim();
-
-    if (!trimmedMapName) {
-      this.resetMapName();
-      return;
-    }
-
-    if (trimmedMapName === this.originalMapName) {
-      return;
-    }
-
-    const mapID = sessionStorage.getItem('Map.mapID');
-    if (!mapID) {
-      console.error('No mapID found in sessionStorage.');
-      return;
-    }
-
-    const updateData = {
-      mapID: Number(mapID),
-      mapName: trimmedMapName
-    };
-
-    this.mapService.updateMap(updateData.mapID, updateData).subscribe({
-      next: (updatedMap) => {
-        const newMapName = updatedMap?.mapName?.trim();
-
-        if (!newMapName) {
-          console.error('API response does not contain valid mapName');
-          return;
-        }
-
-        this.mapName = newMapName;
-        this.originalMapName = newMapName;
-        this.updateInputValue(newMapName);
-        console.log('Map name updated successfully');
-      },
-      error: (err) => {
-        console.error('Error updating map name:', err);
-        this.resetMapName();
-        alert('Failed to update map name');
-      }
-    });
-
-  }
 
   private resetMapName(): void {
     this.mapName = this.originalMapName;
@@ -948,16 +890,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.showDetailsPanel = !this.showDetailsPanel;
   }
 
-  onShareMap(email: string) {
-    // Call your sharing service here
-    console.log('Sharing map with:', email);
-    // Example:
-    // this.mapSharingService.shareMap(this.currentMap.mapID, email).subscribe(
-    //   response => {
-    //     // Update the map's sharedWith array
-    //     this.currentMap.sharedWith.push(response);
-    //   }
-    // );
+  onShareMap(sharedUser: SharedUser) {
+    console.log('Sharing map with:', sharedUser.userEmail);
+
+    this.sharingService.addUserToMap(sharedUser).subscribe(
+      response => {
+        if (this.currentMap) {
+          this.currentMap.sharedWith.push(response);
+        } else {
+          console.error('currentMap is null or undefined.');
+        }
+      }
+    );
   }
 
   onRemoveSharedUser(userId: number) {

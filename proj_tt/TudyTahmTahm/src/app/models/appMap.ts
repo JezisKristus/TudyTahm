@@ -13,5 +13,6 @@ export interface SharedUser {
   userId: number;
   mapId: number;
   userName: string;
+  userEmail: string;
   permission: 'read' | 'write' | 'owner';
 }

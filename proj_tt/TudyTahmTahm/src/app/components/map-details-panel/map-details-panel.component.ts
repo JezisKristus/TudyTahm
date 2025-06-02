@@ -1,6 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {SharedUser} from '../../models/appMap';
+import {ShareConfig} from 'rxjs';
 
 export interface AppMap {
   mapID: number;
@@ -13,19 +15,12 @@ export interface AppMap {
   sharedWith: SharedUser[];
 }
 
-export interface SharedUser {
-  userId: number;
-  mapId: number;
-  userName: string;
-  permission: 'read' | 'write' | 'owner';
-}
-
 @Component({
   selector: 'app-map-details-panel',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './map-details-panel.component.html',
-  styleUrls: ['./map-details-panel.component.css']
+  styleUrls: ['./map-details-panel.component.scss']
 })
 export class MapDetailsPanelComponent implements OnInit {
   @Input() map: AppMap | null = null;
@@ -33,7 +28,7 @@ export class MapDetailsPanelComponent implements OnInit {
   @Input() currentUserId: number = 0;
 
   @Output() closePanel = new EventEmitter<void>();
-  @Output() shareMap = new EventEmitter<string>();
+  @Output() shareMap = new EventEmitter<SharedUser>();
   @Output() removeSharedUser = new EventEmitter<number>();
   @Output() updateMapDescription = new EventEmitter<string>();
 
@@ -42,6 +37,7 @@ export class MapDetailsPanelComponent implements OnInit {
   emailError: string = '';
   isEditingDescription: boolean = false;
   tempDescription: string = '';
+  sharePermission: 'read' | 'write' = 'read';
 
   ngOnInit() {
     if (this.map) {
@@ -62,6 +58,7 @@ export class MapDetailsPanelComponent implements OnInit {
   openShareModal() {
     this.showShareModal = true;
     this.shareEmail = '';
+    this.sharePermission = 'read';  // reset permission when modal opens
     this.emailError = '';
   }
 
@@ -82,13 +79,20 @@ export class MapDetailsPanelComponent implements OnInit {
       return;
     }
 
-    // Check if user is already shared with
-    if (this.map?.sharedWith.some(user => user.userName.toLowerCase() === this.shareEmail.toLowerCase())) {
+    if (this.map?.sharedWith.some(user => user.userEmail.toLowerCase() === this.shareEmail.toLowerCase())) {
       this.emailError = 'Map is already shared with this user';
       return;
     }
 
-    this.shareMap.emit(this.shareEmail);
+    const newSharedUser: SharedUser = {
+      userEmail: this.shareEmail,
+      userId: 0,  // or assign appropriately
+      userName: '',
+      mapId: this.map!.mapID,
+      permission: this.sharePermission  // assign selected permission here
+    };
+
+    this.shareMap.emit(newSharedUser);
     this.closeShareModal();
   }
 

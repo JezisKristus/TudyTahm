@@ -122,6 +122,23 @@
           </div>
         </div>
 
+        <!-- New dropdown for permission -->
+        <div class="form-group">
+          <div class="form-group">
+            <label for="sharePermission">Permission</label>
+            <select
+              [(ngModel)]="sharePermission"
+              class="form-control"
+              id="sharePermission"
+              name="sharePermission"
+              required>
+              <option value="read">Read</option>
+              <option value="write">Write</option>
+            </select>
+          </div>
+
+        </div>
+
         <div class="modal-actions">
           <button type="button" class="btn btn-cancel" (click)="closeShareModal()">
             Cancel
