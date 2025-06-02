@@ -20,11 +20,15 @@ namespace TT_API.Controllers {
         private MyContext context = new MyContext();
 
         [HttpPost("AddUserToMap")]
-        public async Task<IActionResult> AddUserToMap([FromBody] UserPermissionDTO dto) {
+        public async Task<IActionResult> AddUserToMap([FromBody] UserEmailPermission dto) {
+
+            var user = await context.Users.FirstOrDefaultAsync(u => u.UserEmail == dto.Email);
+
+            if (user == null) { return NotFound(); }
 
             MapPermission perm = new MapPermission() {
                 IDMap = dto.MapID,
-                IDUser = dto.UserID,
+                IDUser = user.UserID,
                 Permission = dto.Permission
             };
 

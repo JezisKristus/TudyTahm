@@ -44,6 +44,8 @@ namespace TT_API.Controllers {
             return Ok(maps);
         }
 
+        [Authorize]
+        [HasMapPermission("read")]
         [HttpGet("SharedUsers/{mapID}")]
         public async Task<IActionResult> GetSharedUsers(int mapID) {
             var users = await context.MapPermissions
@@ -60,15 +62,14 @@ namespace TT_API.Controllers {
             return Ok(users);
         }
 
-        //[Authorize]
-        //[HasMapPermission("owner")]
+        [Authorize]
+        [HasMapPermission("read")]
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetMap(int mapID) {
             var map = await context.Maps
                 .FindAsync(mapID);
               return Ok(map);
         }
-
 
         [HttpPost]
         //potrebuje jeste implementaci custom map o  brazku, zatim predavej nejakej string do MapPath
@@ -94,6 +95,8 @@ namespace TT_API.Controllers {
             return Ok(map.MapID);
         }
 
+        [Authorize]
+        [HasMapPermission("owner")]
         [HttpDelete("{mapID}")]
 
         public async Task<IActionResult> DeleteMap(int mapID) {
@@ -114,6 +117,8 @@ namespace TT_API.Controllers {
             return Ok();
         }
 
+        [Authorize]
+        [HasMapPermission("owner")]
         [HttpPut("RenameMap/{mapID}")]
         public async Task<IActionResult> UpdateMapInfo([FromBody] CreateMapDTO dto, int mapID) {
             var map = await context.Maps.FindAsync(mapID);
