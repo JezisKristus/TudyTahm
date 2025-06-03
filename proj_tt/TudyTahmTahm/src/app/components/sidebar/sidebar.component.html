@@ -1,9 +1,10 @@
 <div class="sidebar">
   <!-- Uživatelská sekce -->
   <div>
-    <div class="user-section" (click)="toggleSignOutPopup()" ariaCurrentWhenActive="page">
+    <div (click)="toggleSignOutPopup()" aria-current="page" class="user-section">
       <div class="user-avatar" [style.background-image]="userBackgroundImage"></div>
-      <span class="username" >{{currentUser?.userName}}</span>
+      <span class="username">{{ currentUser?.userName }}</span>
+      <i class="bi bi-box-arrow-right"></i>
     </div>
 
     <!-- Sign-out popup -->

@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {AuthenticationService} from '../../services/authentication.service';
 import {NgIf, NgOptimizedImage} from '@angular/common';
-import { User } from '../../models/user';
-import { environment } from '../../../environments/environment.development';
+import {User} from '../../models/user';
+import {environment} from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-sidebar',
@@ -47,7 +47,7 @@ export class SidebarComponent implements OnInit {
 
   signOut(): void {
     // Clear session storage and navigate to the sign-in page
-    sessionStorage.clear();
+    this.authService.logout();
     this.router.navigate(['/sign-in']);
   }
 

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, finalize, tap , map, switchMap} from 'rxjs/operators';
-import { RegisterDTO } from '../models/register-dto';
-import { SignInDTO } from '../models/sign-in-dto';
-import { environment } from '../../environments/environment.development';
-import { User, TokenResult } from '../models/user';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {RegisterDTO} from '../models/register-dto';
+import {SignInDTO} from '../models/sign-in-dto';
+import {environment} from '../../environments/environment.development';
+import {TokenResult, User} from '../models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -118,12 +118,10 @@ export class AuthenticationService {
   }
 
   public logout(): void {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('userData'); // Also remove this key to avoid conflicts
-    sessionStorage.clear(); // This will remove all keys in sessionStorage
+    sessionStorage.clear();
     console.log('User logged out and session data cleared.');
   }
+
 
   public isAuthenticated(): boolean {
     return !!this.getToken();

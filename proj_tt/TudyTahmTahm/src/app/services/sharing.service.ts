@@ -17,7 +17,7 @@ export class SharingService {
   }
 
   public addUserToMap(sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap`, sharedUser)
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/${sharedUser.mapId}`, sharedUser)
       .pipe(
         map(user => {
           console.log("Sharing ", user);
