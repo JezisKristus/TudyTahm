@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {catchError, map} from 'rxjs/operators';
+import {catchError} from 'rxjs/operators';
 import {AppMap} from '../models/appMap';
 
 @Injectable({
@@ -35,10 +35,10 @@ export class MapService {
   }
 
 
-  createMap(map: Partial<AppMap>): Observable<AppMap> {
-    const userId = this.getCurrentUserId();
-    const payload = {...map, idUser: userId};
-    return this.http.post<AppMap>(`${this.apiUrl}/Map`, payload)
+  createMap(map: AppMap): Observable<AppMap> {
+    console.log("creating map")
+    map.idUser = this.getCurrentUserId()
+    return this.http.post<AppMap>(`${this.apiUrl}/Map`, map)
       .pipe(
         catchError(this.handleError)
       );

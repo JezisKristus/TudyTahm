@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TT_API.Attributes;
 using TT_API.DTOs;
 using TT_API.Models;
 
@@ -14,7 +16,9 @@ namespace TT_API.Controllers
 
         private MyContext context = new MyContext();
 
-        [HttpPost]
+        [Authorize]
+        [HasMapPermission("write")]
+        [HttpPost("{mapID}")]
         public async Task<IActionResult> CreateMarker([FromBody] CreateMarkerDTO cmDTO)
         {
             var existingPoint = await context.GPSPoints
@@ -57,7 +61,7 @@ namespace TT_API.Controllers
             return Ok(marker);
         }
 
-
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMarker(int id, [FromBody] CreateMarkerDTO cmDTO)
         {
@@ -87,7 +91,8 @@ namespace TT_API.Controllers
 
         }
 
-
+        [Authorize]
+        [HasMapPermission("read")]
         [HttpGet("ByMapID/{mapID}")] //tady pak pridat overovani usera
         public async Task<IActionResult> GetMarkersForMap(int mapID)
         { // Markery jenom toho usera 
@@ -116,6 +121,7 @@ namespace TT_API.Controllers
             return Ok(completemarkers);
         }
 
+        [Authorize]
         [HttpGet("ByMarkerID/{markerID}")] //tady pak pridat overovani usera
         public async Task<IActionResult> GetMarker(int markerID)
         { // Markery jenom toho usera 
@@ -142,7 +148,7 @@ namespace TT_API.Controllers
             return Ok(cmdto);
         }
 
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMarker(int id)
         { // Markery jenom toho usera 

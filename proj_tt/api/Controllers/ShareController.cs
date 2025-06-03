@@ -7,6 +7,8 @@ using TT_API.Services;
 using TT_API.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32.SafeHandles;
+using Microsoft.AspNetCore.Authorization;
+using TT_API.Attributes;
 
 
 namespace TT_API.Controllers {
@@ -19,7 +21,9 @@ namespace TT_API.Controllers {
 
         private MyContext context = new MyContext();
 
-        [HttpPost("AddUserToMap")]
+        [Authorize]
+        [HasMapPermission("owner")]
+        [HttpPost("AddUserToMap/{mapID}")]
         public async Task<IActionResult> AddUserToMap([FromBody] UserEmailPermission dto) {
 
             var user = await context.Users.FirstOrDefaultAsync(u => u.UserEmail == dto.Email);
@@ -39,6 +43,8 @@ namespace TT_API.Controllers {
             return Ok(perm);
         }
 
+        [Authorize]
+        [HasMapPermission("owner")]
         [HttpPut("EditUserPermissionOnMap/{mapID}")]
         public async Task<IActionResult> EditPerm([FromBody] UserPermissionDTO dto) {
             var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDMap == dto.MapID && p.IDUser == dto.UserID);
@@ -52,6 +58,8 @@ namespace TT_API.Controllers {
             return Ok(perm);
         }
 
+        [Authorize]
+        [HasMapPermission("owner")]
         [HttpDelete("RemoveUserFromMap/{mapID}")]
         public async Task<IActionResult> RemoveUser([FromBody] UserPermissionDTO dto) {
             var perm = await context.MapPermissions.FirstOrDefaultAsync(p => p.IDUser == dto.UserID && p.IDMap == dto.MapID);
