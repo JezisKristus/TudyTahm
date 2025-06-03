@@ -41,7 +41,7 @@ namespace TT_API.Attributes {
                 .FirstOrDefaultAsync(p => p.IDUser == userID && p.IDMap == mapID);
 
             if (permission == null || !HasSufficientPermission(permission.Permission, _requiredPermission)) {
-                context.Result = new BadRequestObjectResult("Invalid permission");
+                context.Result = new BadRequestObjectResult("Insufficient permission");
             }
         }
 

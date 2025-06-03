@@ -23,6 +23,7 @@ namespace TT_API.Controllers {
 
         MyContext context = new MyContext();
 
+        [Authorize]
         [HttpGet("ByUserID/{userID}")]
         public async Task<IActionResult> GetMapsByUser(int userID) {
             var maps = await context.Maps
@@ -32,6 +33,7 @@ namespace TT_API.Controllers {
             return Ok(maps);
         }
 
+        [Authorize]
         [HttpGet("SharedMaps/{userID}")]
         public async Task<IActionResult> GetSharedMaps(int userID) {
             var maps = await context.MapPermissions
@@ -71,6 +73,7 @@ namespace TT_API.Controllers {
               return Ok(map);
         }
 
+        [Authorize]
         [HttpPost]
         //potrebuje jeste implementaci custom map o  brazku, zatim predavej nejakej string do MapPath
         public async Task<IActionResult> AddMap([FromBody] CreateMapDTO dto) {

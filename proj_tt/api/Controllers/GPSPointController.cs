@@ -6,6 +6,7 @@ using TT_API.Models;
 using TT_API.Services;
 using TT_API.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace TT_API.Controllers {
@@ -18,6 +19,7 @@ namespace TT_API.Controllers {
 
         private MyContext context = new MyContext();
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<GPSPoint>> GetGPSPoint(int id) {
             var gpsPoint = await context.GPSPoints.FindAsync(id);
