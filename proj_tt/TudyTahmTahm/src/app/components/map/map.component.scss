@@ -175,7 +175,7 @@ body {
   overflow: hidden;
 }
 
-/* Samotná oblast mapy Leaflet */
+/* Map Area */
 .map-area {
   flex: 1 1 auto;
   height: 100%;
@@ -185,9 +185,8 @@ body {
   width: 100%;
 }
 
-/* Host pro dynamicky přidávané markery */
-.marker-host,
-.marker-details-container {
+/* Marker Host */
+.marker-host {
   position: absolute;
   top: 0;
   left: 0;
@@ -197,16 +196,49 @@ body {
   z-index: 400;
 }
 
-/* Pokud chcete, aby detaily měly ještě vyšší prioritu */
-.marker-details-container {
+/* Map Details Container */
+.map-details-container {
+  position: absolute;
+  top: 64px;
+  right: 0;
+  width: 230px;
+  height: calc(100% - 64px);
+  pointer-events: none;
   z-index: 500;
+  overflow: hidden;
+  visibility: hidden; /* Hide by default */
 }
 
-/* Příklad: pokud máte v panelu konkrétní šířku */
-.marker-details-container .details-panel {
-  width: 300px;
-  right: 0;
+.map-details-container.visible {
+  visibility: visible;
+}
+
+/* Remove any conflicting styles */
+.marker-details-container .details-panel,
+.map-details-container .details-panel {
   pointer-events: auto;
+  height: 100%;
+  width: 230px;
+  background-color: var(--dark-green);
+  border-left: 2px solid var(--gold);
+}
+
+/* Ensure the map-details-panel is not affected by the map wrapper */
+app-map-details-panel {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 230px;
+  height: calc(100% - 64px);
+  z-index: 1000;
+  pointer-events: auto;
+  background-color: var(--dark-green);
+  border-left: 2px solid var(--gold);
+  visibility: hidden; /* Hide by default */
+}
+
+app-map-details-panel.visible {
+  visibility: visible;
 }
 
 /* Marker Overlay */

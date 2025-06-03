@@ -1,96 +1,85 @@
-<div class="details-panel" [class.panel-visible]="isVisible" *ngIf="map">
-  <!-- Panel Header -->
-  <div class="panel-header">
-    <h3 class="panel-title">Map Details</h3>
-    <button class="btn-close-panel" (click)="closeDetails()" aria-label="Close panel">
-      <i class="fas fa-times"></i>
+<div class="details-panel" #panel [class.panel-visible]="isVisible" *ngIf="map">
+  <h3>Map Details</h3>
+
+  <label class="label">Name</label>
+  <input
+    type="text"
+    [value]="map.mapName"
+    readonly
+    class="form-control"
+  />
+
+  <label class="label">Description</label>
+  <div *ngIf="!isEditingDescription" class="description-section">
+    <p *ngIf="map.description; else noDescription" class="description-text">{{ map.description }}</p>
+    <ng-template #noDescription>
+      <p class="text-muted">No description available</p>
+    </ng-template>
+    <button class="edit-button" (click)="startEditingDescription()">
+      <i class="fas fa-edit"></i> Edit
     </button>
   </div>
 
-  <!-- Panel Content -->
-  <div class="panel-content">
-    <!-- Map Name -->
-    <div class="section">
-      <h4 class="section-title">{{ map.mapName }}</h4>
+  <div *ngIf="isEditingDescription" class="description-edit">
+    <textarea
+      [(ngModel)]="tempDescription"
+      class="form-control"
+      rows="3"
+      placeholder="Enter map description..."
+    ></textarea>
+    <div class="edit-buttons">
+      <button class="save" (click)="saveDescription()">
+        <i class="fas fa-check"></i> Save
+      </button>
+      <button class="cancel" (click)="cancelEditDescription()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="sharing-section">
+    <div class="section-header">
+      <h4>Shared With</h4>
+      <button class="share-button" (click)="openShareModal()">
+        <i class="fas fa-user-plus"></i> Share
+      </button>
     </div>
 
-    <!-- Map Description -->
-    <div class="section">
-      <div class="section-header">
-        <h5 class="section-subtitle">Description</h5>
-        <button
-          class="btn-edit"
-          (click)="startEditingDescription()"
-          *ngIf="!isEditingDescription"
-          aria-label="Edit description">
-          <i class="fas fa-edit"></i>
-        </button>
+    <div class="shared-users-list">
+      <div *ngIf="map.sharedWith.length === 0" class="no-shares">
+        <p class="text-muted">This map is not shared with anyone yet.</p>
       </div>
 
-      <div *ngIf="!isEditingDescription" class="description-text">
-        <p *ngIf="map.description; else noDescription">{{ map.description }}</p>
-        <ng-template #noDescription>
-          <p class="text-muted">No description available. Click edit to add one.</p>
-        </ng-template>
-      </div>
-
-      <div *ngIf="isEditingDescription" class="description-edit">
-        <textarea
-          [(ngModel)]="tempDescription"
-          class="form-control description-textarea"
-          rows="3"
-          placeholder="Enter map description...">
-        </textarea>
-        <div class="edit-buttons">
-          <button class="btn btn-save" (click)="saveDescription()">
-            <i class="fas fa-check"></i> Save
-          </button>
-          <button class="btn btn-cancel" (click)="cancelEditDescription()">
-            <i class="fas fa-times"></i> Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sharing Section -->
-    <div class="section">
-      <div class="section-header">
-        <h5 class="section-subtitle">Shared With</h5>
-        <button class="btn-share" (click)="openShareModal()" aria-label="Share map">
-          <i class="fas fa-user-plus"></i> Share
-        </button>
-      </div>
-
-      <div class="shared-users-list">
-        <div *ngIf="map.sharedWith.length === 0" class="no-shares">
-          <p class="text-muted">This map is not shared with anyone yet.</p>
-        </div>
-
-        <div *ngFor="let user of map.sharedWith" class="shared-user-item">
-          <div class="user-info">
-            <div class="user-avatar">
-              <i class="fas fa-user"></i>
-            </div>
-            <div class="user-details">
-              <span class="user-name">{{ user.userName }}</span>
-              <span class="user-permission">
-                <i [class]="getPermissionIcon(user.permission)"></i>
-                <span [class]="getPermissionBadgeClass(user.permission)">
-                  {{ user.permission | titlecase }}
-                </span>
-              </span>
-            </div>
+      <div *ngFor="let user of map.sharedWith" class="shared-user-item">
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
           </div>
-          <button
-            *ngIf="canRemoveUser(user)"
-            class="btn-remove-user"
-            (click)="removeUser(user.userId)"
-            aria-label="Remove user access">
-            <i class="fas fa-times"></i>
-          </button>
+          <div class="user-details">
+            <span class="user-name">{{ user.userName }}</span>
+            <span class="user-permission">
+              <i [class]="getPermissionIcon(user.permission)"></i>
+              <span [class]="getPermissionBadgeClass(user.permission)">
+                {{ user.permission | titlecase }}
+              </span>
+            </span>
+          </div>
         </div>
+        <button
+          *ngIf="canRemoveUser(user)"
+          class="remove-button"
+          (click)="removeUser(user.userId)"
+        >
+          <i class="fas fa-times"></i>
+        </button>
       </div>
     </div>
+  </div>
+
+  <div class="button-row">
+    <button class="close" (click)="closeDetails()">Close</button>
   </div>
 </div>
 
@@ -98,8 +87,8 @@
 <div class="modal-overlay" *ngIf="showShareModal" (click)="closeShareModal()">
   <div class="share-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h4 class="modal-title">Share Map</h4>
-      <button class="btn-close-modal" (click)="closeShareModal()" aria-label="Close modal">
+      <h4>Share Map</h4>
+      <button class="close-button" (click)="closeShareModal()">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -107,45 +96,37 @@
     <div class="modal-body">
       <form (ngSubmit)="onShareSubmit()" #shareForm="ngForm">
         <div class="form-group">
-          <label for="shareEmail">Email Address</label>
+          <label class="label">Email Address</label>
           <input
             type="email"
-            id="shareEmail"
             [(ngModel)]="shareEmail"
             name="shareEmail"
             class="form-control"
-            [class.is-invalid]="emailError"
+            [class.invalid]="emailError"
             placeholder="Enter email address..."
-            required>
-          <div class="invalid-feedback" *ngIf="emailError">
+            required
+          >
+          <div class="error-message" *ngIf="emailError">
             {{ emailError }}
           </div>
         </div>
 
-        <!-- New dropdown for permission -->
         <div class="form-group">
-          <div class="form-group">
-            <label for="sharePermission">Permission</label>
-            <select
-              [(ngModel)]="sharePermission"
-              class="form-control"
-              id="sharePermission"
-              name="sharePermission"
-              required>
-              <option value="read">Read</option>
-              <option value="write">Write</option>
-            </select>
-          </div>
-
+          <label class="label">Permission</label>
+          <select
+            [(ngModel)]="sharePermission"
+            class="form-control"
+            name="sharePermission"
+            required
+          >
+            <option value="read">Read</option>
+            <option value="write">Write</option>
+          </select>
         </div>
 
-        <div class="modal-actions">
-          <button type="button" class="btn btn-cancel" (click)="closeShareModal()">
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-share-submit">
-            <i class="fas fa-share"></i> Share Map
-          </button>
+        <div class="button-row">
+          <button type="button" class="cancel" (click)="closeShareModal()">Cancel</button>
+          <button type="submit" class="save">Share Map</button>
         </div>
       </form>
     </div>

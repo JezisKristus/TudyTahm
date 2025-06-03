@@ -57,6 +57,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   @ViewChild('markerDetailsContainer', { read: ViewContainerRef, static: true })
   private markerDetailsContainer!: ViewContainerRef;
 
+  /** Container reference for map details component */
+  @ViewChild('mapDetailsContainer', { read: ViewContainerRef, static: true })
+  private mapDetailsContainer!: ViewContainerRef;
+
   /** References to color marker components */
   private colorMarkerRefs: ComponentRef<ColorMarkerComponent>[] = [];
 
@@ -92,6 +96,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   @Output() markerClicked = new EventEmitter<L.Marker<any>>();
 
   @Output() detailsPanelToggle = new EventEmitter<void>();
+
+  private mapDetailsRef?: ComponentRef<MapDetailsPanelComponent>;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -812,22 +818,56 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       return;
     }
 
+    console.log('Loading map data for ID:', mapID);
     this.mapService.getMapById(Number(mapID)).subscribe({
-      next: (mapData: MapData) => {
-        if (mapData && mapData.mapName) {
-          this.mapName = mapData.mapName.trim();
+      next: (mapData: AppMap) => {
+        console.log('Received map data:', mapData);
+        if (mapData) {
+          // Ensure all required properties are set
+          this.currentMap = {
+            mapID: mapData.mapID,
+            idUser: mapData.idUser,
+            isCustom: mapData.isCustom,
+            mapName: mapData.mapName || 'Unnamed Map',
+            mapPath: mapData.mapPath || '',
+            mapPreviewPath: mapData.mapPreviewPath || '',
+            description: mapData.description || '',
+            sharedWith: mapData.sharedWith || []
+          };
+          this.mapName = this.currentMap.mapName.trim();
           this.originalMapName = this.mapName;
           this.updateInputValue(this.mapName);
+          console.log('Map data loaded successfully. Current map:', this.currentMap);
         } else {
           console.warn('Received invalid map data');
           this.mapName = 'Unnamed Map';
           this.originalMapName = 'Unnamed Map';
+          this.currentMap = {
+            mapID: Number(mapID),
+            idUser: this.currentUserId,
+            isCustom: false,
+            mapName: 'Unnamed Map',
+            mapPath: '',
+            mapPreviewPath: '',
+            description: '',
+            sharedWith: []
+          };
         }
       },
       error: (err: Error) => {
         console.error('Error loading map data:', err);
         this.mapName = 'Unnamed Map';
         this.originalMapName = 'Unnamed Map';
+        this.currentMap = {
+          mapID: Number(mapID),
+          idUser: this.currentUserId,
+          isCustom: false,
+          mapName: 'Unnamed Map',
+          mapPath: '',
+          mapPreviewPath: '',
+          description: '',
+          sharedWith: []
+        };
       }
     });
   }
@@ -888,10 +928,31 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
   toggleDetailsPanel() {
     this.showDetailsPanel = !this.showDetailsPanel;
+    this.detailsPanelToggle.emit();
+    console.log('Details panel visibility toggled:', this.showDetailsPanel);
+    
+    if (this.showDetailsPanel) {
+      this.showMapDetails();
+    } else {
+      this.clearMapDetails();
+    }
   }
 
-  onShareMap(sharedUser: SharedUser) {
-    console.log('Sharing map with:', sharedUser.userEmail);
+  onShareMap(shareData: {email: string, permission: string}) {
+    console.log('Sharing map with:', shareData.email);
+
+    // Ensure permission is one of the allowed values
+    const permission = (shareData.permission === 'write' || shareData.permission === 'owner') 
+      ? shareData.permission 
+      : 'read';
+
+    const sharedUser: SharedUser = {
+      userId: 0, // This will be set by the backend
+      mapId: this.currentMap?.mapID || 0,
+      userName: shareData.email.split('@')[0], // Temporary username
+      userEmail: shareData.email,
+      permission: permission
+    };
 
     this.sharingService.addUserToMap(sharedUser).subscribe(
       response => {
@@ -928,5 +989,53 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
   onClosePanelDetails() {
     this.showDetailsPanel = false;
+  }
+
+  toggleMapDetails(): void {
+    if (this.mapDetailsRef) {
+      this.clearMapDetails();
+    } else {
+      this.showMapDetails();
+    }
+  }
+
+  private showMapDetails(): void {
+    if (!this.currentMap) {
+      console.error('No map data available');
+      return;
+    }
+
+    try {
+      this.mapDetailsRef = this.mapDetailsContainer.createComponent(MapDetailsPanelComponent);
+      this.mapDetailsRef.instance.map = { ...this.currentMap };
+      this.mapDetailsRef.instance.isVisible = true;
+
+      this.mapDetailsRef.instance.closePanel.subscribe(() => this.clearMapDetails());
+      this.mapDetailsRef.instance.shareMap.subscribe((data) => this.onShareMap(data));
+      this.mapDetailsRef.instance.removeSharedUser.subscribe((userId) => this.onRemoveSharedUser(userId));
+      this.mapDetailsRef.instance.updateMapDescription.subscribe((description) => this.onUpdateMapDescription(description));
+
+      this.mapDetailsRef.changeDetectorRef.detectChanges();
+
+      const container = document.querySelector('.map-details-container');
+      if (container) {
+        container.classList.add('visible');
+      }
+    } catch (error) {
+      console.error('Error creating map details:', error);
+      this.clearMapDetails();
+    }
+  }
+
+  private clearMapDetails(): void {
+    const container = document.querySelector('.map-details-container');
+    if (container) {
+      container.classList.remove('visible');
+    }
+
+    if (this.mapDetailsRef) {
+      this.mapDetailsRef.destroy();
+      this.mapDetailsRef = undefined;
+    }
   }
 }

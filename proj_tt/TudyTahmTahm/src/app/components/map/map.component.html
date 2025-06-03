@@ -65,17 +65,10 @@
     <div #markerDetailsContainer class="marker-details-container">
       <div class="details-panel"></div>
     </div>
-    <app-map-details-panel
-      [map]="currentMap"
-      [isVisible]="showDetailsPanel"
-      [currentUserId]="currentUserId"
-      (closePanel)="onClosePanelDetails()"
-      (shareMap)="onShareMap($event)"
-      (removeSharedUser)="onRemoveSharedUser($event)"
-      (updateMapDescription)="onUpdateMapDescription($event)">
-    </app-map-details-panel>  </div>
-
-
+    <div #mapDetailsContainer class="map-details-container">
+      <div class="details-panel"></div>
+    </div>
+  </div>
 
   <!-- Add Label Modal -->
   <div
