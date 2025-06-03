@@ -7,6 +7,7 @@ using TT_API.Services;
 using TT_API.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace TT_API.Controllers {
@@ -19,6 +20,7 @@ namespace TT_API.Controllers {
 
         private MyContext context = new MyContext();
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateJourney([FromBody] JourneyDTO dto) {
 
@@ -32,6 +34,7 @@ namespace TT_API.Controllers {
 
         }
 
+        [Authorize]
         [HttpPut("AddPointToJourney/{jourID}")]
         public async Task<IActionResult> AddToJourney([FromBody] PointDTO dto, int jourID) {
             var journey = await context.Journeys.FirstOrDefaultAsync(j => j.JourneyID == jourID);
@@ -51,6 +54,7 @@ namespace TT_API.Controllers {
             return Ok(point.PointID);
         }
 
+        [Authorize]
         [HttpDelete("PointFromJourney/{jourID}")]
         public async Task<IActionResult> RemoveFromJourney([FromBody] int pointID ,int jourID) {
             var journey = await context.Journeys.FirstOrDefaultAsync(j => j.JourneyID == jourID);
@@ -68,6 +72,7 @@ namespace TT_API.Controllers {
             return Ok(point);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveJourney(int id) {
 
@@ -88,7 +93,7 @@ namespace TT_API.Controllers {
             return Ok(journey);
         }
 
-
+        [Authorize]
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetJourneyByMap(int mapID) {
             var journeys = await context.Journeys.Where(j => j.IDMap == mapID).ToListAsync();
@@ -98,6 +103,7 @@ namespace TT_API.Controllers {
             return Ok(journeys);
         }
 
+        [Authorize]
         [HttpGet("ByUserID/{userID}")]
         public async Task<IActionResult> GetJourneyByUser(int userID)
         {
@@ -112,7 +118,7 @@ namespace TT_API.Controllers {
             return Ok(journeys);
         }
 
-
+        [Authorize]
         [HttpGet("Points/{jourID}")]
         public async Task<IActionResult> GetPoints(int jourID) {
             var points = await context.JourneyPoints.Where(p => p.IDJourney == jourID).ToListAsync();

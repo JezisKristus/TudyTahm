@@ -57,6 +57,7 @@ namespace TT_API.Controllers {
         }
 
 
+        [Authorize]
         [HttpPut("UpdateUser/{userID}")]
         public async Task<IActionResult> UpdateUser([FromBody] CreateUpdateUserDTO dto, int userID) {
             if (!ModelState.IsValid)
@@ -82,7 +83,7 @@ namespace TT_API.Controllers {
             }
         }
 
-
+        [Authorize]
         [HttpPut("ChangePassword/{userID}")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, int userID)
         {
@@ -107,7 +108,7 @@ namespace TT_API.Controllers {
         }
 
 
-
+        [Authorize]
         [HttpPut("UploadPFP/{userID}")]
         public async Task<IActionResult> UploadPFP(IFormFile image, int userID) {
 
@@ -155,6 +156,7 @@ namespace TT_API.Controllers {
             return Ok(identity.FindFirst("userID").Value);
         }
 
+        [Authorize]
         [HttpGet("UserInfoByID/{id}")]
         public async Task<IActionResult> GetUserInfoByID(int id) {
             var user = await context.Users.FindAsync(id);
@@ -166,7 +168,7 @@ namespace TT_API.Controllers {
             });
         }
 
-
+        [Authorize]
         [HttpGet("pfpPath/{userID}")]
 
         public async Task<IActionResult> GetPfpPath(int userID) {

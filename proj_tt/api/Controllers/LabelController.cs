@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using TT_API.Attributes;
 using TT_API.DTOs;
 using TT_API.Models;
 using TT_API.Services;
@@ -15,6 +17,7 @@ namespace TT_API.Controllers
     {
         private readonly MyContext context = new MyContext();
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateLabel([FromBody] LabelDTO dto)
         {
@@ -34,6 +37,7 @@ namespace TT_API.Controllers
             return CreatedAtAction(nameof(GetByID), new { id = label.LabelID }, label);
         }
 
+        [Authorize]
         [HttpPut("{labelID}")]
         public async Task<IActionResult> UpdateLabel(int labelID, [FromBody] LabelDTO dto)
         {
@@ -53,6 +57,7 @@ namespace TT_API.Controllers
             return Ok(label);
         }
 
+        [Authorize]
         [HttpDelete("{labelID}")]
         public async Task<IActionResult> DeleteLabel(int labelID)
         {
@@ -75,6 +80,8 @@ namespace TT_API.Controllers
             return Ok(label.LabelID);
         }
 
+        [Authorize]
+        [HasMapPermission("read")]
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetByMapID(int mapID)
         {
@@ -88,6 +95,7 @@ namespace TT_API.Controllers
             return Ok(labels);
         }
 
+        [Authorize]
         [HttpGet("ByMarkerID/{markerID}")]
         public async Task<IActionResult> GetByMarkerID(int markerID)
         {
@@ -103,6 +111,7 @@ namespace TT_API.Controllers
             return Ok(label);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(int id)
         {
