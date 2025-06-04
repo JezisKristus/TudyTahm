@@ -106,10 +106,6 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
     return this.map?.mapPreviewPath || '';
   }
 
-  get isCustom(): boolean {
-    return this.map?.isCustom || false;
-  }
-
   get sharedWith(): SharedUser[] {
     return this.map?.sharedWith || [];
   }

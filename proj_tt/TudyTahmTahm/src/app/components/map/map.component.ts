@@ -111,16 +111,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
    * Initializes the component and loads initial data
    */
   ngOnInit(): void {
-    const mapID = sessionStorage.getItem('Map.mapID');
-    if (!mapID) {
-      console.error('No mapID found in sessionStorage.');
-      sessionStorage.setItem('Map.mapID', '1');
-      console.log('Setting default mapID to 1.');
-    } else {
-      console.log('Retrieved mapID from sessionStorage:', mapID);
-    }
-    this.mapID = Number(mapID) || 1;
-    this.labels = [];
     this.loadMapData();
   }
 
@@ -827,16 +817,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
           this.currentMap = {
             mapID: mapData.mapID,
             idUser: mapData.idUser,
-            isCustom: mapData.isCustom,
             mapName: mapData.mapName || 'Unnamed Map',
-            mapPath: mapData.mapPath || '',
             mapPreviewPath: mapData.mapPreviewPath || '',
             description: mapData.description || '',
             sharedWith: mapData.sharedWith || []
           };
           this.mapName = this.currentMap.mapName.trim();
           this.originalMapName = this.mapName;
-          this.updateInputValue(this.mapName);
           console.log('Map data loaded successfully. Current map:', this.currentMap);
         } else {
           console.warn('Received invalid map data');
@@ -845,9 +832,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
           this.currentMap = {
             mapID: Number(mapID),
             idUser: this.currentUserId,
-            isCustom: false,
             mapName: 'Unnamed Map',
-            mapPath: '',
             mapPreviewPath: '',
             description: '',
             sharedWith: []
@@ -861,30 +846,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
         this.currentMap = {
           mapID: Number(mapID),
           idUser: this.currentUserId,
-          isCustom: false,
           mapName: 'Unnamed Map',
-          mapPath: '',
           mapPreviewPath: '',
           description: '',
           sharedWith: []
         };
-      }
-    });
-  }
-
-  private resetMapName(): void {
-    this.mapName = this.originalMapName;
-    this.updateInputValue(this.originalMapName);
-  }
-
-  private updateInputValue(value: string): void {
-    console.log('Setting input value to:', value);
-    setTimeout(() => {
-      const inputElement = document.querySelector('.map-title-input') as HTMLInputElement;
-      if (inputElement) {
-        inputElement.value = value;
-      } else {
-        console.warn('Input element .map-title-input not found');
       }
     });
   }
@@ -930,7 +896,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.showDetailsPanel = !this.showDetailsPanel;
     this.detailsPanelToggle.emit();
     console.log('Details panel visibility toggled:', this.showDetailsPanel);
-    
+
     if (this.showDetailsPanel) {
       this.showMapDetails();
     } else {
@@ -942,8 +908,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     console.log('Sharing map with:', shareData.email);
 
     // Ensure permission is one of the allowed values
-    const permission = (shareData.permission === 'write' || shareData.permission === 'owner') 
-      ? shareData.permission 
+    const permission = (shareData.permission === 'write' || shareData.permission === 'owner')
+      ? shareData.permission
       : 'read';
 
     const sharedUser: SharedUser = {
