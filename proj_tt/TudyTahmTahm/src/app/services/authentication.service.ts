@@ -68,12 +68,17 @@ export class AuthenticationService {
     );
   }
 
-  public getCurrentUserID(): number | null {
+  public getCurrentUserID(): number {
     const user = this.getUser();
     if (user && typeof user.userID === 'number') {
       return user.userID;
     }
     return null;
+  }
+
+  public getCurrentUser(): User {
+    const userId: = this.getCurrentUserID();
+    return this.getUserByID(userId).subscribe();
   }
 
   setUser(user: User): void {

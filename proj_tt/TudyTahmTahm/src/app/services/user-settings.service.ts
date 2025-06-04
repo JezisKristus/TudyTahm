@@ -130,8 +130,4 @@ export class UserSettingsService {
         })
       );
   }
-
-  getCurrentUser(): User | null {
-    return this.authService.getUser();
-  }
 }

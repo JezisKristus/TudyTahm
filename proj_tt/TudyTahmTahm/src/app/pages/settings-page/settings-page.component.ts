@@ -52,7 +52,7 @@ export class SettingsPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentUser = this.userSettingsService.getCurrentUser();
+    this.currentUser = this.authService.getUser();
     if (!this.currentUser) {
       console.warn('No authenticated user found');
       this.router.navigate(['/sign-in']);
