@@ -81,7 +81,6 @@ namespace TT_API.Controllers {
 
                 IDUser = dto.IDUser,
                 MapName = dto.MapName,
-                MapPath = dto.MapPath,
                 MapPreviewPath = @"bg.jpg",
                 MapDescription = dto.MapDescription,
             };
