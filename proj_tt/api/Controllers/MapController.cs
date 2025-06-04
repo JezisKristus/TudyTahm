@@ -80,7 +80,6 @@ namespace TT_API.Controllers {
             Map map = new Map() {
 
                 IDUser = dto.IDUser,
-                IsCustom = dto.IsCustom,
                 MapName = dto.MapName,
                 MapPath = dto.MapPath,
                 MapPreviewPath = @"bg.jpg",
@@ -136,6 +135,7 @@ namespace TT_API.Controllers {
             return Ok(map);
         }
 
+        //[Authorize]
         //[HttpPut("UploadMapPreview/{mapID}")]
 
         //public async Task<IActionResult> UploadPreview([FromForm] IFormFile image, int mapID) {
