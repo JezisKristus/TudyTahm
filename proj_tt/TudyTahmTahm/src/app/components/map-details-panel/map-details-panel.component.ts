@@ -2,7 +2,6 @@ import {Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {AppMap, SharedUser} from '../../models/appMap';
-import {ShareConfig} from 'rxjs';
 import {SharingService} from '../../services/sharing.service';
 
 @Component({
@@ -28,20 +27,17 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
   shareEmail: string = '';
   sharePermission: string = 'read';
   emailError: string = '';
-  isEditingDescription: boolean = false;
-  tempDescription: string = '';
-
   private panelInitialized = false;
 
-  constructor(private renderer: Renderer2, private sharingService: SharingService) {}
+  constructor(private renderer: Renderer2, private sharingService: SharingService) {
+    console.log('MapDetailsPanelComponent constructor called');
+  }
 
   ngOnInit(): void {
     console.log('Map details panel initialized');
     console.log('Initial map data:', this.map);
     console.log('Initial visibility:', this.isVisible);
-    if (this.map) {
-      this.tempDescription = this.map.description || '';
-    }
+    console.log('Initial showShareModal:', this.showShareModal);
   }
 
   ngAfterViewInit(): void {
@@ -64,9 +60,6 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
       } else {
         this.hidePanel();
       }
-    }
-    if (changes['map'] && changes['map'].currentValue) {
-      this.tempDescription = this.map?.description || '';
     }
   }
 
@@ -115,17 +108,24 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   openShareModal(): void {
+    console.log('Opening share modal');
+    console.log('Current showShareModal value:', this.showShareModal);
     this.showShareModal = true;
+    console.log('New showShareModal value:', this.showShareModal);
     this.shareEmail = '';
     this.sharePermission = 'read';
     this.emailError = '';
   }
 
   closeShareModal(): void {
+    console.log('Closing share modal');
+    console.log('Current showShareModal value:', this.showShareModal);
     this.showShareModal = false;
+    console.log('New showShareModal value:', this.showShareModal);
   }
 
   onShareSubmit(): void {
+    console.log('Share form submitted');
     if (!this.shareEmail) {
       this.emailError = 'Email is required';
       return;
@@ -182,21 +182,10 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
     }
   }
 
-  startEditingDescription(): void {
-    this.isEditingDescription = true;
-    this.tempDescription = this.map?.description || '';
-  }
-
   saveDescription(): void {
-    if (this.tempDescription !== this.map?.description) {
-      this.updateMapDescription.emit(this.tempDescription);
+    if (this.map?.description) {
+      this.updateMapDescription.emit(this.map.description);
     }
-    this.isEditingDescription = false;
-  }
-
-  cancelEditDescription(): void {
-    this.isEditingDescription = false;
-    this.tempDescription = this.map?.description || '';
   }
 }
 

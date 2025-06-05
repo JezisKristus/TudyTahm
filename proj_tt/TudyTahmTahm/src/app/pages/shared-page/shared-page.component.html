@@ -2,10 +2,11 @@
   <app-sidebar class="sidebar"></app-sidebar>
 
   <div class="content">
-    <!-- Header -->
-    <div class="content-header">
-      <div class="share-icon-large"></div>
-      <h1>Shared Maps</h1>
+    <div class="header">
+      <div class="share-icon">
+        <i class="fas fa-share-alt"></i>
+      </div>
+      <h1 class="page-title">Shared Maps</h1>
     </div>
 
     <!-- Filters Section -->
@@ -14,23 +15,21 @@
         <input
           [(ngModel)]="searchQuery"
           type="text"
-          (ngModelChange)="applyFilters()"
-          placeholder="Search shared maps..."
+          (ngModelChange)="onSearch()"
+          placeholder="Search maps..."
           class="search-input"
         >
       </div>
       <div class="filter-container">
-        <select [(ngModel)]="selectedOwner" (ngModelChange)="applyFilters()" class="filter-select">
-          <option value="">All Owners</option>
-          <option *ngFor="let owner of uniqueOwners" [ngValue]="owner.userId">
-            {{ owner.userName }}
-          </option>
+        <select [(ngModel)]="selectedOwner" (ngModelChange)="onOwnerFilterChange()" class="filter-select">
+          <option value="all">All Owners</option>
+          <option value="me">My Maps</option>
+          <option value="others">Others' Maps</option>
         </select>
-        <select [(ngModel)]="selectedAccessLevel" (ngModelChange)="applyFilters()" class="filter-select">
-          <option value="">All Access Levels</option>
+        <select [(ngModel)]="selectedAccess" (ngModelChange)="onAccessFilterChange()" class="filter-select">
+          <option value="all">All Access Levels</option>
           <option value="read">Read Only</option>
           <option value="write">Write Access</option>
-          <option value="owner">Owner</option>
         </select>
       </div>
     </div>
@@ -41,7 +40,7 @@
       <div class="groups-panel">
         <div class="panel-title">Categories</div>
         <div
-          class="group-item"
+          class="group-item active"
           [class.active]="selectedCategory === 'all'"
           (click)="selectCategory('all')"
         >
@@ -78,12 +77,11 @@
           <p>Try adjusting your search or filter criteria</p>
         </div>
 
-        <div (click)="openMap(map) " *ngFor="let map of filteredMaps" class="map-item">
-          <div class="map-thumbnail" [style.background-image]="getMapThumbnail(map)"></div>
-          <div (click)="openMap(map)"
-               [routerLink]="['', map.mapID]"
-               class="map-details"
-               routerLinkActive="active">
+        <a class="map-item" *ngFor="let map of filteredMaps" [routerLink]="['/', map.mapID]">
+          <div class="map-thumbnail">
+            <img [src]="map.mapPreviewPath || 'assets/default-map-thumbnail.png'" alt="Map thumbnail" width="80" height="80">
+          </div>
+          <div class="map-details">
             <h2 class="map-title">{{ map.mapName }}</h2>
             <p class="map-author">By {{ getOwnerName(map.idUser) }}</p>
             <p class="map-description" *ngIf="map.description">{{ map.description }}</p>
@@ -97,14 +95,11 @@
             </div>
           </div>
           <div class="map-actions">
-            <button class="action-btn" (click)="$event.stopPropagation(); openMapDetails(map)" title="Map Details">
+            <button class="action-btn" (click)="$event.preventDefault(); openMapDetails(map)" title="Map Details">
               <span class="info-icon"></span>
             </button>
-            <button class="action-btn" (click)="$event.stopPropagation(); shareMap(map)" title="Share Map">
-              <span class="share-icon"></span>
-            </button>
           </div>
-        </div>
+        </a>
       </div>
     </div>
 
@@ -114,10 +109,28 @@
         <span class="refresh-icon"></span>
         Refresh
       </button>
-      <button class="footer-btn primary" (click)="openShareDialog()">
-        <span class="plus-icon">+</span>
-        Share New Map
-      </button>
+    </div>
+  </div>
+
+  <!-- Map Details Dialog -->
+  <div class="dialog-overlay" *ngIf="showMapDetails" (click)="closeMapDetails()">
+    <div class="dialog-content" (click)="$event.stopPropagation()">
+      <app-map-details
+        [map]="selectedMap!"
+        (close)="closeMapDetails()"
+        (share)="openShareDialog(selectedMap!)">
+      </app-map-details>
+    </div>
+  </div>
+
+  <!-- Share Dialog -->
+  <div class="dialog-overlay" *ngIf="showShareDialog" (click)="closeShareDialog()">
+    <div class="dialog-content" (click)="$event.stopPropagation()">
+      <app-share-map-dialog
+        [map]="selectedMap!"
+        (close)="closeShareDialog()"
+        (shareSuccess)="onShareSuccess()">
+      </app-share-map-dialog>
     </div>
   </div>
 </div>

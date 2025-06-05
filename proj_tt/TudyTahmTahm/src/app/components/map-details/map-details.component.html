@@ -1,0 +1,37 @@
+<div class="map-details-container">
+  <div class="header">
+    <h2>{{ map.mapName }}</h2>
+    <button class="close-btn" (click)="closeDialog()">×</button>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <h3>Description</h3>
+      <p>{{ map.description || 'No description available' }}</p>
+    </div>
+
+    <div class="section">
+      <h3>Owner</h3>
+      <p>{{ getOwnerName(map.ownerId) }}</p>
+    </div>
+
+    <div class="section">
+      <h3>Shared With</h3>
+      <div class="shared-users">
+        <div *ngFor="let user of map.sharedWith" class="shared-user">
+          <span class="user-name">{{ user.userName }}</span>
+          <span class="permission-badge" [class]="user.permission">
+            {{ user.permission }}
+          </span>
+        </div>
+        <div *ngIf="!map.sharedWith?.length" class="no-users">
+          No users have been shared with this map yet.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions" *ngIf="canShare">
+    <button class="btn btn-primary" (click)="onShare()">Share Map</button>
+  </div>
+</div> 

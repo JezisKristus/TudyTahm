@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "install",
+			"path": "proj_tt/TudyTahmTahm",
+			"group": "clean",
+			"problemMatcher": [],
+			"label": "npm: install - proj_tt/TudyTahmTahm",
+			"detail": "install dependencies from package"
+		}
+	]
+}

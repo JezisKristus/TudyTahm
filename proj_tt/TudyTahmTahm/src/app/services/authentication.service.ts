@@ -68,7 +68,7 @@ export class AuthenticationService {
     );
   }
 
-  public getCurrentUserID(): number {
+  public getCurrentUserID(): number | null {
     const user = this.getUser();
     if (user && typeof user.userID === 'number') {
       return user.userID;
@@ -76,9 +76,12 @@ export class AuthenticationService {
     return null;
   }
 
-  public getCurrentUser(): User {
-    const userId: = this.getCurrentUserID();
-    return this.getUserByID(userId).subscribe();
+  public getCurrentUser(): Observable<User> {
+    const userId = this.getCurrentUserID();
+    if (!userId) {
+      return throwError(() => new Error('No user ID found'));
+    }
+    return this.getUserByID(userId);
   }
 
   setUser(user: User): void {

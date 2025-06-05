@@ -1,3 +1,4 @@
+<!-- Map Details Panel -->
 <div class="details-panel" #panel [class.panel-visible]="isVisible" *ngIf="map">
   <h3>Map Details</h3>
 
@@ -10,31 +11,14 @@
   />
 
   <label class="label">Description</label>
-  <div *ngIf="!isEditingDescription" class="description-section">
-    <p *ngIf="map.description; else noDescription" class="description-text">{{ map.description }}</p>
-    <ng-template #noDescription>
-      <p class="text-muted">No description available</p>
-    </ng-template>
-    <button class="edit-button" (click)="startEditingDescription()">
-      <i class="fas fa-edit"></i> Edit
-    </button>
-  </div>
-
-  <div *ngIf="isEditingDescription" class="description-edit">
+  <div class="description-section">
     <textarea
-      [(ngModel)]="tempDescription"
+      [(ngModel)]="map.description"
       class="form-control"
       rows="3"
       placeholder="Enter map description..."
+      (blur)="saveDescription()"
     ></textarea>
-    <div class="edit-buttons">
-      <button class="save" (click)="saveDescription()">
-        <i class="fas fa-check"></i> Save
-      </button>
-      <button class="cancel" (click)="cancelEditDescription()">
-        <i class="fas fa-times"></i> Cancel
-      </button>
-    </div>
   </div>
 
   <hr>
@@ -111,7 +95,7 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group permission-select">
           <label class="label">Permission</label>
           <select
             [(ngModel)]="sharePermission"
@@ -122,6 +106,7 @@
             <option value="read">Read</option>
             <option value="write">Write</option>
           </select>
+          <i class="bi bi-caret-down-fill select-icon"></i>
         </div>
 
         <div class="button-row">
