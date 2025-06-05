@@ -13,6 +13,7 @@ custom mapy API
 obrázky předělat
 
 JK
+Mapa aby si brala ID z url asi nejlepší způsob? 
 Udělat error handeling u settings např. stejný password apod.
 předělat UX u journeys
 udělat clickable pointy v journeys aby se daly pointy upravovat
