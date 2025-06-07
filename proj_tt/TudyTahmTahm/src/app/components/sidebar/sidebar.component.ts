@@ -20,6 +20,7 @@ import {environment} from '../../../environments/environment.development';
 export class SidebarComponent implements OnInit {
   showSignOutPopup = false;
   currentUser: User | null = null;
+  environment = environment;
 
   constructor(private router: Router, private authService: AuthenticationService) {
   }
@@ -30,10 +31,12 @@ export class SidebarComponent implements OnInit {
 
   getProfilePictureUrl(path: string | undefined): string {
     if (!path) return '';
-
-    // Remove the 'L\' prefix if it exists and encode the path
-    const cleanPath = path.startsWith('L\\') ? path.substring(2) : path;
-    return `${environment.apiUrl}/Image/${encodeURIComponent(cleanPath)}`;
+    // Handle local file path format (L\pfp\...)
+    if (path.startsWith('L\\')) {
+      return `${environment.apiUrl}/Image/${encodeURIComponent(path)}`;
+    }
+    // Handle regular path format
+    return `${environment.apiUrl}/Image/${encodeURIComponent(path)}`;
   }
 
   get userBackgroundImage(): string {

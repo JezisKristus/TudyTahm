@@ -90,6 +90,11 @@ export class SettingsPageComponent implements OnInit {
 
   getProfilePictureUrl(path: string | undefined): string {
     if (!path) return '';
+    // Handle local file path format (L\pfp\...)
+    if (path.startsWith('L\\')) {
+      return `${environment.apiUrl}/Image/${encodeURIComponent(path)}`;
+    }
+    // Handle regular path format
     return `${environment.apiUrl}/Image/${encodeURIComponent(path)}`;
   }
 
@@ -144,7 +149,10 @@ export class SettingsPageComponent implements OnInit {
           this.currentUser = updatedUser;
           this.showSuccess('Profile picture successfully updated');
         },
-        error: err => console.error('Error updating profile picture:', err)
+        error: err => {
+          console.error('Error updating profile picture:', err);
+          this.showError(err.message || 'Failed to update profile picture. Please try again.');
+        }
       });
     this.isProfilePictureDialogVisible = false;
   }

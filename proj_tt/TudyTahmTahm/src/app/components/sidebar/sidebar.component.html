@@ -53,7 +53,7 @@
 
   <!-- Spodní část -->
   <div class="bottom-section">
-    <img routerLink="" routerLinkActive="active" ngSrc="http://localhost:5010/api/Image/bench.png" height="69" width="69" alt="Tahm" class="logo"/>
+    <img routerLink="" routerLinkActive="active" [ngSrc]="environment.apiUrl + '/Image/bench.png'" height="69" width="69" alt="Tahm" class="logo"/>
     <span class="brand">TUDY <br>TAHM</span>
   </div>
 </div>

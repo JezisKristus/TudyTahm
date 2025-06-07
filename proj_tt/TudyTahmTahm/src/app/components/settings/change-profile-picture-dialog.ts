@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-change-profile-picture-dialog',
@@ -19,7 +20,7 @@ import { FormsModule } from '@angular/forms';
         <div class="dialog-content">
           <div class="current-image-container" *ngIf="currentImagePath">
             <p>Current profile picture:</p>
-            <div class="current-image" [style.background-image]="'url(' + currentImagePath + ')'"></div>
+            <div class="current-image" [style.background-image]="'url(' + getProfilePictureUrl(currentImagePath) + ')'"></div>
           </div>
 
           <div class="preview-container" *ngIf="imagePreviewUrl">
@@ -200,6 +201,16 @@ export class ChangeProfilePictureDialogComponent implements OnInit {
 
   ngOnInit(): void {
     // Initialize dialog
+  }
+
+  getProfilePictureUrl(path: string): string {
+    if (!path) return '';
+    // Handle local file path format (L\pfp\...)
+    if (path.startsWith('L\\')) {
+      return `${environment.apiUrl}/Image/${encodeURIComponent(path)}`;
+    }
+    // Handle regular path format
+    return `${environment.apiUrl}/Image/${encodeURIComponent(path)}`;
   }
 
   onFileSelected(event: Event): void {
