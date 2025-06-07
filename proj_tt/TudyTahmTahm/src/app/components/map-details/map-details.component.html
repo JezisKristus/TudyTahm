@@ -12,7 +12,7 @@
 
     <div class="section">
       <h3>Owner</h3>
-      <p>{{ getOwnerName(map.ownerId) }}</p>
+      <p>{{ getOwnerName(map.idUser) }}</p>
     </div>
 
     <div class="section">
@@ -32,6 +32,6 @@
   </div>
 
   <div class="actions" *ngIf="canShare">
-    <button class="btn btn-primary" (click)="onShare()">Share Map</button>
+    <button class="btn btn-primary" (click)="openShareDialog()">Share Map</button>
   </div>
 </div> 

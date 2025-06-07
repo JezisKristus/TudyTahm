@@ -26,7 +26,7 @@
       <div class="map-card" *ngFor="let map of maps">
         <div class="map-content"
              (click)="onMapClick(map)"
-             [routerLink]="['', map.mapID]"
+             [routerLink]="['/map', map.mapID]"
              routerLinkActive="active"
              [style.background-image]="'url(' + map.mapPreviewPath + ')'"></div>
         <div class="map-footer">

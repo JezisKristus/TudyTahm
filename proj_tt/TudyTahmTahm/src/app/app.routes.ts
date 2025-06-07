@@ -19,5 +19,5 @@ export const routes: Routes = [
   {path: 'settings', component: SettingsPageComponent , canActivate: [authGuard]},
   {path: 'journey', component: JourneyPageComponent , canActivate: [authGuard]},
   { path: 'journey/:id', component: JourneyPageComponent , canActivate: [authGuard] },
-  { path: ':id', component: MapPageComponent, canActivate: [authGuard] },
+  { path: 'map/:mapId', component: MapPageComponent, canActivate: [authGuard] },
 ];

@@ -8,6 +8,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation
@@ -31,6 +32,7 @@ import {ExtendedMarker} from '../../models/extended-marker';
 import {MapDetailsPanelComponent} from '../map-details-panel/map-details-panel.component';
 import {SharingService} from '../../services/sharing.service';
 import {share} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
 
 class MapData {
   mapName?: string
@@ -72,7 +74,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   mapName: string = '';
   private originalMapName: string = '';
   layer: any;
-  mapID: number = Number(sessionStorage.getItem('Map.mapID')) || 1;
   private Lmarkers: ExtendedMarker[] = [];
   private markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
   private popupRef: ComponentRef<AddMarkerPopupComponent> | null = null;
@@ -99,19 +100,40 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
   private mapDetailsRef?: ComponentRef<MapDetailsPanelComponent>;
 
+  private _mapID: number = 1;
+  @Input() 
+  get mapID(): number {
+    return this._mapID;
+  }
+  set mapID(value: number) {
+    this._mapID = value;
+  }
+
   constructor(
     private viewContainerRef: ViewContainerRef,
     private markerService: MarkerService,
     private labelService: LabelService,
     private mapService: MapService,
-    private sharingService: SharingService
+    private sharingService: SharingService,
+    private route: ActivatedRoute
   ) {}
 
   /**
    * Initializes the component and loads initial data
    */
   ngOnInit(): void {
-    this.loadMapData();
+    // Get mapId from route parameters if not provided as input
+    if (!this._mapID) {
+      this.route.params.subscribe(params => {
+        const routeMapId = Number(params['mapId']);
+        if (routeMapId) {
+          this._mapID = routeMapId;
+          this.loadMapData();
+        }
+      });
+    } else {
+      this.loadMapData();
+    }
   }
 
   /**
@@ -855,7 +877,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     });
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['mapID'] && !changes['mapID'].firstChange) {
+      this.loadMapData();
+      this.loadMarkers();
+      this.loadLabels();
+    }
+
     this.Lmarkers.forEach(marker => {
       this.applyLabelFilter(marker);
     });

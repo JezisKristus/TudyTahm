@@ -77,7 +77,7 @@
           <p>Try adjusting your search or filter criteria</p>
         </div>
 
-        <a class="map-item" *ngFor="let map of filteredMaps" [routerLink]="['/', map.mapID]">
+        <a class="map-item" *ngFor="let map of filteredMaps" [routerLink]="['/map', map.mapID]">
           <div class="map-thumbnail">
             <img [src]="map.mapPreviewPath || 'assets/default-map-thumbnail.png'" alt="Map thumbnail" width="80" height="80">
           </div>
