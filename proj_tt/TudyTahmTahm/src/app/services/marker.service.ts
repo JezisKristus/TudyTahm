@@ -31,7 +31,7 @@ export class MarkerService {
 
   public createMarker(createMarkerDto: CreateUpdateMarkerDto): Observable<AppMarker> {
     console.log('Sending create request with data:', createMarkerDto);
-    return this.http.post<BackendMarker | null>(`${environment.apiUrl}/Marker`, createMarkerDto).pipe(
+    return this.http.post<BackendMarker | null>(`${environment.apiUrl}/Marker/${createMarkerDto.idMap}`, createMarkerDto).pipe(
       switchMap(response => {
         if (!response) {
           // fallback, unchanged

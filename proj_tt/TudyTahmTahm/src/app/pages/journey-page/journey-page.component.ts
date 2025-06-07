@@ -24,6 +24,7 @@ import {SidebarComponent} from '../../components/sidebar/sidebar.component';
 })
 export class JourneyPageComponent implements OnInit {
   journeyName = '';
+  journeyDescription = '';
   distance = 0;
   journey: Journey | null = null;
   loading = true;
@@ -54,6 +55,7 @@ export class JourneyPageComponent implements OnInit {
       this.journey = JSON.parse(journeyStr);
       if (this.journey) {
         this.journeyName = this.journey.name;
+        this.journeyDescription = this.journey.description || '';
       }
     } catch (e) {
       this.error = 'Failed to load journey data.';
