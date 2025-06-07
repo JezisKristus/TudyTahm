@@ -4,6 +4,7 @@ export interface AppMap {
   mapName: string;
   mapPreviewPath: string;
   description: string;
+  permission?: 'read' | 'write' | 'owner';
   sharedWith: SharedUser[];
 }
 

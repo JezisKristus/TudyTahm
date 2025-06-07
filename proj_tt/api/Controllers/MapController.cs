@@ -12,7 +12,7 @@ using Org.BouncyCastle.Asn1;
 using System.Runtime.CompilerServices;
 using TT_API.Attributes;
 using Microsoft.AspNetCore.Authorization;
-
+using System.Security.Claims;
 
 namespace TT_API.Controllers {
 
@@ -36,14 +36,46 @@ namespace TT_API.Controllers {
         [Authorize]
         [HttpGet("SharedMaps/{userID}")]
         public async Task<IActionResult> GetSharedMaps(int userID) {
-            var maps = await context.MapPermissions
-                .Include(r => r.Map)
-                .Where(r => r.IDUser == userID)
-                .Select(r => r.Map).ToListAsync();
+            try {
+                // Get maps where user is the owner
+                var ownedMaps = await context.Maps
+                    .Where(m => m.IDUser == userID)
+                    .Select(m => new {
+                        m.MapID,
+                        m.MapName,
+                        m.MapDescription,
+                        m.MapPreviewPath,
+                        m.IDUser,
+                        Permission = "owner"
+                    })
+                    .ToListAsync();
 
-            if (maps == null) return NotFound();
+                // Get maps shared with the user
+                var sharedMaps = await context.MapPermissions
+                    .Include(r => r.Map)
+                    .Where(r => r.IDUser == userID)
+                    .Select(r => new {
+                        r.Map.MapID,
+                        r.Map.MapName,
+                        r.Map.MapDescription,
+                        r.Map.MapPreviewPath,
+                        r.Map.IDUser,
+                        r.Permission
+                    })
+                    .ToListAsync();
 
-            return Ok(maps);
+                // Combine both lists, removing duplicates
+                var allMaps = ownedMaps
+                    .Concat(sharedMaps)
+                    .GroupBy(m => m.MapID)
+                    .Select(g => g.First())
+                    .ToList();
+
+                return Ok(allMaps);
+            }
+            catch (Exception ex) {
+                return BadRequest(new { message = "Error retrieving shared maps" });
+            }
         }
 
         [Authorize]
@@ -68,17 +100,14 @@ namespace TT_API.Controllers {
         [HasMapPermission("read")]
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetMap(int mapID) {
-            var map = await context.Maps
-                .FindAsync(mapID);
-              return Ok(map);
+            var map = await context.Maps.FindAsync(mapID);
+            return Ok(map);
         }
 
         [Authorize]
         [HttpPost]
-        //potrebuje jeste implementaci custom map o  brazku, zatim predavej nejakej string do MapPath
         public async Task<IActionResult> AddMap([FromBody] CreateMapDTO dto) {
             Map map = new Map() {
-
                 IDUser = dto.IDUser,
                 MapName = dto.MapName,
                 MapPreviewPath = @"bg.jpg",
@@ -86,11 +115,9 @@ namespace TT_API.Controllers {
             };
 
             context.Maps.Add(map);
-
             await context.SaveChangesAsync();
 
             context.MapPermissions.Add(new MapPermission { IDMap = map.MapID, IDUser = map.IDUser, Permission = "owner"});
-
             await context.SaveChangesAsync();
 
             return Ok(map.MapID);
@@ -99,11 +126,8 @@ namespace TT_API.Controllers {
         [Authorize]
         [HasMapPermission("owner")]
         [HttpDelete("{mapID}")]
-
         public async Task<IActionResult> DeleteMap(int mapID) {
-
             var mapToDelete = await context.Maps.FindAsync(mapID);
-
             var perissionsToDelete = await context.MapPermissions.Where(p => p.IDMap == mapID).ToListAsync();
 
             try {
@@ -114,7 +138,6 @@ namespace TT_API.Controllers {
             }
 
             await context.SaveChangesAsync();
-
             return Ok();
         }
 
@@ -130,7 +153,6 @@ namespace TT_API.Controllers {
             map.MapDescription = dto.MapDescription;
 
             await context.SaveChangesAsync();
-
             return Ok(map);
         }
 

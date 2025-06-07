@@ -2,8 +2,9 @@ import {Injectable} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {catchError} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 import {AppMap} from '../models/appMap';
+import {AuthenticationService} from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +12,22 @@ import {AppMap} from '../models/appMap';
 export class MapService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthenticationService
+  ) {
+  }
+
+  // Debug method to check current user and permissions
+  debugUserAndPermissions(): void {
+    const userId = this.authService.getCurrentUserID();
+    console.log('Current User ID:', userId);
+    console.log('Current User:', this.authService.getUser());
+    console.log('Is Authenticated:', this.authService.isAuthenticated());
   }
 
   getMapById(id: number): Observable<AppMap> {
+    this.debugUserAndPermissions(); // Add debug logging
     return this.http.get<AppMap>(`${this.apiUrl}/Map/ByMapID/${id}`)
       .pipe(
         catchError(this.handleError)
@@ -22,7 +35,10 @@ export class MapService {
   }
 
   getMapsByCurrentUser(): Observable<AppMap[]> {
-    const userId = this.getCurrentUserId();
+    const userId = this.authService.getCurrentUserID();
+    if (!userId) {
+      return throwError(() => new Error('User is not authenticated'));
+    }
     return this.http.get<AppMap[]>(`${this.apiUrl}/Map/ByUserID/${userId}`)
       .pipe(
         catchError(this.handleError),
@@ -30,14 +46,30 @@ export class MapService {
   }
 
   public getSharedMaps(): Observable<AppMap[]> {
-    const userId = this.getCurrentUserId();
-    return this.http.get<AppMap[]>(`${this.apiUrl}/Map/SharedMaps/${userId}`)
+    const userId = this.authService.getCurrentUserID();
+    if (!userId) {
+      return throwError(() => new Error('User is not authenticated'));
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/Map/SharedMaps/${userId}`)
+      .pipe(
+        map(maps => maps.map(map => ({
+          mapID: map.mapID,
+          mapName: map.mapName,
+          description: map.mapDescription,
+          mapPreviewPath: map.mapPreviewPath,
+          idUser: map.idUser,
+          permission: map.permission,
+          sharedWith: [] // This will be populated separately if needed
+        })))
+      );
   }
 
-
   createMap(map: AppMap): Observable<AppMap> {
-    console.log("creating map")
-    map.idUser = this.getCurrentUserId()
+    const userId = this.authService.getCurrentUserID();
+    if (!userId) {
+      return throwError(() => new Error('User is not authenticated'));
+    }
+    map.idUser = userId;
     return this.http.post<AppMap>(`${this.apiUrl}/Map`, map)
       .pipe(
         catchError(this.handleError)
@@ -72,28 +104,6 @@ export class MapService {
         catchError(this.handleError)
       );
   }
-
-  private getCurrentUserId(): number {
-    const user = sessionStorage.getItem('user');
-    if (!user) {
-      console.warn('No user data found in sessionStorage. Redirecting to login...');
-      // Optionally, redirect to login page here
-      return 0; // Return 0 or handle as unauthenticated
-    }
-
-    try {
-      const parsedUser = JSON.parse(user);
-      if (!parsedUser.userID) {
-        console.warn('User data is missing userID:', parsedUser);
-        return 0; // Return 0 if userID is missing
-      }
-      return parsedUser.userID;
-    } catch (error) {
-      console.error('Error parsing user data from sessionStorage:', error);
-      return 0; // Return 0 if parsing fails
-    }
-  }
-
 
   private handleError(error: any) {
     console.error('An error occurred:', error);

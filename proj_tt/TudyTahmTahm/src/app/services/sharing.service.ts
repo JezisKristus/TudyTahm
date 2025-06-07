@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {map, tap} from 'rxjs/operators';
 import {SharedUser} from '../models/appMap';
@@ -16,19 +16,20 @@ export class SharingService {
   ) {
   }
 
-  public addUserToMap(sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/${sharedUser.mapId}`, sharedUser)
-      .pipe(
-        map(user => {
-          console.log("Sharing ", user);
-          return user;
-        })
-      );
-  }
-
   public getSharedUsers(): Observable<SharedUser[]> {
     const userId = this.authService.getCurrentUserID();
-    return this.http.get<SharedUser[]>(`${environment.apiUrl}/Map/SharedUsers/${userId}`)
+    const token = this.authService.getToken();
+    
+    if (!userId || !token) {
+      return throwError(() => new Error('User is not authenticated'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<any[]>(`${environment.apiUrl}/Map/SharedMaps/${userId}`, { headers });
+  }
+
+  public addUserToMap(sharedUser: SharedUser): Observable<SharedUser> {
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/${sharedUser.mapId}`, sharedUser);
   }
 
   public editUserPermission(sharedUser: SharedUser): Observable<SharedUser> {
@@ -38,13 +39,7 @@ export class SharingService {
     );
   }
 
-
-
   public removeUserFromMap(sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap`, sharedUser)
-      .pipe(
-        tap(user => console.log("Removed user from map", user))
-      );
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap`, sharedUser);
   }
-
 }
