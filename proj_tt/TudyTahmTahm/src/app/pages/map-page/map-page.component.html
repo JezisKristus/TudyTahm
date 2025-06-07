@@ -4,6 +4,6 @@
 
   <!-- Map Component -->
   <div class="map-container">
-    <app-map *ngIf="mapID" [mapID]="mapID"></app-map>
+    <app-map *ngIf="mapID !== null" [mapID]="mapID"></app-map>
   </div>
 </div>

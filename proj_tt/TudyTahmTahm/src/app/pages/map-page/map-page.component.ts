@@ -19,13 +19,15 @@ import {ActivatedRoute} from '@angular/router';
 export class MapPageComponent {
   isDetailsPanelOpen = false;
   currentMap: AppMap | null = null;
-  mapID: number = 1;
+  mapID: number | null = null;
 
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe(params => {
       const routeMapId = Number(params['mapId']);
       if (routeMapId) {
         this.mapID = routeMapId;
+        // Store in sessionStorage for consistency
+        sessionStorage.setItem('Map.mapID', routeMapId.toString());
       }
     });
   }
