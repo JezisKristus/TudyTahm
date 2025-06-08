@@ -8,6 +8,9 @@ import { JourneyService } from '../../services/journey.service';
 import { Journey } from '../../models/journey';
 import { ActivatedRoute, Router } from '@angular/router';
 import {SidebarComponent} from '../../components/sidebar/sidebar.component';
+import { MapService } from '../../services/map.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { AppMap } from '../../models/appMap';
 
 @Component({
   selector: 'app-journey-page',
@@ -29,6 +32,9 @@ export class JourneyPageComponent implements OnInit {
   journey: Journey | null = null;
   loading = true;
   error: string | null = null;
+  successMessage: string | null = null;
+  canEdit = false;
+  currentMap: AppMap | null = null;
 
   mapOptions: L.MapOptions = {} as L.MapOptions;
   mapLayers: L.Layer[] = [];
@@ -46,6 +52,8 @@ export class JourneyPageComponent implements OnInit {
 
   constructor(
     private journeyService: JourneyService,
+    private mapService: MapService,
+    private authService: AuthenticationService,
     private router: Router
   ) {}
 
@@ -64,6 +72,9 @@ export class JourneyPageComponent implements OnInit {
       if (this.journey) {
         this.journeyName = this.journey.name;
         this.journeyDescription = this.journey.description || '';
+        
+        // Load map information and check permissions
+        this.loadMapAndCheckPermissions();
       }
     } catch (e) {
       this.error = 'Failed to load journey data.';
@@ -82,66 +93,91 @@ export class JourneyPageComponent implements OnInit {
     };
     // Load points for this journey
     if (this.journey && this.journey.journeyID) {
-      console.log('Loading points for journey ID:', this.journey.journeyID);
-      this.journeyService.getPointsByJourneyID(this.journey.journeyID).subscribe({
-        next: (points) => {
-          console.log('Received points from API:', points);
-          if (!Array.isArray(points)) {
-            console.error('Invalid points data received:', points);
-            this.error = 'Invalid points data received from server.';
-            this.loading = false;
-            return;
-          }
-
-          // Expecting points to have lat/lng
-          this.points = points.map((p: any) => {
-            const lat = p.latitude || p.lat;
-            const lng = p.longitude || p.lng;
-            if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
-              console.warn('Invalid coordinates for point:', p);
-              return null;
-            }
-            return {
-              lat: lat,
-              lng: lng,
-              visible: true,
-              pointID: p.pointID
-            };
-          }).filter(p => p !== null);
-
-          console.log('Processed points:', this.points);
-
-          // Center and zoom map to fit all points
-          if (this.points.length > 0) {
-            const latlngs = this.points.map(p => L.latLng(p.lat, p.lng));
-            const bounds = L.latLngBounds(latlngs);
-            // Pokud je mapa již inicializovaná, posuň pohled
-            if (this.mapInstance) {
-              this.mapInstance.fitBounds(bounds, {padding: [30, 30]});
-            } else {
-              // fallback pro případ, že mapa ještě není ready
-              this.mapOptions = {
-                ...this.mapOptions,
-                center: bounds.getCenter(),
-                zoom: this.getBoundsZoom(bounds),
-              };
-            }
-          }
-
-          this.updatePath();
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error('Error loading journey points:', err);
-          this.error = `Failed to load journey points: ${err.message || 'Unknown error'}`;
-          this.loading = false;
-        }
-      });
+      this.loadJourneyPoints();
     } else {
       console.error('Invalid journey data:', this.journey);
       this.error = 'Invalid journey data: missing journeyID';
       this.loading = false;
     }
+  }
+
+  private loadMapAndCheckPermissions() {
+    if (!this.journey?.idMap) return;
+
+    this.mapService.getSharedMaps().subscribe({
+      next: (maps) => {
+        const map = maps.find(m => m.mapID === this.journey?.idMap);
+        if (map) {
+          this.currentMap = map;
+          const currentUserId = this.authService.getCurrentUserID();
+          
+          // Check if user is owner or has write permission
+          this.canEdit = map.idUser === currentUserId || 
+                        map.permission === 'write' || 
+                        map.permission === 'owner';
+        }
+      },
+      error: (err) => {
+        console.error('Error loading map permissions:', err);
+        this.error = 'Failed to load map permissions';
+      }
+    });
+  }
+
+  private loadJourneyPoints() {
+    console.log('Loading points for journey ID:', this.journey?.journeyID);
+    this.journeyService.getPointsByJourneyID(this.journey!.journeyID).subscribe({
+      next: (points) => {
+        console.log('Received points from API:', points);
+        if (!Array.isArray(points)) {
+          console.error('Invalid points data received:', points);
+          this.error = 'Invalid points data received from server.';
+          this.loading = false;
+          return;
+        }
+
+        // Expecting points to have lat/lng
+        this.points = points.map((p: any) => {
+          const lat = p.latitude || p.lat;
+          const lng = p.longitude || p.lng;
+          if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
+            console.warn('Invalid coordinates for point:', p);
+            return null;
+          }
+          return {
+            lat: lat,
+            lng: lng,
+            visible: true,
+            pointID: p.pointID
+          };
+        }).filter(p => p !== null);
+
+        console.log('Processed points:', this.points);
+
+        // Center and zoom map to fit all points
+        if (this.points.length > 0) {
+          const latlngs = this.points.map(p => L.latLng(p.lat, p.lng));
+          const bounds = L.latLngBounds(latlngs);
+          if (this.mapInstance) {
+            this.mapInstance.fitBounds(bounds, {padding: [30, 30]});
+          } else {
+            this.mapOptions = {
+              ...this.mapOptions,
+              center: bounds.getCenter(),
+              zoom: this.getBoundsZoom(bounds),
+            };
+          }
+        }
+
+        this.updatePath();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading journey points:', err);
+        this.error = `Failed to load journey points: ${err.message || 'Unknown error'}`;
+        this.loading = false;
+      }
+    });
   }
 
   updatePath() {
@@ -206,6 +242,10 @@ export class JourneyPageComponent implements OnInit {
   }
 
   openRemoveDialog(point: { lat: number; lng: number; visible: boolean; pointID?: number }, idx: number, event?: any) {
+    if (!this.canEdit) {
+      this.error = 'You do not have permission to edit this journey';
+      return;
+    }
     // Close any existing popup first
     this.closeRemoveDialog();
     
@@ -339,5 +379,48 @@ export class JourneyPageComponent implements OnInit {
           this.closeRemoveDialog();
         }
       });
+  }
+
+  saveJourney() {
+    if (!this.canEdit) {
+      this.error = 'You do not have permission to edit this journey';
+      return;
+    }
+    if (!this.journey?.journeyID) {
+      this.error = 'Invalid journey data';
+      return;
+    }
+
+    const updatedJourney: Partial<Journey> = {
+      name: this.journeyName,
+      description: this.journeyDescription
+    };
+
+    this.journeyService.updateJourney(this.journey.journeyID, updatedJourney)
+      .subscribe({
+        next: (updatedJourney) => {
+          // Update the journey in session storage
+          this.journey = { ...this.journey!, ...updatedJourney };
+          sessionStorage.setItem('Journey', JSON.stringify(this.journey));
+          
+          // Show success message
+          this.error = null;
+          this.successMessage = 'Journey saved successfully!';
+          
+          // Clear success message after 3 seconds
+          setTimeout(() => {
+            this.successMessage = null;
+          }, 3000);
+        },
+        error: (err) => {
+          this.error = 'Failed to save journey changes';
+          console.error('Error saving journey:', err);
+        }
+      });
+  }
+
+  discardChanges() {
+    // Navigate back to the journey list
+    this.router.navigate(['/memories']);
   }
 }

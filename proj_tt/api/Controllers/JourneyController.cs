@@ -127,5 +127,20 @@ namespace TT_API.Controllers {
 
             return Ok(points);
         }
+
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateJourney(int id, [FromBody] JourneyDTO dto) {
+            var journey = await context.Journeys.FirstOrDefaultAsync(j => j.JourneyID == id);
+            
+            if (journey == null) return NotFound();
+
+            journey.Name = dto.Name;
+            journey.Description = dto.Description;
+
+            await context.SaveChangesAsync();
+
+            return Ok(journey);
+        }
     }
 }

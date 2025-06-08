@@ -10,7 +10,11 @@
         <div class="journey-icon">
           <i class="fas fa-route"></i>
         </div>
-        <input class="journey-name" placeholder="Journey name..." [(ngModel)]="journeyName" />
+        <input 
+          class="journey-name" 
+          placeholder="Journey name..." 
+          [(ngModel)]="journeyName"
+          [readonly]="!canEdit" />
       </div>
 
       <div *ngIf="loading" class="loading-indicator">
@@ -19,12 +23,16 @@
       <div *ngIf="error" class="error-message">
         {{ error }}
       </div>
+      <div *ngIf="successMessage" class="success-message">
+        <i class="fas fa-check-circle"></i> {{ successMessage }}
+      </div>
 
       <div class="journey-description" *ngIf="!loading && !error">
         <textarea
           class="description-input"
           placeholder="Add a description for your journey..."
           [(ngModel)]="journeyDescription"
+          [readonly]="!canEdit"
           rows="4"
           maxlength="500">
         </textarea>
@@ -36,13 +44,13 @@
       </div>
 
       <div class="buttons" *ngIf="!loading && !error">
-        <button class="share" title="Share this journey with others">
+        <button class="share" title="Share this journey with others" *ngIf="canEdit">
           <i class="fas fa-share-alt"></i> Share
         </button>
-        <button class="save" title="Save your changes">
+        <button class="save" title="Save your changes" (click)="saveJourney()" *ngIf="canEdit">
           <i class="fas fa-save"></i> Save
         </button>
-        <button class="discard" title="Discard changes and return to journey list">
+        <button class="discard" title="Discard changes and return to journey list" (click)="discardChanges()">
           <i class="fas fa-times"></i> Discard
         </button>
       </div>

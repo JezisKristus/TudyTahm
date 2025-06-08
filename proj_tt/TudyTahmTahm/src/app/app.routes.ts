@@ -10,7 +10,7 @@ import {JourneyPageComponent} from './pages/journey-page/journey-page.component'
 import {authGuard} from './auth.guard';
 
 export const routes: Routes = [
-  {path: '', component: MapPageComponent , canActivate: [authGuard]},
+  {path: '', component: SignInPageComponent , canActivate: [authGuard]},
   {path: 'sign-in', component: SignInPageComponent},
   {path: 'register', component: RegisterPageComponent},
   {path: 'my-maps', component: MyMapsPageComponent , canActivate: [authGuard]},

@@ -63,4 +63,11 @@ export class JourneyService {
         tap((response) => console.log('Points for Journey:', response))
       );
   }
+
+  public updateJourney(journeyID: number, journey: Partial<Journey>): Observable<Journey> {
+    return this.http.put<Journey>(`${environment.apiUrl}/Journey/${journeyID}`, journey)
+      .pipe(
+        tap((response) => console.log('Updated Journey:', response))
+      );
+  }
 }

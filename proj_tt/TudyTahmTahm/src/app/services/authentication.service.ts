@@ -41,38 +41,36 @@ export class AuthenticationService {
 
   public login(credentials: SignInDTO): Observable<{ token: TokenResult, user: User }> {
     this.logout();
-
-    console.log('Sending login requests')
-
-    return this.http.post<TokenResult>(`${environment.apiUrl}/Authentication/Login`, credentials).pipe(
-      switchMap((result: TokenResult) => {
+  
+    return this.http.post<{ token: string, refreshToken: string, user: User }>(`${environment.apiUrl}/Authentication/Login`, credentials).pipe(
+      map((result) => {
         this.setToken(result.token);
         this.setRefreshToken(result.refreshToken);
-
-        if (!result.userID) {
-          console.warn('Login response missing userID. Cannot fetch user.');
-          return throwError(() => new Error('User ID missing from login response.'));
-        }
-
-        // Fetch user and combine with token
-        return this.getUserByID(result.userID).pipe(
-          map((user: User) => {
-            return { token: result, user };
-          })
-        );
+        this.setUser(result.user);
+        return { 
+          token: { 
+            token: result.token, 
+            refreshToken: result.refreshToken,
+            userID: result.user.userID,
+            user: result.user
+          }, 
+          user: result.user 
+        };
       }),
       catchError((error) => {
-        console.error('Login failed:', error);
         return throwError(() => new Error('Login failed. Please check your credentials and try again.'));
       })
     );
   }
+  
 
   public refreshToken(): Observable<{ token: string, refreshToken: string }> {
     const userId = this.getCurrentUserID();
     const refreshToken = this.getRefreshToken();
 
     if (!userId || !refreshToken) {
+      console.error('Refresh token failed: Missing userId or refreshToken');
+      this.logout(); // Clear invalid state
       return throwError(() => new Error('No refresh token available'));
     }
 
@@ -81,8 +79,12 @@ export class AuthenticationService {
       { userID: userId, refreshToken }
     ).pipe(
       tap(result => {
+        if (!result.token || !result.refreshToken) {
+          throw new Error('Invalid token response');
+        }
         this.setToken(result.token);
         this.setRefreshToken(result.refreshToken);
+        console.log('Token refresh successful');
       }),
       catchError(error => {
         console.error('Token refresh failed:', error);
@@ -99,8 +101,13 @@ export class AuthenticationService {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const expiry = payload.exp * 1000; // Convert to milliseconds
-      return Date.now() >= expiry;
-    } catch {
+      const isExpired = Date.now() >= expiry;
+      if (isExpired) {
+        console.log('Token is expired');
+      }
+      return isExpired;
+    } catch (error) {
+      console.error('Error checking token expiration:', error);
       return true;
     }
   }
@@ -114,8 +121,13 @@ export class AuthenticationService {
       const expiry = payload.exp * 1000; // Convert to milliseconds
       const timeUntilExpiry = expiry - Date.now();
       // Refresh if token expires in less than 5 minutes
-      return timeUntilExpiry < 5 * 60 * 1000;
-    } catch {
+      const shouldRefresh = timeUntilExpiry < 5 * 60 * 1000;
+      if (shouldRefresh) {
+        console.log('Token should be refreshed, expires in:', Math.round(timeUntilExpiry / 1000), 'seconds');
+      }
+      return shouldRefresh;
+    } catch (error) {
+      console.error('Error checking if token should be refreshed:', error);
       return false;
     }
   }

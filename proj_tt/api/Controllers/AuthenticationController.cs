@@ -1,32 +1,26 @@
-﻿using JWT.Algorithms;
-using JWT.Builder;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Tls;
-using TT_API.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using TT_API.DTOs;
+using TT_API.HelperClasses;
 using TT_API.Models;
 using TT_API.Services;
-using TT_API.DTOs;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using TT_API.HelperClasses;
-using System.Net.WebSockets;
 
-namespace TT_API.Controllers {
+namespace TT_API.Controllers
+{
     [ApiController]
     [Route("api/[controller]")]
 
-    public class AuthenticationController : ControllerBase {
+    public class AuthenticationController : ControllerBase
+    {
         private TokensService service = new TokensService();
 
         MyContext context = new MyContext();
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO logindto) {
-
+        public async Task<IActionResult> Login([FromBody] LoginDTO logindto)
+        {
             var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == logindto.Username);
 
             if (user == null) { return NotFound(new { message = "User not found." }); }
@@ -36,7 +30,16 @@ namespace TT_API.Controllers {
             var token = service.Create(user);
             var refreshToken = service.CreateRefreshToken(user);
 
-            return Ok(new { token, refreshToken, user.UserID});
+            return Ok(new { 
+                token, 
+                refreshToken, 
+                user = new {
+                    user.UserID,
+                    user.UserName,
+                    user.UserEmail,
+                    user.UserIconPath
+                }
+            });
         }
 
         [HttpPost("RefreshToken")]
@@ -71,8 +74,10 @@ namespace TT_API.Controllers {
         [HttpPost("Register")]
 
         //adduser
-        public async Task<IActionResult> Register([FromBody] CreateUpdateUserDTO registerdto) {
-            User user = new User() {
+        public async Task<IActionResult> Register([FromBody] CreateUpdateUserDTO registerdto)
+        {
+            User user = new User()
+            {
                 UserName = registerdto.UserName,
                 UserPassword = HashHelper.Hash(registerdto.UserPassword),
                 UserEmail = registerdto.UserEmail,
@@ -89,7 +94,8 @@ namespace TT_API.Controllers {
 
         [Authorize]
         [HttpPut("UpdateUser/{userID}")]
-        public async Task<IActionResult> UpdateUser([FromBody] CreateUpdateUserDTO dto, int userID) {
+        public async Task<IActionResult> UpdateUser([FromBody] CreateUpdateUserDTO dto, int userID)
+        {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -102,7 +108,7 @@ namespace TT_API.Controllers {
             if (!string.IsNullOrEmpty(dto.UserEmail)) user.UserEmail = dto.UserEmail;
             if (!string.IsNullOrEmpty(dto.UserIconPath)) user.UserIconPath = dto.UserIconPath;
 
-            try 
+            try
             {
                 await context.SaveChangesAsync();
                 return Ok(user);
@@ -140,7 +146,8 @@ namespace TT_API.Controllers {
 
         [Authorize]
         [HttpPut("UploadPFP/{userID}")]
-        public async Task<IActionResult> UploadPFP(IFormFile image, int userID) {
+        public async Task<IActionResult> UploadPFP(IFormFile image, int userID)
+        {
 
             var help = new ImageHelper();
 
@@ -152,11 +159,13 @@ namespace TT_API.Controllers {
 
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
 
-            if (!allowedExtensions.Contains(extension)) {
+            if (!allowedExtensions.Contains(extension))
+            {
                 return BadRequest(new { message = "Invalid file type. Only JPG and PNG are allowed." });
             }
 
-            if (image != null && image.Length > 0) {
+            if (image != null && image.Length > 0)
+            {
                 var filename = @"pfp\" + user.UserID + "_" + user.UserName.ToLower().Replace(' ', '-') + extension;
 
                 help.UploadImageLocal(filename, image);
@@ -180,7 +189,8 @@ namespace TT_API.Controllers {
 
         [Authorize]
         [HttpGet("UserIDByToken")]
-        public async Task<IActionResult> GetUserInfoByToken() {
+        public async Task<IActionResult> GetUserInfoByToken()
+        {
             var identity = User.Identity as ClaimsIdentity;
 
             return Ok(identity.FindFirst("userID").Value);
@@ -188,20 +198,26 @@ namespace TT_API.Controllers {
 
         [Authorize]
         [HttpGet("UserInfoByID/{id}")]
-        public async Task<IActionResult> GetUserInfoByID(int id) {
+        public async Task<IActionResult> GetUserInfoByID(int id)
+        {
             var user = await context.Users.FindAsync(id);
 
             if (user == null) return NotFound();
 
-            return Ok(new {
-                user.UserID, user.UserName, user.UserEmail, user.UserIconPath
+            return Ok(new
+            {
+                user.UserID,
+                user.UserName,
+                user.UserEmail,
+                user.UserIconPath
             });
         }
 
         [Authorize]
         [HttpGet("pfpPath/{userID}")]
 
-        public async Task<IActionResult> GetPfpPath(int userID) {
+        public async Task<IActionResult> GetPfpPath(int userID)
+        {
             var user = await context.Users.FindAsync(userID);
 
             if (user == null) return NotFound();

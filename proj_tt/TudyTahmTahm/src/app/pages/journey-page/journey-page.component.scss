@@ -161,6 +161,21 @@
     color: #d4af37;
   }
 
+  .success-message {
+    color: #fff;
+    background: #4caf50;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    i {
+      color: #fff;
+    }
+  }
+
   .journey-description {
     margin-bottom: 1.2rem;
 

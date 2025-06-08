@@ -37,12 +37,27 @@ export class MapService {
   getMapsByCurrentUser(): Observable<AppMap[]> {
     const userId = this.authService.getCurrentUserID();
     if (!userId) {
+      console.error('getMapsByCurrentUser: No user ID available');
       return throwError(() => new Error('User is not authenticated'));
     }
-    return this.http.get<AppMap[]>(`${this.apiUrl}/Map/ByUserID/${userId}`)
-      .pipe(
-        catchError(this.handleError),
-      );
+
+    const token = this.authService.getToken();
+    if (!token) {
+      console.error('getMapsByCurrentUser: No token available');
+      return throwError(() => new Error('No authentication token available'));
+    }
+
+    console.log('Fetching maps for user:', userId);
+    return this.http.get<AppMap[]>(`${this.apiUrl}/Map/ByUserID/${userId}`).pipe(
+      tap(response => console.log('Received maps response:', response)),
+      catchError(error => {
+        console.error('Error fetching maps:', error);
+        if (error.status === 401) {
+          console.error('Authentication failed. Token might be invalid or expired.');
+        }
+        return throwError(() => new Error('Failed to fetch maps. Please try again later.'));
+      })
+    );
   }
 
   public getSharedMaps(): Observable<AppMap[]> {
