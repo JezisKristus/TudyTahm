@@ -34,7 +34,15 @@ export class JourneyPageComponent implements OnInit {
   mapLayers: L.Layer[] = [];
   mapInstance: L.Map | null = null;
 
-  points: { lat: number; lng: number; visible: boolean }[] = [];
+  points: { lat: number; lng: number; visible: boolean; pointID?: number }[] = [];
+
+  // Dialog state
+  showRemoveDialog = false;
+  pointToRemove: { lat: number; lng: number; visible: boolean; pointID?: number } | null = null;
+  removeIndex: number | null = null;
+  removeConfirmed = false;
+  dialogPosition: { x: number; y: number } | null = null;
+  currentPopup: L.Popup | null = null;
 
   constructor(
     private journeyService: JourneyService,
@@ -74,14 +82,34 @@ export class JourneyPageComponent implements OnInit {
     };
     // Load points for this journey
     if (this.journey && this.journey.journeyID) {
+      console.log('Loading points for journey ID:', this.journey.journeyID);
       this.journeyService.getPointsByJourneyID(this.journey.journeyID).subscribe({
         next: (points) => {
+          console.log('Received points from API:', points);
+          if (!Array.isArray(points)) {
+            console.error('Invalid points data received:', points);
+            this.error = 'Invalid points data received from server.';
+            this.loading = false;
+            return;
+          }
+
           // Expecting points to have lat/lng
-          this.points = points.map((p: any) => ({
-            lat: p.latitude || p.lat,
-            lng: p.longitude || p.lng,
-            visible: true
-          }));
+          this.points = points.map((p: any) => {
+            const lat = p.latitude || p.lat;
+            const lng = p.longitude || p.lng;
+            if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
+              console.warn('Invalid coordinates for point:', p);
+              return null;
+            }
+            return {
+              lat: lat,
+              lng: lng,
+              visible: true,
+              pointID: p.pointID
+            };
+          }).filter(p => p !== null);
+
+          console.log('Processed points:', this.points);
 
           // Center and zoom map to fit all points
           if (this.points.length > 0) {
@@ -104,12 +132,14 @@ export class JourneyPageComponent implements OnInit {
           this.loading = false;
         },
         error: (err) => {
-          this.error = 'Failed to load journey points.';
+          console.error('Error loading journey points:', err);
+          this.error = `Failed to load journey points: ${err.message || 'Unknown error'}`;
           this.loading = false;
         }
       });
     } else {
-      this.error = 'Invalid journey data.';
+      console.error('Invalid journey data:', this.journey);
+      this.error = 'Invalid journey data: missing journeyID';
       this.loading = false;
     }
   }
@@ -122,9 +152,15 @@ export class JourneyPageComponent implements OnInit {
       return;
     }
     const latlngs = visiblePoints.map(p => L.latLng(p.lat, p.lng));
+    // Vytvoř markery s click eventem
+    const markerLayers = visiblePoints.map((p, idx) => {
+      const marker = L.circleMarker([p.lat, p.lng], { radius: 5, color: 'red', fillColor: '#fff', fillOpacity: 1, weight: 2 });
+      marker.on('click', (e: any) => this.openRemoveDialog(p, idx, e));
+      return marker;
+    });
     this.mapLayers = [
       L.polyline(latlngs, { color: 'red', weight: 4 }),
-      ...latlngs.map(p => L.circleMarker(p, { radius: 3, color: 'red' }))
+      ...markerLayers
     ];
     this.distance = this.calculateDistance(latlngs);
   }
@@ -167,5 +203,141 @@ export class JourneyPageComponent implements OnInit {
       const bounds = L.latLngBounds(latlngs);
       map.fitBounds(bounds, {padding: [30, 30]});
     }
+  }
+
+  openRemoveDialog(point: { lat: number; lng: number; visible: boolean; pointID?: number }, idx: number, event?: any) {
+    // Close any existing popup first
+    this.closeRemoveDialog();
+    
+    this.pointToRemove = point;
+    this.removeIndex = idx;
+    this.removeConfirmed = false;
+
+    // Create a temporary container for our popup content
+    const popupContent = document.createElement('div');
+    popupContent.className = 'remove-dialog-popup';
+    
+    // Create the popup content HTML
+    popupContent.innerHTML = `
+      <div class="dialog-title">
+        <i class="fas fa-exclamation-triangle"></i>
+        Remove point?
+      </div>
+      <div class="dialog-body">
+        <p>Do you really want to remove this point from your journey?</p>
+        <div class="coords">
+          <i class="fas fa-map-marker-alt"></i>
+          ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="cancel">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button class="confirm">
+          <i class="fas fa-trash-alt"></i> Remove
+        </button>
+      </div>
+    `;
+
+    // Add event listeners to the buttons
+    const cancelBtn = popupContent.querySelector('.cancel');
+    const confirmBtn = popupContent.querySelector('.confirm');
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.closeRemoveDialog();
+      });
+    }
+
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.confirmRemovePoint();
+      });
+    }
+
+    // Create and show the Leaflet popup
+    if (this.mapInstance) {
+      const popup = L.popup({
+        closeButton: false,
+        closeOnClick: false,
+        autoClose: false,
+        className: 'custom-popup-container'
+      })
+        .setLatLng([point.lat, point.lng])
+        .setContent(popupContent)
+        .openOn(this.mapInstance);
+
+      // Store the popup reference
+      this.currentPopup = popup;
+
+      // Add click outside handler with a small delay to prevent immediate closing
+      setTimeout(() => {
+        if (this.mapInstance) {
+          const clickHandler = (e: L.LeafletMouseEvent) => {
+            // Check if the click was outside the popup
+            const popupElement = document.querySelector('.leaflet-popup');
+            if (popupElement && !popupElement.contains(e.originalEvent.target as Node)) {
+              this.closeRemoveDialog();
+              this.mapInstance?.off('click', clickHandler);
+            }
+          };
+          this.mapInstance.on('click', clickHandler);
+        }
+      }, 100);
+    }
+  }
+
+  closeRemoveDialog() {
+    if (this.currentPopup && this.mapInstance) {
+      this.mapInstance.closePopup(this.currentPopup);
+    }
+    this.pointToRemove = null;
+    this.removeIndex = null;
+    this.removeConfirmed = false;
+    this.currentPopup = null;
+  }
+
+  confirmRemovePoint() {
+    if (!this.journey?.journeyID || !this.pointToRemove?.pointID) {
+      this.error = 'Invalid journey or point data';
+      this.closeRemoveDialog();
+      return;
+    }
+
+    this.journeyService.removePointFromJourney(this.journey.journeyID, this.pointToRemove.pointID)
+      .subscribe({
+        next: () => {
+          // Remove the point from the local array
+          this.points = this.points.filter((p, idx) => idx !== this.removeIndex);
+          this.updatePath();
+          this.removeConfirmed = true;
+          
+          // Show success message
+          if (this.currentPopup && this.mapInstance) {
+            const successContent = document.createElement('div');
+            successContent.className = 'remove-dialog-popup';
+            successContent.innerHTML = `
+              <div class="dialog-title success">
+                <i class="fas fa-check-circle"></i>
+                Point removed
+              </div>
+            `;
+            this.currentPopup.setContent(successContent);
+            
+            // Close after delay
+            setTimeout(() => {
+              this.closeRemoveDialog();
+            }, 1000);
+          }
+        },
+        error: (err) => {
+          this.error = 'Failed to remove point from journey';
+          console.error('Error removing point:', err);
+          this.closeRemoveDialog();
+        }
+      });
   }
 }

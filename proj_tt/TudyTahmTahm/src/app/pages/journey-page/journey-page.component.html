@@ -21,9 +21,9 @@
       </div>
 
       <div class="journey-description" *ngIf="!loading && !error">
-        <textarea 
-          class="description-input" 
-          placeholder="Add a description for your journey..." 
+        <textarea
+          class="description-input"
+          placeholder="Add a description for your journey..."
           [(ngModel)]="journeyDescription"
           rows="4"
           maxlength="500">
@@ -52,5 +52,38 @@
     <div class="map flex-grow-1">
       <div leaflet [leafletOptions]="mapOptions" [leafletLayers]="mapLayers" (leafletMapReady)="onMapReady($event)" style="height: 100%; width: 100%"></div>
     </div>
+  </div>
+</div>
+
+<!-- Remove point dialog -->
+<div *ngIf="showRemoveDialog" class="remove-dialog-overlay" (click)="closeRemoveDialog()">
+  <div class="remove-dialog-popup" [ngStyle]="dialogPosition ? {'left.px': dialogPosition.x, 'top.px': dialogPosition.y} : {}" (click)="$event.stopPropagation()">
+    <ng-container *ngIf="!removeConfirmed; else removed">
+      <div class="dialog-title">
+        <i class="fas fa-exclamation-triangle"></i>
+        Remove point?
+      </div>
+      <div class="dialog-body">
+        <p>Do you really want to remove this point from your journey?</p>
+        <div class="coords">
+          <i class="fas fa-map-marker-alt"></i>
+          {{pointToRemove?.lat | number:'1.6-6'}}, {{pointToRemove?.lng | number:'1.6-6'}}
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="cancel" (click)="closeRemoveDialog()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button class="confirm" (click)="confirmRemovePoint()">
+          <i class="fas fa-trash-alt"></i> Remove
+        </button>
+      </div>
+    </ng-container>
+    <ng-template #removed>
+      <div class="dialog-title success">
+        <i class="fas fa-check-circle"></i>
+        Point removed
+      </div>
+    </ng-template>
   </div>
 </div>
