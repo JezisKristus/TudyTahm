@@ -26,9 +26,9 @@ namespace TT_API.Services {
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
-        new Claim("userID", user.UserID.ToString()),
-        new Claim("user", user.UserName)
-    };
+                new Claim("userID", user.UserID.ToString()),
+                new Claim("user", user.UserName)
+            };
 
             var token = new JwtSecurityToken(
                 claims: claims,
@@ -36,6 +36,62 @@ namespace TT_API.Services {
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string CreateRefreshToken(User user)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(PASSWORD));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim("userID", user.UserID.ToString()),
+                new Claim("user", user.UserName),
+                new Claim("tokenType", "refresh")
+            };
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(7), // Refresh tokens last longer
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public bool VerifyRefreshToken(string refreshToken, User user)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(PASSWORD);
+                var tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(refreshToken, tokenValidationParameters, out validatedToken);
+
+                // Verify it's a refresh token
+                var tokenType = principal.FindFirst("tokenType")?.Value;
+                if (tokenType != "refresh")
+                {
+                    return false;
+                }
+
+                // Verify the user ID matches
+                var userId = principal.FindFirst("userID")?.Value;
+                return userId == user.UserID.ToString();
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public bool Verify(string header) {

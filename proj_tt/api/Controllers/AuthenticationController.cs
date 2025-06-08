@@ -34,8 +34,38 @@ namespace TT_API.Controllers {
             if (!HashHelper.Verify(logindto.Password, user.UserPassword)) { return Unauthorized(new { message = "Invalid credentials." }); }
 
             var token = service.Create(user);
+            var refreshToken = service.CreateRefreshToken(user);
 
-            return Ok(new { token, user.UserID});
+            return Ok(new { token, refreshToken, user.UserID});
+        }
+
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDTO dto)
+        {
+            try
+            {
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserID == dto.UserID);
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found." });
+                }
+
+                // Verify the refresh token
+                if (!service.VerifyRefreshToken(dto.RefreshToken, user))
+                {
+                    return Unauthorized(new { message = "Invalid refresh token." });
+                }
+
+                // Generate new tokens
+                var newToken = service.Create(user);
+                var newRefreshToken = service.CreateRefreshToken(user);
+
+                return Ok(new { token = newToken, refreshToken = newRefreshToken });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Failed to refresh token", error = ex.Message });
+            }
         }
 
         [HttpPost("Register")]

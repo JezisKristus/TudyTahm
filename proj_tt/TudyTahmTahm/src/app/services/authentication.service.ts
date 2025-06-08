@@ -68,6 +68,58 @@ export class AuthenticationService {
     );
   }
 
+  public refreshToken(): Observable<{ token: string, refreshToken: string }> {
+    const userId = this.getCurrentUserID();
+    const refreshToken = this.getRefreshToken();
+
+    if (!userId || !refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<{ token: string, refreshToken: string }>(
+      `${environment.apiUrl}/Authentication/RefreshToken`,
+      { userID: userId, refreshToken }
+    ).pipe(
+      tap(result => {
+        this.setToken(result.token);
+        this.setRefreshToken(result.refreshToken);
+      }),
+      catchError(error => {
+        console.error('Token refresh failed:', error);
+        this.logout(); // Log out user if refresh fails
+        return throwError(() => new Error('Session expired. Please log in again.'));
+      })
+    );
+  }
+
+  public isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      return Date.now() >= expiry;
+    } catch {
+      return true;
+    }
+  }
+
+  public shouldRefreshToken(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      const timeUntilExpiry = expiry - Date.now();
+      // Refresh if token expires in less than 5 minutes
+      return timeUntilExpiry < 5 * 60 * 1000;
+    } catch {
+      return false;
+    }
+  }
+
   public getCurrentUserID(): number | null {
     const user = this.getUser();
     if (user && typeof user.userID === 'number') {
