@@ -81,7 +81,7 @@ namespace TT_API.Controllers
                 UserName = registerdto.UserName,
                 UserPassword = HashHelper.Hash(registerdto.UserPassword),
                 UserEmail = registerdto.UserEmail,
-                UserIconPath = @"pfp\default.png",
+                UserIconPath = @"L\pfp\default.png",
             };
 
             context.Users.Add(user);
