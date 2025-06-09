@@ -14,8 +14,6 @@ obrázky předělat
 
 JK
 Udělat error handeling u settings např. stejný password apod.
-udělat clickable pointy v journeys aby se daly pointy upravovat
 Předělat requesty na API na úpravu účtu aby odpovídaly
-Bude se dát mergnout více cest do jedný aby se jich na mapě dalo ukázat víc
-editovat jednotlivý pointy po nakliknutí, nějakej dialog
+Bude se dát mergnout více cest do jedný aby se jich na mapě dalo ukázat víc - novej objekt v databázi?
 fixnout map-details-panel

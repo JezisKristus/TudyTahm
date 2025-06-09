@@ -170,6 +170,117 @@ body {
   z-index: 500;
   overflow: hidden;
   visibility: hidden; /* Hide by default */
+
+  .details-panel {
+    // Stylování stejně jako marker-details
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #1c2e1c;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    color: #d1b97f;
+    font-family: sans-serif;
+    padding: 20px;
+    border-left: 2px solid var(--gold);
+    overflow-y: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    border-radius: 0; // stejné jako marker-details
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      color: #d1b97f;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      color: #d1d1d1;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #2f4531;
+      margin: 0.5rem 0;
+    }
+
+    .label {
+      font-size: 0.85rem;
+      margin: 0.5rem 0;
+      display: block;
+      color: #d1b97f;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      background: #2a3e2b;
+      color: #d1b97f;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem;
+      font-family: inherit;
+      width: 100%;
+
+      &::placeholder {
+        color: rgba(209, 185, 127, 0.6);
+      }
+
+      &:focus {
+        outline: 1px solid #d4b87c;
+      }
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      margin: 0.5rem 0 1rem;
+      min-height: 100px;
+    }
+
+    select option {
+      background: #2a3e2b;
+      color: #d1b97f;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+      gap: 0.5rem;
+
+      button {
+        flex: 1;
+        padding: 0.4rem 0.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        &:active {
+          transform: scale(0.98);
+        }
+
+        &.close {
+          background: #3d5f3d;
+          color: white;
+        }
+      }
+    }
+  }
 }
 
 .map-details-container.visible {
