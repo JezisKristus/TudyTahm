@@ -10,14 +10,13 @@ import {JourneyPageComponent} from './pages/journey-page/journey-page.component'
 import {authGuard} from './auth.guard';
 
 export const routes: Routes = [
-  {path: '', component: SignInPageComponent , canActivate: [authGuard]},
   {path: 'sign-in', component: SignInPageComponent},
+  {path: 'my-maps', component: MyMapsPageComponent, canActivate: [authGuard]},
+  {path: 'journey/:id', component: JourneyPageComponent, canActivate: [authGuard]},
+  {path: 'memories', component: MemoriesPageComponent, canActivate: [authGuard]},
+  {path: '', redirectTo: '/my-maps', pathMatch: 'full'},
   {path: 'register', component: RegisterPageComponent},
-  {path: 'my-maps', component: MyMapsPageComponent , canActivate: [authGuard]},
-  {path: 'memories', component: MemoriesPageComponent , canActivate: [authGuard]},
-  {path: 'shared', component: SharedPageComponent , canActivate: [authGuard]},
-  {path: 'settings', component: SettingsPageComponent , canActivate: [authGuard]},
-  {path: 'journey', component: JourneyPageComponent , canActivate: [authGuard]},
-  { path: 'journey/:id', component: JourneyPageComponent , canActivate: [authGuard] },
-  { path: 'map/:mapId', component: MapPageComponent, canActivate: [authGuard] },
+  {path: 'shared', component: SharedPageComponent, canActivate: [authGuard]},
+  {path: 'settings', component: SettingsPageComponent, canActivate: [authGuard]},
+  {path: 'map/:mapId', component: MapPageComponent, canActivate: [authGuard]},
 ];

@@ -70,4 +70,11 @@ export class JourneyService {
         tap((response) => console.log('Updated Journey:', response))
       );
   }
+
+  mergeJourneys(mergeData: { name: string; description: string; idMap: number; journeyIDs: number[] }): Observable<Journey> {
+    return this.http.post<Journey>(`${environment.apiUrl}/Journey/MergeJourneys`, mergeData)
+      .pipe(
+        tap((response) => console.log('Merged Journeys:', response))
+      );
+  }
 }

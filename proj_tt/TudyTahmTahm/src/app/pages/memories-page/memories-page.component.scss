@@ -49,6 +49,46 @@
   margin-right: auto;
 }
 
+.multi-view-btn {
+  background: linear-gradient(135deg, var(--dark-green) 0%, #1a2714 100%);
+  color: var(--gold);
+  border: 1px solid #476947;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &:hover:not(.disabled) {
+    background: linear-gradient(135deg, #1a2714 0%, var(--dark-green) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #2e3c2f 0%, #1a2714 100%);
+  }
+
+  i {
+    font-size: 16px;
+  }
+
+  .journey-count {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+}
+
 .header-actions {
   display: flex;
   gap: 10px;
@@ -123,6 +163,76 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.journey-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Checkbox styles */
+.checkbox-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+  user-select: none;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: 2px solid #476947;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid #476947;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  input:checked ~ .checkmark {
+    background-color: #476947;
+    border-color: #476947;
+
+    &:after {
+      display: block;
+      border-color: #fff;
+    }
+  }
+
+  &:hover input ~ .checkmark {
+    border-color: #22301e;
+  }
+}
+
+.multi-view-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  background: linear-gradient(150deg, var(--dark-green) 60%, rgb(21, 37, 17) 40%);
+  border-top: 2px solid #476947;
 }
 
 .delete-journey-btn {

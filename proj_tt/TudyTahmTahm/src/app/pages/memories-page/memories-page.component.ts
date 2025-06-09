@@ -28,6 +28,7 @@ export class MemoriesPageComponent implements OnInit {
   showDeleteDialog = false;
   journeyToDelete: Journey | null = null;
   deleteInProgress = false;
+  selectedJourneys: Set<number> = new Set();
 
   constructor(
     private journeyService: JourneyService,
@@ -61,13 +62,21 @@ export class MemoriesPageComponent implements OnInit {
       });
   }
 
+  toggleJourneySelection(journeyID: number): void {
+    if (this.selectedJourneys.has(journeyID)) {
+      this.selectedJourneys.delete(journeyID);
+    } else {
+      this.selectedJourneys.add(journeyID);
+    }
+  }
+
   onJourneyClick(journey: Journey): void {
-    // Save the entire journey object to sessionStorage
-    sessionStorage.setItem('Journey', JSON.stringify(journey));
-    sessionStorage.setItem('Journey.journeyID', journey.journeyID.toString());
-    console.log('Storing journey data into sessionStorage:', journey);
-    // Redirect to journey page
-    this.router.navigate(['/journey', journey.journeyID]);
+    // Only navigate if not clicking on checkbox or delete button
+    if (!this.selectedJourneys.has(journey.journeyID)) {
+      sessionStorage.setItem('Journey', JSON.stringify(journey));
+      sessionStorage.setItem('Journey.journeyID', journey.journeyID.toString());
+      this.router.navigate(['/journey', journey.journeyID]);
+    }
   }
 
   // Delete journey functionality
@@ -87,24 +96,26 @@ export class MemoriesPageComponent implements OnInit {
     if (this.journeyToDelete && this.journeyToDelete.journeyID && !this.deleteInProgress) {
       this.deleteInProgress = true;
 
-      // Close the dialog immediately
-      this.closeDeleteConfirmation();
-
       this.journeyService.deleteJourney(this.journeyToDelete.journeyID).subscribe({
         next: () => {
           // Remove the deleted journey from the array
           this.journeys = this.journeys.filter(journey => journey.journeyID !== this.journeyToDelete?.journeyID);
           this.deleteInProgress = false;
+          // Close the dialog after successful deletion
+          this.closeDeleteConfirmation();
         },
         error: (err) => {
           console.error('Failed to delete journey:', err);
           this.error = 'Failed to delete journey. Please try again later.';
           this.deleteInProgress = false;
+          // Close the dialog even if there's an error
+          this.closeDeleteConfirmation();
         }
       });
     } else {
       console.error('Invalid journeyID or delete operation already in progress.');
       this.error = 'Invalid journey selected for deletion.';
+      this.closeDeleteConfirmation();
     }
   }
 }

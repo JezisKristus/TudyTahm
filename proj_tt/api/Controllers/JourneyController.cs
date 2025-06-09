@@ -142,5 +142,53 @@ namespace TT_API.Controllers {
 
             return Ok(journey);
         }
+
+        [Authorize]
+        [HttpPost("MergeJourneys")]
+        public async Task<IActionResult> MergeJourneys([FromBody] MergeJourneysDTO dto) {
+            try {
+                // Create new journey
+                var journey = new Journey() { 
+                    Name = dto.Name, 
+                    Description = dto.Description, 
+                    IDMap = dto.IDMap 
+                };
+
+                context.Journeys.Add(journey);
+                await context.SaveChangesAsync();
+
+                // Get all points from source journeys
+                var allPoints = new List<JourneyPoint>();
+                foreach (var journeyId in dto.JourneyIDs) {
+                    var points = await context.JourneyPoints
+                        .Where(p => p.IDJourney == journeyId)
+                        .OrderBy(p => p.PointID)
+                        .ToListAsync();
+                    allPoints.AddRange(points);
+                }
+
+                // Add points to new journey
+                foreach (var point in allPoints) {
+                    var newPoint = new JourneyPoint {
+                        IDJourney = journey.JourneyID,
+                        Latitude = point.Latitude,
+                        Longitude = point.Longitude
+                    };
+                    await context.JourneyPoints.AddAsync(newPoint);
+                }
+
+                await context.SaveChangesAsync();
+
+                // Return the complete journey with its points
+                var createdJourney = await context.Journeys
+                    .Include(j => j.Map)
+                    .FirstOrDefaultAsync(j => j.JourneyID == journey.JourneyID);
+
+                return Ok(createdJourney);
+            }
+            catch (Exception ex) {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

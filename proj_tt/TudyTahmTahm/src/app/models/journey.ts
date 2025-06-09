@@ -1,7 +1,8 @@
 export interface Journey {
   journeyID: number;
-  idMap: number;
   name: string;
-  description: string;
-  imagePath: string;
+  description?: string;
+  idMap: number;
+  idUser: number;
+  imagePath?: string;
 }
