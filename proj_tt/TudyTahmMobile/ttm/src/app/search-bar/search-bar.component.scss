@@ -1,0 +1,16 @@
+ion-searchbar {
+    margin: 10px;
+    width: 95%;
+  }
+  
+  .suggestion-list {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: transparent;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    z-index: 9999;
+  }

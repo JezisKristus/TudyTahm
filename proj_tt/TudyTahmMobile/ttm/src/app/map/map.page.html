@@ -1,0 +1,15 @@
+<ion-header>
+  <div class="custom-toolbar">
+    <app-search-bar [map]="map" style="flex: 1;"></app-search-bar>
+    <ion-toggle slot="end" (ionChange)="toggleBreadcrumbs()"></ion-toggle>
+  </div>
+</ion-header>
+
+<ion-content>
+  <div id="map"></div>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="centerMapOnUser()" >
+      <ion-icon name="locate-sharp"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

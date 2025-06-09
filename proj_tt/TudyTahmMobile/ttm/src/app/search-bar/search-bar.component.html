@@ -1,0 +1,34 @@
+<!-- <ion-searchbar
+  placeholder="Search location"
+  (ionChange)="searchLocation($event)">
+</ion-searchbar>
+
+<ul *ngIf="suggestions.length > 0" class="suggestions-list">
+  <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+    {{ suggestion.label }}
+  </li>
+</ul> -->
+
+<!-- SUGESTIONS -->
+ 
+<ion-searchbar
+  placeholder="Search location"
+  (ionInput)="searchLocation($event)"
+  debounce="500"
+  autocomplete="off"
+  spellcheck="false"
+  autocorrect="off"
+  autocapitalize="off"
+></ion-searchbar>
+
+<!-- <ion-list *ngIf="suggestions.length > 0" class="suggestion-list">
+  <ion-item *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+    {{ suggestion.label }}
+  </ion-item>
+</ion-list> -->
+
+<ion-list *ngIf="suggestions.length > 0" class="suggestion-list">
+  <ion-item *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+    {{ suggestion.label }}
+  </ion-item>
+</ion-list>
