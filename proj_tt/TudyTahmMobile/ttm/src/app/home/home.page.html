@@ -13,5 +13,13 @@
     <ion-label position="floating">Password</ion-label>
     <ion-input [(ngModel)]="password" type="password"></ion-input>
   </ion-item>
-  <ion-button expand="full" (click)="login()">Login</ion-button>
+
+  <ion-button expand="full" (click)="login()" [disabled]="loading">
+    <ion-spinner *ngIf="loading" slot="start"></ion-spinner>
+    Login
+  </ion-button>
+
+  <ion-text color="danger" *ngIf="errorMessage">
+    <p class="ion-padding-top">{{ errorMessage }}</p>
+  </ion-text>
 </ion-content>
