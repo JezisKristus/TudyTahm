@@ -11,7 +11,8 @@ import {
   SimpleChanges,
   ViewChild,
   ViewContainerRef,
-  ViewEncapsulation
+  ViewEncapsulation,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {CommonModule, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -31,12 +32,45 @@ import {ColorMarkerComponent} from '../color-marker/color-marker.component';
 import {ExtendedMarker} from '../../models/extended-marker';
 import {MapDetailsPanelComponent} from '../map-details-panel/map-details-panel.component';
 import {SharingService} from '../../services/sharing.service';
-import {share} from 'rxjs';
+import {share, Subject, takeUntil} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
+import {MarkerManagerService} from '../../services/marker-manager.service';
+import {LabelManagerService} from '../../services/label-manager.service';
+import {MapInitializationService} from '../../services/map-initialization.service';
+
+interface MapState {
+  mapID: number;
+  mapName: string;
+  originalMapName: string;
+  currentMap: AppMap | null;
+  selectedMarker: ExtendedMarker | null;
+  selectedLabelFilter: number | null;
+  showDetailsPanel: boolean;
+  showLabelModal: boolean;
+}
+
+interface MarkerState {
+  markers: ExtendedMarker[];
+  colorMarkerRefs: ComponentRef<ColorMarkerComponent>[];
+  markerDetailsRef?: ComponentRef<MarkerDetailsComponent>;
+  popupRef: ComponentRef<AddMarkerPopupComponent> | null;
+}
+
+interface LabelState {
+  labels: Label[];
+  newLabel: CreateLabelDto;
+}
 
 class MapData {
   mapName?: string
   mapID?: number
+}
+
+class MapError extends Error {
+  constructor(message: string, public readonly code: string) {
+    super(message);
+    this.name = 'MapError';
+  }
 }
 
 /**
@@ -49,7 +83,8 @@ class MapData {
   styleUrls: ['./map.component.scss'],
   standalone: true,
   imports: [CommonModule, NgIf, NgForOf, FormsModule, SearchComponent, MapDetailsPanelComponent],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   /** Container reference for dynamic marker components */
@@ -109,11 +144,40 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this._mapID = value;
   }
 
+  private mapState: MapState = {
+    mapID: 1,
+    mapName: '',
+    originalMapName: '',
+    currentMap: null,
+    selectedMarker: null,
+    selectedLabelFilter: null,
+    showDetailsPanel: false,
+    showLabelModal: false
+  };
+
+  private markerState: MarkerState = {
+    markers: [],
+    colorMarkerRefs: [],
+    markerDetailsRef: undefined,
+    popupRef: null
+  };
+
+  private labelState: LabelState = {
+    labels: [],
+    newLabel: {
+      idMap: this.mapID,
+      name: '',
+      color: '#3a5a40'
+    }
+  };
+
+  private destroy$ = new Subject<void>();
+
   constructor(
     private viewContainerRef: ViewContainerRef,
-    private markerService: MarkerService,
-    private labelService: LabelService,
-    private mapService: MapService,
+    private markerManager: MarkerManagerService,
+    private labelManager: LabelManagerService,
+    private mapInitialization: MapInitializationService,
     private sharingService: SharingService,
     private route: ActivatedRoute
   ) {}
@@ -122,15 +186,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
    * Initializes the component and loads initial data
    */
   ngOnInit(): void {
-    // Get mapId from route parameters if not provided as input
     if (!this._mapID) {
-      this.route.params.subscribe(params => {
-        const routeMapId = Number(params['mapId']);
-        if (routeMapId) {
-          this._mapID = routeMapId;
-          this.loadMapData();
-        }
-      });
+      this.route.params
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(params => {
+          const routeMapId = Number(params['mapId']);
+          if (routeMapId) {
+            this._mapID = routeMapId;
+            this.loadMapData();
+          }
+        });
     } else {
       this.loadMapData();
     }
@@ -154,18 +219,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
    * Initializes the Leaflet map with default settings
    */
   private initializeMap(): void {
-    try {
-      this.map = L.map('map').setView([49.8022514, 15.6252330], 8);
-      this.layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(this.map);
-
-      this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
-        this.showPopup(event.latlng);
+    this.mapInitialization.initializeMap('map')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (map) => {
+          this.map = map;
+          this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
+            this.markerManager.showPopup(event.latlng, this.viewContainerRef, this.map);
+          });
+        },
+        error: (error) => console.error('Error initializing map:', error)
       });
-    } catch (error) {
-      console.error('Error initializing map:', error);
-    }
   }
 
   /**
@@ -227,66 +291,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       latitude: latlng.lat
     };
 
-    this.markerService.createMarker(markerData).subscribe({
-      next: (createdMarker) => {
-        try {
-          const compRef = this.markerHost.createComponent(ColorMarkerComponent);
-          compRef.instance.map = this.map;
-          compRef.instance.markerData = createdMarker;
-          compRef.instance.labelColor = '#0000ff';
-
-          // Správně: použijeme markerClick event z komponenty
-          compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
-            this.onColorMarkerClick(clickedMarkerData.markerID);
-          });
-
-          // Vytvoříme ExtendedMarker a přidáme ho do pole Lmarkers
-          setTimeout(() => {
-            if (compRef.instance.leafletMarker) {
-              const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
-              extendedMarker.markerData = createdMarker;
-              extendedMarker.markerID = createdMarker.markerID;
-              extendedMarker.selected = true;
-              this.Lmarkers.push(extendedMarker);
-              this.selectedMarker = extendedMarker;
-            }
-          });
-
-          this.colorMarkerRefs.push(compRef);
-
-          if (this.markerDetailsRef) {
-            this.markerDetailsRef.destroy();
-          }
-
-          this.markerDetailsRef = this.markerDetailsContainer.createComponent(MarkerDetailsComponent);
-          this.markerDetailsRef.instance.marker = { ...createdMarker };
-          this.markerDetailsRef.instance.labels = [...this.labels];
-
-          this.markerDetailsRef.instance.cancel.subscribe(() => this.onCancel());
-          this.markerDetailsRef.instance.save.subscribe((updatedMarker: AppMarker) => this.onSave(updatedMarker));
-          this.markerDetailsRef.instance.deleteMarker.subscribe((marker: AppMarker) => this.onDeleteMarker(marker));
-
-          this.markerDetailsRef.changeDetectorRef.detectChanges();
-
-          const container = document.querySelector('.marker-details-container');
-          if (container) {
-            container.classList.add('visible');
-          }
-
-          if (this.selectedLabelFilter !== null && createdMarker.idLabel !== this.selectedLabelFilter) {
-            compRef.instance.hide();
-          }
-
-        } catch (error) {
-          console.error('Error creating marker component:', error);
-          alert('Nepodařilo se přidat marker - chyba při vytváření komponenty.');
-        }
-      },
-      error: (err) => {
-        console.error('Chyba při přidávání markeru:', err);
-        alert('Nepodařilo se přidat marker.');
-      }
-    });
+    this.markerManager.createMarker(markerData, this.map, this.markerHost)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe();
   }
 
   /**
@@ -438,42 +445,44 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       return;
     }
 
-    this.markerService.updateMarker(markerData).subscribe({
-      next: (response) => {
-        const updatedMarker = response || markerData;
-        const markerIndex = this.colorMarkerRefs.findIndex(ref =>
-          ref.instance.markerData.markerID === updatedMarker.markerID
-        );
-        if (markerIndex !== -1) {
-          this.colorMarkerRefs[markerIndex].instance.removeFromMap();
-          this.colorMarkerRefs[markerIndex].destroy();
-          this.colorMarkerRefs.splice(markerIndex, 1);
+    this.markerManager.updateMarker(markerData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const updatedMarker = response || markerData;
+          const markerIndex = this.colorMarkerRefs.findIndex(ref =>
+            ref.instance.markerData.markerID === updatedMarker.markerID
+          );
+          if (markerIndex !== -1) {
+            this.colorMarkerRefs[markerIndex].instance.removeFromMap();
+            this.colorMarkerRefs[markerIndex].destroy();
+            this.colorMarkerRefs.splice(markerIndex, 1);
+          }
+          const compRef = this.markerHost.createComponent(ColorMarkerComponent);
+          compRef.instance.map = this.map;
+          compRef.instance.markerData = updatedMarker;
+          const label = this.labels.find(l => l.labelID === updatedMarker.idLabel);
+          compRef.instance.labelColor = label?.color ?? '#d4af37';
+          // Správně: použijeme markerClick event z komponenty
+          compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
+            this.onColorMarkerClick(clickedMarkerData.markerID);
+          });
+          this.colorMarkerRefs.push(compRef);
+          const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
+          if (extendedMarker) {
+            extendedMarker.markerData = updatedMarker;
+            extendedMarker.markerID = updatedMarker.markerID;
+            extendedMarker.selected = false;
+            this.Lmarkers.push(extendedMarker);
+          }
+          console.log('Marker successfully updated:', updatedMarker);
+          this.clearSelectedMarker();
+        },
+        error: (err) => {
+          console.error('Error updating marker:', err);
+          this.clearSelectedMarker();
         }
-        const compRef = this.markerHost.createComponent(ColorMarkerComponent);
-        compRef.instance.map = this.map;
-        compRef.instance.markerData = updatedMarker;
-        const label = this.labels.find(l => l.labelID === updatedMarker.idLabel);
-        compRef.instance.labelColor = label?.color ?? '#d4af37';
-        // Správně: použijeme markerClick event z komponenty
-        compRef.instance.markerClick.subscribe((clickedMarkerData: AppMarker) => {
-          this.onColorMarkerClick(clickedMarkerData.markerID);
-        });
-        this.colorMarkerRefs.push(compRef);
-        const extendedMarker = compRef.instance.leafletMarker as ExtendedMarker;
-        if (extendedMarker) {
-          extendedMarker.markerData = updatedMarker;
-          extendedMarker.markerID = updatedMarker.markerID;
-          extendedMarker.selected = false;
-          this.Lmarkers.push(extendedMarker);
-        }
-        console.log('Marker successfully updated:', updatedMarker);
-        this.clearSelectedMarker();
-      },
-      error: (err) => {
-        console.error('Error updating marker:', err);
-        this.clearSelectedMarker();
-      }
-    });
+      });
   }
 
   onDeleteMarker(marker: AppMarker | null): void {
@@ -489,48 +498,45 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       return;
     }
 
-    this.markerService.deleteMarker({...marker, markerID: markerId}).subscribe({
-      next: () => {
-        console.log(`Marker with ID ${markerId} deleted successfully.`);
+    this.markerManager.deleteMarker({...marker, markerID: markerId})
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          console.log(`Marker with ID ${markerId} deleted successfully.`);
 
-        const markerCompIndex = this.colorMarkerRefs.findIndex(ref =>
-          ref.instance.markerData.markerID === markerId
-        );
+          const markerCompIndex = this.colorMarkerRefs.findIndex(ref =>
+            ref.instance.markerData.markerID === markerId
+          );
 
-        if (markerCompIndex !== -1) {
-          this.colorMarkerRefs[markerCompIndex].instance.removeFromMap();
-          this.colorMarkerRefs[markerCompIndex].destroy();
-          this.colorMarkerRefs.splice(markerCompIndex, 1);
-        }
+          if (markerCompIndex !== -1) {
+            this.colorMarkerRefs[markerCompIndex].instance.removeFromMap();
+            this.colorMarkerRefs[markerCompIndex].destroy();
+            this.colorMarkerRefs.splice(markerCompIndex, 1);
+          }
 
-        this.clearSelectedMarker();
-      },
-      error: (err) => console.error('Error deleting marker:', err)
-    });
+          this.clearSelectedMarker();
+        },
+        error: (err) => console.error('Error deleting marker:', err)
+      });
   }
 
   private loadMarkers(): void {
     this.Lmarkers.forEach(marker => marker.remove());
     this.Lmarkers = [];
 
-    const mapID = sessionStorage.getItem('Map.mapID') || '1';
-
-    if (!mapID) {
-      console.error('No mapID found in sessionStorage.');
-      return;
-    }
-
-    this.markerService.getMarkersByMapId(Number(mapID)).subscribe({
-      next: (markers) => {
-        if (Array.isArray(markers)) {
-          console.log('Markers loaded:', markers);
-          this.addMarkersToMap(markers);
-        } else {
-          console.error('Invalid marker data format:', markers);
-        }
-      },
-      error: (err) => console.error('Error loading markers:', err)
-    });
+    this.markerManager.loadMarkers(this._mapID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (markers) => {
+          if (Array.isArray(markers)) {
+            console.log('Markers loaded:', markers);
+            this.addMarkersToMap(markers);
+          } else {
+            console.error('Invalid marker data format:', markers);
+          }
+        },
+        error: (err) => console.error('Error loading markers:', err)
+      });
   }
 
   private refreshMarkers(): void {
@@ -567,7 +573,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
             return;
           }
 
-          this.map.setView([lat, lon], 13);
+          this.mapInitialization.updateMapView(this.map, lat, lon);
 
           this.colorMarkerRefs = this.colorMarkerRefs.filter(ref => {
             if (ref.instance.markerData && ref.instance.markerData.markerID === -9999) {
@@ -639,42 +645,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
    * Loads and caches labels for current map
    */
   private loadLabels(): void {
-    const mapID = Number(sessionStorage.getItem('Map.mapID'));
-
-    // Při prvním načtení ignorujeme cache
-    if (!this.isInitialLoad) {
-      const cachedLabels = sessionStorage.getItem(`labels_${mapID}`);
-      if (cachedLabels) {
-        try {
-          this.labels = JSON.parse(cachedLabels);
-          console.log('Načtené štítky z cache:', this.labels);
-          return;
-        } catch (e) {
-          console.warn('Chyba při parsování cache:', e);
-          sessionStorage.removeItem(`labels_${mapID}`);
-        }
-      }
-    }
-
-    this.labelService.getLabelsByMapID(mapID).subscribe({
-      next: (labels) => {
-        this.labels = labels.map(label => ({
-          labelID: label.labelID,
-          idMap: label.idMap,
-          name: label.name,
-          color: label.color
-        }));
-
-        sessionStorage.setItem(`labels_${mapID}`, JSON.stringify(this.labels));
-        console.log('Načtené štítky z API:', this.labels);
-        this.isInitialLoad = false; // Nastavíme příznak na false po prvním načtení
-      },
-      error: (err) => {
-        console.error('Chyba při načítání štítků:', err);
-        this.labels = [];
-        this.isInitialLoad = false;
-      }
-    });
+    this.labelManager.loadLabels(this._mapID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        error: (error) => console.error('Error loading labels:', error)
+      });
   }
 
   /**
@@ -682,37 +657,25 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
    * @param labelID ID of label to delete
    */
   deleteLabel(labelID: number): void {
-    this.labelService.deleteLabel(labelID).subscribe({
-      next: () => {
-        console.log('Label deleted successfully');
-        this.invalidateLabelsCache();
-        this.loadLabels();
-        this.refreshMarkers();
-      },
-      error: (err) => {
-        console.error('Error deleting label:', err);
-        alert('Failed to delete label');
-      }
-    });
+    this.labelManager.deleteLabel(labelID, this._mapID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          console.log('Label deleted successfully');
+          this.loadLabels();
+          this.refreshMarkers();
+        },
+        error: (err) => {
+          console.error('Error deleting label:', err);
+          alert('Failed to delete label');
+        }
+      });
   }
 
   ensureLabelsLoaded(): void {
     if (this.labels.length === 0) {
       this.loadLabels();
     }
-  }
-
-  private invalidateLabelsCache(): void {
-    const mapID = sessionStorage.getItem('Map.mapID');
-    if (mapID) {
-      sessionStorage.removeItem(`labels_${mapID}`);
-    }
-
-    Object.keys(sessionStorage)
-      .filter(key => key.startsWith('labels_'))
-      .forEach(key => sessionStorage.removeItem(key));
-
-    console.log('Labels cache invalidated');
   }
 
   openLabelModal(): void {
@@ -730,18 +693,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   updateLabel(labelData: Label): void {
-    this.labelService.updateLabel(labelData).subscribe({
-      next: (updatedLabel) => {
-        console.log('Label updated successfully');
-        this.invalidateLabelsCache();
-        this.loadLabels();
-        this.refreshMarkers();
-      },
-      error: (err) => {
-        console.error('Error updating label:', err);
-        alert('Failed to update label');
-      }
-    });
+    this.labelManager.updateLabel(labelData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updatedLabel) => {
+          console.log('Label updated successfully');
+          this.loadLabels();
+          this.refreshMarkers();
+        },
+        error: (err) => {
+          console.error('Error updating label:', err);
+          alert('Failed to update label');
+        }
+      });
   }
 
   createLabel(): void {
@@ -750,24 +714,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       return;
     }
 
-    const createLabelDto: CreateLabelDto = {
-      idMap: this.mapID,
-      name: this.newLabel.name,
-      color: this.newLabel.color
-    };
-
-    this.labelService.createLabel(createLabelDto).subscribe({
-      next: (newLabel) => {
-        console.log('New label created:', newLabel);
-        this.closeLabelModal();
-        this.invalidateLabelsCache();
-        this.loadLabels();
-      },
-      error: (err) => {
-        console.error('Error saving label:', err);
-        alert('An error occurred while saving the label');
-      }
-    });
+    this.labelManager.createLabel(this.newLabel)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.closeLabelModal();
+        },
+        error: (err) => {
+          console.error('Error saving label:', err);
+          alert('An error occurred while saving the label');
+        }
+      });
   }
 
   private clearSelectedMarker(): void {
@@ -796,7 +753,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   onLocationSelected(location: {lat: number, lon: number, name: string}): void {
-    this.map.setView([location.lat, location.lon], 13);
+    this.mapInitialization.updateMapView(this.map, location.lat, location.lon);
 
     this.colorMarkerRefs = this.colorMarkerRefs.filter(ref => {
       if (ref.instance.markerData && ref.instance.markerData.markerID === -9999) {
@@ -823,58 +780,59 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.colorMarkerRefs.push(compRef);
   };
 
-  private loadMapData(): void {
-    const mapID = sessionStorage.getItem('Map.mapID');
-    if (!mapID) {
-      console.error('No mapID found in sessionStorage.');
-      return;
-    }
-
-    console.log('Loading map data for ID:', mapID);
-    this.mapService.getMapById(Number(mapID)).subscribe({
-      next: (mapData: AppMap) => {
-        console.log('Received map data:', mapData);
-        if (mapData) {
-          // Ensure all required properties are set
-          this.currentMap = {
-            mapID: mapData.mapID,
-            idUser: mapData.idUser,
-            mapName: mapData.mapName || 'Unnamed Map',
-            mapPreviewPath: mapData.mapPreviewPath || '',
-            description: mapData.description || '',
-            sharedWith: mapData.sharedWith || []
-          };
-          this.mapName = this.currentMap.mapName.trim();
-          this.originalMapName = this.mapName;
-          console.log('Map data loaded successfully. Current map:', this.currentMap);
-        } else {
-          console.warn('Received invalid map data');
-          this.mapName = 'Unnamed Map';
-          this.originalMapName = 'Unnamed Map';
-          this.currentMap = {
-            mapID: Number(mapID),
-            idUser: this.currentUserId,
-            mapName: 'Unnamed Map',
-            mapPreviewPath: '',
-            description: '',
-            sharedWith: []
-          };
-        }
-      },
-      error: (err: Error) => {
-        console.error('Error loading map data:', err);
-        this.mapName = 'Unnamed Map';
-        this.originalMapName = 'Unnamed Map';
-        this.currentMap = {
-          mapID: Number(mapID),
-          idUser: this.currentUserId,
-          mapName: 'Unnamed Map',
-          mapPreviewPath: '',
-          description: '',
-          sharedWith: []
-        };
+  private handleError(error: unknown, context: string): void {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error(`Error in ${context}:`, error);
+    
+    if (error instanceof MapError) {
+      // Handle specific map errors
+      switch (error.code) {
+        case 'MAP_NOT_FOUND':
+          this.handleMapNotFound();
+          break;
+        case 'MARKER_CREATION_FAILED':
+          this.handleMarkerCreationFailed();
+          break;
+        default:
+          this.handleGenericError(errorMessage);
       }
-    });
+    } else {
+      this.handleGenericError(errorMessage);
+    }
+  }
+
+  private handleMapNotFound(): void {
+    this.mapName = 'Unnamed Map';
+    this.originalMapName = 'Unnamed Map';
+    this.currentMap = {
+      mapID: this._mapID,
+      idUser: this.currentUserId,
+      mapName: 'Unnamed Map',
+      mapPreviewPath: '',
+      description: '',
+      sharedWith: []
+    };
+  }
+
+  private handleMarkerCreationFailed(): void {
+    alert('Failed to create marker. Please try again.');
+  }
+
+  private handleGenericError(message: string): void {
+    alert(`An error occurred: ${message}`);
+  }
+
+  private loadMapData(): void {
+    this.mapInitialization.loadMapData(this._mapID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (mapData) => {
+          this.currentMap = mapData;
+          this.mapName = mapData.mapName.trim();
+          this.originalMapName = this.mapName;
+        },
+        error: (error) => console.error('Error loading map data:', error)
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -893,6 +851,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
    * Handles cleanup when component is destroyed
    */
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
@@ -932,31 +893,29 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     }
   }
 
-  onShareMap(shareData: {email: string, permission: string}) {
-    console.log('Sharing map with:', shareData.email);
-
-    // Ensure permission is one of the allowed values
+  onShareMap(shareData: {email: string, permission: string}): void {
     const permission = (shareData.permission === 'write' || shareData.permission === 'owner')
       ? shareData.permission
       : 'read';
 
     const sharedUser: SharedUser = {
-      userId: 0, // This will be set by the backend
+      userId: 0,
       mapId: this.currentMap?.mapID || 0,
-      userName: shareData.email.split('@')[0], // Temporary username
+      userName: shareData.email.split('@')[0],
       userEmail: shareData.email,
       permission: permission
     };
 
-    this.sharingService.addUserToMap(sharedUser).subscribe(
-      response => {
-        if (this.currentMap) {
-          this.currentMap.sharedWith.push(response);
-        } else {
-          console.error('currentMap is null or undefined.');
-        }
-      }
-    );
+    this.sharingService.addUserToMap(sharedUser)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (this.currentMap) {
+            this.currentMap.sharedWith.push(response);
+          }
+        },
+        error: (err) => console.error('Error sharing map:', err)
+      });
   }
 
   onRemoveSharedUser(userId: number) {
