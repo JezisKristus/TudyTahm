@@ -28,8 +28,16 @@ export class MapService {
 
   getMapById(id: number): Observable<AppMap> {
     this.debugUserAndPermissions(); // Add debug logging
-    return this.http.get<AppMap>(`${this.apiUrl}/Map/ByMapID/${id}`)
+    return this.http.get<any>(`${this.apiUrl}/Map/ByMapID/${id}`)
       .pipe(
+        map(response => ({
+          mapID: response.mapID,
+          idUser: response.idUser,
+          mapName: response.mapName,
+          description: response.mapDescription,
+          mapPreviewPath: response.mapPreviewPath,
+          sharedWith: response.sharedWith || []
+        })),
         catchError(this.handleError)
       );
   }

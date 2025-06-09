@@ -134,7 +134,42 @@ namespace TT_API.Controllers {
         [HttpGet("ByMapID/{mapID}")]
         public async Task<IActionResult> GetMap(int mapID) {
             var map = await context.Maps.FindAsync(mapID);
-            return Ok(map);
+            if (map == null) return NotFound();
+
+            // Get shared users
+            var sharedUsers = await context.MapPermissions
+                .Include(p => p.User)
+                .Where(p => p.IDMap == mapID)
+                .Select(p => new {
+                    UserID = p.User.UserID,
+                    UserName = p.User.UserName,
+                    UserEmail = p.User.UserEmail,
+                    Permission = p.Permission
+                })
+                .ToListAsync();
+
+            // Add owner to shared users only if not already present
+            var owner = await context.Users.FindAsync(map.IDUser);
+            if (owner != null && !sharedUsers.Any(u => u.UserID == owner.UserID)) {
+                sharedUsers.Add(new {
+                    UserID = owner.UserID,
+                    UserName = owner.UserName,
+                    UserEmail = owner.UserEmail,
+                    Permission = "owner"
+                });
+            }
+
+            // Create response object with shared users
+            var response = new {
+                map.MapID,
+                map.IDUser,
+                map.MapName,
+                map.MapDescription,
+                map.MapPreviewPath,
+                SharedWith = sharedUsers
+            };
+
+            return Ok(response);
         }
 
         [Authorize]

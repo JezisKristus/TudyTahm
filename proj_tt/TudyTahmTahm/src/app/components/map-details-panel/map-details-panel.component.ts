@@ -35,7 +35,9 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
 
   ngOnInit(): void {
     console.log('Map details panel initialized');
-    console.log('Initial map data:', this.map);
+    console.log('Initial map data:', JSON.stringify(this.map, null, 2));
+    console.log('Shared users:', JSON.stringify(this.map?.sharedWith, null, 2));
+    console.log('Shared users length:', this.map?.sharedWith?.length);
     console.log('Initial visibility:', this.isVisible);
     console.log('Initial showShareModal:', this.showShareModal);
   }
@@ -53,6 +55,16 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('Map details panel changes:', changes);
+    if (changes['map']) {
+      console.log('Map data changed:', JSON.stringify(this.map, null, 2));
+      console.log('Shared users after change:', JSON.stringify(this.map?.sharedWith, null, 2));
+      console.log('Shared users length after change:', this.map?.sharedWith?.length);
+      
+      // Ensure sharedWith is properly initialized
+      if (this.map && !this.map.sharedWith) {
+        this.map.sharedWith = [];
+      }
+    }
     if (changes['isVisible'] && this.panelInitialized) {
       console.log('Visibility changed to:', this.isVisible);
       if (this.isVisible) {
@@ -100,6 +112,8 @@ export class MapDetailsPanelComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   get sharedWith(): SharedUser[] {
+    console.log('Getting sharedWith, map:', this.map);
+    console.log('Current sharedWith array:', this.map?.sharedWith);
     return this.map?.sharedWith || [];
   }
 

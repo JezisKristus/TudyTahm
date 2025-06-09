@@ -8,7 +8,6 @@ import {SharingService} from '../../services/sharing.service';
 import {MapService} from '../../services/map.service';
 import {finalize} from 'rxjs/operators';
 import {AuthenticationService} from '../../services/authentication.service';
-import {MapDetailsComponent} from '../../components/map-details/map-details.component';
 import {ShareMapDialogComponent} from '../../components/share-map-dialog/share-map-dialog.component';
 
 @Component({
@@ -20,7 +19,6 @@ import {ShareMapDialogComponent} from '../../components/share-map-dialog/share-m
     RouterLink,
     RouterLinkActive,
     SidebarComponent,
-    MapDetailsComponent,
     ShareMapDialogComponent
   ],
   templateUrl: './shared-page.component.html',

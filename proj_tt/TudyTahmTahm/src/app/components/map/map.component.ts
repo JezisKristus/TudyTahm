@@ -958,8 +958,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     }
 
     try {
+      console.log('Creating map details panel with map:', JSON.stringify(this.currentMap, null, 2));
+      console.log('Shared users in current map:', JSON.stringify(this.currentMap.sharedWith, null, 2));
+      
       this.mapDetailsRef = this.mapDetailsContainer.createComponent(MapDetailsPanelComponent);
-      this.mapDetailsRef.instance.map = { ...this.currentMap };
+      // Create a deep copy of the map data to ensure sharedWith array is preserved
+      const mapCopy = JSON.parse(JSON.stringify(this.currentMap));
+      this.mapDetailsRef.instance.map = mapCopy;
+      console.log('Map data passed to details panel:', JSON.stringify(this.mapDetailsRef.instance.map, null, 2));
+      console.log('Shared users in details panel:', JSON.stringify(this.mapDetailsRef.instance.map?.sharedWith, null, 2));
+      
       this.mapDetailsRef.instance.isVisible = true;
 
       this.mapDetailsRef.instance.closePanel.subscribe(() => this.clearMapDetails());

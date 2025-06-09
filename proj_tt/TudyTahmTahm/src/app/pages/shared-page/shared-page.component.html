@@ -106,26 +106,4 @@
       </button>
     </div>
   </div>
-
-  <!-- Map Details Dialog -->
-  <div class="dialog-overlay" *ngIf="showMapDetails" (click)="closeMapDetails()">
-    <div class="dialog-content" (click)="$event.stopPropagation()">
-      <app-map-details
-        [map]="selectedMap!"
-        (close)="closeMapDetails()"
-        (share)="openShareDialog(selectedMap!)">
-      </app-map-details>
-    </div>
-  </div>
-
-  <!-- Share Dialog -->
-  <div class="dialog-overlay" *ngIf="showShareDialog" (click)="closeShareDialog()">
-    <div class="dialog-content" (click)="$event.stopPropagation()">
-      <app-share-map-dialog
-        [map]="selectedMap!"
-        (close)="closeShareDialog()"
-        (shareSuccess)="onShareSuccess()">
-      </app-share-map-dialog>
-    </div>
-  </div>
 </div>

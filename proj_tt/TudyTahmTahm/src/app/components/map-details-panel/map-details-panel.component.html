@@ -32,11 +32,11 @@
     </div>
 
     <div class="shared-users-list">
-      <div *ngIf="map.sharedWith.length === 0" class="no-shares">
+      <div *ngIf="!map?.sharedWith || map.sharedWith.length === 0" class="no-shares">
         <p class="text-muted">This map is not shared with anyone yet.</p>
       </div>
 
-      <div *ngFor="let user of map.sharedWith" class="shared-user-item">
+      <div *ngFor="let user of map?.sharedWith" class="shared-user-item">
         <div class="user-info">
           <div class="user-avatar">
             <i class="fas fa-user"></i>
@@ -54,7 +54,7 @@
         <button
           *ngIf="canRemoveUser(user)"
           class="remove-button"
-          (click)="removeUser(user.userId)"
+          (click)="removeUser(user.userID)"
         >
           <i class="fas fa-times"></i>
         </button>
