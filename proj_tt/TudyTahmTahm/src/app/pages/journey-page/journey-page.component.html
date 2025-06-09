@@ -6,54 +6,103 @@
   <div class="flex-grow-1 d-flex flex-row-reverse" style="height: 100vh;">
     <!-- Points/info panel on the right -->
     <div class="journey-info-panel">
-      <div class="header">
-        <div class="journey-icon">
-          <i class="fas fa-route"></i>
+      <!-- Single Journey View -->
+      <ng-container *ngIf="!isMultiView">
+        <div class="header">
+          <div class="journey-icon">
+            <i class="fas fa-route"></i>
+          </div>
+          <input 
+            class="journey-name" 
+            placeholder="Journey name..." 
+            [(ngModel)]="journeyName"
+            [readonly]="!canEdit" />
         </div>
-        <input 
-          class="journey-name" 
-          placeholder="Journey name..." 
-          [(ngModel)]="journeyName"
-          [readonly]="!canEdit" />
-      </div>
 
-      <div *ngIf="loading" class="loading-indicator">
-        <i class="fas fa-spinner fa-spin"></i> Loading journey...
-      </div>
-      <div *ngIf="error" class="error-message">
-        {{ error }}
-      </div>
-      <div *ngIf="successMessage" class="success-message">
-        <i class="fas fa-check-circle"></i> {{ successMessage }}
-      </div>
+        <div *ngIf="loading" class="loading-indicator">
+          <i class="fas fa-spinner fa-spin"></i> Loading journey...
+        </div>
+        <div *ngIf="error" class="error-message">
+          {{ error }}
+        </div>
+        <div *ngIf="successMessage" class="success-message">
+          <i class="fas fa-check-circle"></i> {{ successMessage }}
+        </div>
 
-      <div class="journey-description" *ngIf="!loading && !error">
-        <textarea
-          class="description-input"
-          placeholder="Add a description for your journey..."
-          [(ngModel)]="journeyDescription"
-          [readonly]="!canEdit"
-          rows="4"
-          maxlength="500">
-        </textarea>
-        <div class="char-counter">{{journeyDescription.length}}/500 characters</div>
-      </div>
+        <div class="journey-description" *ngIf="!loading && !error">
+          <textarea
+            class="description-input"
+            placeholder="Add a description for your journey..."
+            [(ngModel)]="journeyDescription"
+            [readonly]="!canEdit"
+            rows="4"
+            maxlength="500">
+          </textarea>
+          <div class="char-counter">{{journeyDescription.length}}/500 characters</div>
+        </div>
 
-      <div class="distance" *ngIf="!loading && !error">
-        Journey distance: {{ distance }} km
-      </div>
+        <div class="distance" *ngIf="!loading && !error">
+          Journey distance: {{ distance }} km
+        </div>
 
-      <div class="buttons" *ngIf="!loading && !error">
-        <button class="share" title="Share this journey with others" *ngIf="canEdit">
-          <i class="fas fa-share-alt"></i> Share
-        </button>
-        <button class="save" title="Save your changes" (click)="saveJourney()" *ngIf="canEdit">
-          <i class="fas fa-save"></i> Save
-        </button>
-        <button class="discard" title="Discard changes and return to journey list" (click)="discardChanges()">
-          <i class="fas fa-times"></i> Discard
-        </button>
-      </div>
+        <div class="buttons" *ngIf="!loading && !error">
+          <button class="share" title="Share this journey with others" *ngIf="canEdit">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <button class="save" title="Save your changes" (click)="saveJourney()" *ngIf="canEdit">
+            <i class="fas fa-save"></i> Save
+          </button>
+          <button class="discard" title="Discard changes and return to journey list" (click)="discardChanges()">
+            <i class="fas fa-times"></i> Discard
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Multi Journey View -->
+      <ng-container *ngIf="isMultiView">
+        <div class="header">
+          <div class="journey-icon">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <h2 class="journey-name">Multi-Journey View</h2>
+        </div>
+
+        <div *ngIf="loading" class="loading-indicator">
+          <i class="fas fa-spinner fa-spin"></i> Loading journeys...
+        </div>
+        <div *ngIf="error" class="error-message">
+          {{ error }}
+        </div>
+
+        <div class="journey-list">
+          <div *ngFor="let journey of journeys" 
+               class="journey-item"
+               [class.selected]="selectedJourneys.has(journey.journeyID)"
+               (click)="toggleJourney(journey)">
+            <div class="journey-color-indicator" 
+                 [style.background-color]="selectedJourneys.has(journey.journeyID) ? getJourneyColor(journey.journeyID) : '#ccc'">
+            </div>
+            <div class="journey-info">
+              <div class="journey-name">{{ journey.name }}</div>
+              <div class="journey-description" *ngIf="journey.description">
+                {{ journey.description }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button class="merge" 
+                  title="Merge selected journeys" 
+                  *ngIf="selectedJourneys.size === 2"
+                  (click)="openMergeDialog()">
+            <i class="fas fa-code-merge"></i> Merge Journeys
+          </button>
+          <button class="discard" title="Return to journey list" (click)="discardChanges()">
+            <i class="fas fa-times"></i> Back to List
+          </button>
+        </div>
+      </ng-container>
     </div>
 
     <!-- Map on the left of the info panel (but right of sidebar) -->
@@ -93,5 +142,59 @@
         Point removed
       </div>
     </ng-template>
+  </div>
+</div>
+
+<!-- Merge Journey Dialog -->
+<div *ngIf="showMergeDialog" class="dialog-overlay" (click)="closeMergeDialog()">
+  <div class="merge-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>Merge Journeys</h3>
+    </div>
+    <div class="dialog-content">
+      <p>Create a new journey by merging:</p>
+      <div class="journey-selection">
+        <div class="journey-item" *ngFor="let journey of orderedJourneys; let i = index">
+          <div class="journey-info">
+            <div class="journey-name">{{ journey.name }}</div>
+            <div class="journey-description" *ngIf="journey.description">
+              {{ journey.description }}
+            </div>
+          </div>
+          <div class="journey-order-controls">
+            <button class="order-btn" (click)="moveJourneyUp(i)" [disabled]="i === 0">
+              <i class="fas fa-arrow-up"></i>
+            </button>
+            <button class="order-btn" (click)="moveJourneyDown(i)" [disabled]="i === orderedJourneys.length - 1">
+              <i class="fas fa-arrow-down"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="newJourneyName">New Journey Name</label>
+        <input type="text" 
+               id="newJourneyName" 
+               [(ngModel)]="newJourneyName" 
+               placeholder="Enter name for merged journey">
+      </div>
+      <div class="form-group">
+        <label for="newJourneyDescription">Description (optional)</label>
+        <textarea id="newJourneyDescription" 
+                  [(ngModel)]="newJourneyDescription" 
+                  placeholder="Enter description for merged journey"
+                  rows="3"></textarea>
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <button class="cancel" (click)="closeMergeDialog()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+      <button class="confirm" 
+              [disabled]="!newJourneyName"
+              (click)="confirmMerge()">
+        <i class="fas fa-code-merge"></i> Merge
+      </button>
+    </div>
   </div>
 </div>

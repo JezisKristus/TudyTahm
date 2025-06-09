@@ -11,6 +11,8 @@ import {SidebarComponent} from '../../components/sidebar/sidebar.component';
 import { MapService } from '../../services/map.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { AppMap } from '../../models/appMap';
+import { forkJoin } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-journey-page',
@@ -30,17 +32,28 @@ export class JourneyPageComponent implements OnInit {
   journeyDescription = '';
   distance = 0;
   journey: Journey | null = null;
+  journeys: Journey[] = [];
   loading = true;
   error: string | null = null;
   successMessage: string | null = null;
   canEdit = false;
   currentMap: AppMap | null = null;
+  isMultiView = false;
+  selectedJourneys: Set<number> = new Set();
 
   mapOptions: L.MapOptions = {} as L.MapOptions;
   mapLayers: L.Layer[] = [];
   mapInstance: L.Map | null = null;
 
   points: { lat: number; lng: number; visible: boolean; pointID?: number }[] = [];
+  journeyPoints: Map<number, { lat: number; lng: number; visible: boolean; pointID?: number }[]> = new Map();
+  
+  // Color mapping for different journeys
+  private colorMap = new Map<number, string>();
+  private readonly colors = [
+    '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', 
+    '#00FFFF', '#FFA500', '#800080', '#008000', '#800000'
+  ];
 
   // Dialog state
   showRemoveDialog = false;
@@ -50,17 +63,46 @@ export class JourneyPageComponent implements OnInit {
   dialogPosition: { x: number; y: number } | null = null;
   currentPopup: L.Popup | null = null;
 
+  showMergeDialog = false;
+  newJourneyName = '';
+  newJourneyDescription = '';
+  orderedJourneys: Journey[] = [];
+
   constructor(
     private journeyService: JourneyService,
     private mapService: MapService,
     private authService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.loading = true;
     this.error = null;
-    // Load journey from sessionStorage
+
+    // Check if we're in multi-view mode
+    this.route.queryParams.subscribe(params => {
+      this.isMultiView = params['multi'] === 'true';
+      if (this.isMultiView) {
+        this.loadAllJourneys();
+      } else {
+        this.loadSingleJourney();
+      }
+    });
+
+    // Set map default
+    this.mapOptions = {
+      center: L.latLng(50.1192600, 14.4918975),
+      zoom: 13,
+      layers: [
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        })
+      ]
+    };
+  }
+
+  private loadSingleJourney(): void {
     const journeyStr = sessionStorage.getItem('Journey');
     if (!journeyStr) {
       this.error = 'No journey selected.';
@@ -72,37 +114,162 @@ export class JourneyPageComponent implements OnInit {
       if (this.journey) {
         this.journeyName = this.journey.name;
         this.journeyDescription = this.journey.description || '';
-        
-        // Load map information and check permissions
         this.loadMapAndCheckPermissions();
+        if (this.journey.journeyID) {
+          this.loadJourneyPoints(this.journey);
+        } else {
+          this.loading = false;
+        }
       }
     } catch (e) {
       this.error = 'Failed to load journey data.';
       this.loading = false;
+    }
+  }
+
+  private loadAllJourneys(): void {
+    const userID = this.authService.getCurrentUserID();
+    if (!userID) {
+      this.error = 'User not logged in';
+      this.loading = false;
       return;
     }
-    // Set map default
-    this.mapOptions = {
-      center: L.latLng(50.1192600, 14.4918975),
-      zoom: 17,
-      layers: [
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        })
-      ]
-    };
-    // Load points for this journey
-    if (this.journey && this.journey.journeyID) {
-      this.loadJourneyPoints();
+
+    this.journeyService.getJourneyByUserID(userID).subscribe({
+      next: (journeys) => {
+        this.journeys = journeys;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load journeys:', err);
+        this.error = 'Failed to load journeys';
+        this.loading = false;
+      }
+    });
+  }
+
+  toggleJourney(journey: Journey): void {
+    if (this.selectedJourneys.has(journey.journeyID)) {
+      this.selectedJourneys.delete(journey.journeyID);
+      this.journeyPoints.delete(journey.journeyID);
     } else {
-      console.error('Invalid journey data:', this.journey);
-      this.error = 'Invalid journey data: missing journeyID';
+      this.selectedJourneys.add(journey.journeyID);
+      this.loadJourneyPoints(journey);
+    }
+    this.updateMap();
+  }
+
+  private loadJourneyPoints(journey: Journey): void {
+    if (!journey.journeyID) {
       this.loading = false;
+      return;
+    }
+
+    this.journeyService.getPointsByJourneyID(journey.journeyID).subscribe({
+      next: (points) => {
+        const processedPoints = points.map((p: any) => ({
+          lat: p.latitude || p.lat,
+          lng: p.longitude || p.lng,
+          visible: true,
+          pointID: p.pointID
+        })).filter((p: any) => p.lat && p.lng);
+
+        if (this.isMultiView) {
+          this.journeyPoints.set(journey.journeyID!, processedPoints);
+        } else {
+          this.points = processedPoints;
+        }
+        this.updateMap();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading points for journey:', err);
+        this.error = `Failed to load points for journey ${journey.name}`;
+        this.loading = false;
+      }
+    });
+  }
+
+  public getJourneyColor(journeyID: number): string {
+    if (!this.colorMap.has(journeyID)) {
+      const colorIndex = this.colorMap.size % this.colors.length;
+      this.colorMap.set(journeyID, this.colors[colorIndex]);
+    }
+    return this.colorMap.get(journeyID)!;
+  }
+
+  private updateMap(): void {
+    if (!this.mapInstance) return;
+
+    // Clear existing layers
+    this.mapLayers = [];
+
+    if (this.isMultiView) {
+      // Add layers for each selected journey
+      this.selectedJourneys.forEach(journeyID => {
+        const points = this.journeyPoints.get(journeyID);
+        if (!points || points.length < 2) return;
+
+        const color = this.getJourneyColor(journeyID);
+        const latlngs = points.map(p => L.latLng(p.lat, p.lng));
+
+        // Add polyline
+        this.mapLayers.push(
+          L.polyline(latlngs, { 
+            color: color, 
+            weight: 4,
+            opacity: 0.7
+          })
+        );
+
+        // Add markers
+        points.forEach(p => {
+          this.mapLayers.push(
+            L.circleMarker([p.lat, p.lng], {
+              radius: 5,
+              color: color,
+              fillColor: '#fff',
+              fillOpacity: 1,
+              weight: 2
+            })
+          );
+        });
+      });
+
+      // Fit bounds to show all selected journeys
+      const allPoints = Array.from(this.journeyPoints.values())
+        .flat()
+        .map(p => L.latLng(p.lat, p.lng));
+
+      if (allPoints.length > 0) {
+        const bounds = L.latLngBounds(allPoints);
+        this.mapInstance.fitBounds(bounds, { padding: [30, 30] });
+      }
+    } else {
+      // Single journey view
+      if (this.points.length < 2) {
+        this.distance = 0;
+        return;
+      }
+      const latlngs = this.points.map(p => L.latLng(p.lat, p.lng));
+      const markerLayers = this.points.map((p, idx) => {
+        const marker = L.circleMarker([p.lat, p.lng], { radius: 5, color: 'red', fillColor: '#fff', fillOpacity: 1, weight: 2 });
+        marker.on('click', (e: any) => this.openRemoveDialog(p, idx, e));
+        return marker;
+      });
+      this.mapLayers = [
+        L.polyline(latlngs, { color: 'red', weight: 4 }),
+        ...markerLayers
+      ];
+      this.distance = this.calculateDistance(latlngs);
     }
   }
 
   private loadMapAndCheckPermissions() {
-    if (!this.journey?.idMap) return;
+    if (!this.journey?.idMap) {
+      this.loading = false;
+      return;
+    }
 
     this.mapService.getSharedMaps().subscribe({
       next: (maps) => {
@@ -116,89 +283,14 @@ export class JourneyPageComponent implements OnInit {
                         map.permission === 'write' || 
                         map.permission === 'owner';
         }
+        this.loading = false;
       },
       error: (err) => {
         console.error('Error loading map permissions:', err);
         this.error = 'Failed to load map permissions';
-      }
-    });
-  }
-
-  private loadJourneyPoints() {
-    console.log('Loading points for journey ID:', this.journey?.journeyID);
-    this.journeyService.getPointsByJourneyID(this.journey!.journeyID).subscribe({
-      next: (points) => {
-        console.log('Received points from API:', points);
-        if (!Array.isArray(points)) {
-          console.error('Invalid points data received:', points);
-          this.error = 'Invalid points data received from server.';
-          this.loading = false;
-          return;
-        }
-
-        // Expecting points to have lat/lng
-        this.points = points.map((p: any) => {
-          const lat = p.latitude || p.lat;
-          const lng = p.longitude || p.lng;
-          if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
-            console.warn('Invalid coordinates for point:', p);
-            return null;
-          }
-          return {
-            lat: lat,
-            lng: lng,
-            visible: true,
-            pointID: p.pointID
-          };
-        }).filter(p => p !== null);
-
-        console.log('Processed points:', this.points);
-
-        // Center and zoom map to fit all points
-        if (this.points.length > 0) {
-          const latlngs = this.points.map(p => L.latLng(p.lat, p.lng));
-          const bounds = L.latLngBounds(latlngs);
-          if (this.mapInstance) {
-            this.mapInstance.fitBounds(bounds, {padding: [30, 30]});
-          } else {
-            this.mapOptions = {
-              ...this.mapOptions,
-              center: bounds.getCenter(),
-              zoom: this.getBoundsZoom(bounds),
-            };
-          }
-        }
-
-        this.updatePath();
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error loading journey points:', err);
-        this.error = `Failed to load journey points: ${err.message || 'Unknown error'}`;
         this.loading = false;
       }
     });
-  }
-
-  updatePath() {
-    const visiblePoints = this.points.filter(p => p.visible);
-    if (visiblePoints.length < 2) {
-      this.mapLayers = [];
-      this.distance = 0;
-      return;
-    }
-    const latlngs = visiblePoints.map(p => L.latLng(p.lat, p.lng));
-    // Vytvoř markery s click eventem
-    const markerLayers = visiblePoints.map((p, idx) => {
-      const marker = L.circleMarker([p.lat, p.lng], { radius: 5, color: 'red', fillColor: '#fff', fillOpacity: 1, weight: 2 });
-      marker.on('click', (e: any) => this.openRemoveDialog(p, idx, e));
-      return marker;
-    });
-    this.mapLayers = [
-      L.polyline(latlngs, { color: 'red', weight: 4 }),
-      ...markerLayers
-    ];
-    this.distance = this.calculateDistance(latlngs);
   }
 
   calculateDistance(points: L.LatLng[]): number {
@@ -207,28 +299,6 @@ export class JourneyPageComponent implements OnInit {
       dist += points[i - 1].distanceTo(points[i]);
     }
     return parseFloat((dist / 1000).toFixed(2)); // km
-  }
-
-  // Add helper to get zoom to fit bounds
-  getBoundsZoom(bounds: L.LatLngBounds): number {
-    // Default Leaflet zoom levels: 0 (whole world) to 18+ (street)
-    // We'll use a map size of 800x600 for calculation, but leaflet will auto-adjust
-    const mapSize = {width: 800, height: 600};
-    // Use Leaflet's built-in getBoundsZoom if available, otherwise fallback
-    // @ts-ignore
-    if (L.CRS.EPSG3857.getBoundsZoom) {
-      // @ts-ignore
-      return L.CRS.EPSG3857.getBoundsZoom(bounds, false, mapSize);
-    }
-    // Fallback: use zoom 13 for city, 10 for region, 7 for country
-    const ne = bounds.getNorthEast();
-    const sw = bounds.getSouthWest();
-    const latDiff = Math.abs(ne.lat - sw.lat);
-    const lngDiff = Math.abs(ne.lng - sw.lng);
-    if (latDiff < 0.01 && lngDiff < 0.01) return 16;
-    if (latDiff < 0.1 && lngDiff < 0.1) return 13;
-    if (latDiff < 1 && lngDiff < 1) return 10;
-    return 7;
   }
 
   onMapReady(map: L.Map) {
@@ -352,7 +422,7 @@ export class JourneyPageComponent implements OnInit {
         next: () => {
           // Remove the point from the local array
           this.points = this.points.filter((p, idx) => idx !== this.removeIndex);
-          this.updatePath();
+          this.updateMap();
           this.removeConfirmed = true;
           
           // Show success message
@@ -422,5 +492,77 @@ export class JourneyPageComponent implements OnInit {
   discardChanges() {
     // Navigate back to the journey list
     this.router.navigate(['/memories']);
+  }
+
+  openMergeDialog(): void {
+    if (this.selectedJourneys.size !== 2) return;
+    this.showMergeDialog = true;
+    this.newJourneyName = '';
+    this.newJourneyDescription = '';
+    this.orderedJourneys = this.getSelectedJourneys();
+  }
+
+  closeMergeDialog(): void {
+    this.showMergeDialog = false;
+    this.newJourneyName = '';
+    this.newJourneyDescription = '';
+  }
+
+  getSelectedJourneys(): Journey[] {
+    return this.journeys.filter(journey => this.selectedJourneys.has(journey.journeyID));
+  }
+
+  moveJourneyUp(index: number): void {
+    if (index > 0) {
+      const temp = this.orderedJourneys[index];
+      this.orderedJourneys[index] = this.orderedJourneys[index - 1];
+      this.orderedJourneys[index - 1] = temp;
+    }
+  }
+
+  moveJourneyDown(index: number): void {
+    if (index < this.orderedJourneys.length - 1) {
+      const temp = this.orderedJourneys[index];
+      this.orderedJourneys[index] = this.orderedJourneys[index + 1];
+      this.orderedJourneys[index + 1] = temp;
+    }
+  }
+
+  confirmMerge(): void {
+    if (!this.newJourneyName || this.orderedJourneys.length !== 2) return;
+
+    const userId = this.authService.getCurrentUserID();
+    if (!userId) {
+      this.error = 'User not logged in';
+      return;
+    }
+
+    const mergeData = {
+      name: this.newJourneyName,
+      description: this.newJourneyDescription,
+      idMap: this.orderedJourneys[0].idMap,
+      journeyIDs: this.orderedJourneys.map(j => j.journeyID)
+    };
+
+    this.journeyService.mergeJourneys(mergeData).subscribe({
+      next: (createdJourney) => {
+        console.log('Journeys merged successfully:', createdJourney);
+        this.successMessage = 'Journeys merged successfully!';
+        this.closeMergeDialog();
+        this.selectedJourneys.clear();
+        this.journeyPoints.clear();
+        this.updateMap();
+        
+        // Navigate to the new journey
+        sessionStorage.setItem('Journey', JSON.stringify(createdJourney));
+        sessionStorage.setItem('Journey.journeyID', createdJourney.journeyID.toString());
+        this.router.navigate(['/journey', createdJourney.journeyID]);
+      },
+      error: (err) => {
+        console.error('Error merging journeys:', err);
+        this.error = 'Failed to merge journeys. Please try again.';
+        this.closeMergeDialog();
+      }
+    });
   }
 }
