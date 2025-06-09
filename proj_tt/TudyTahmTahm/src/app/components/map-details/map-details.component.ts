@@ -30,7 +30,7 @@ export class MapDetailsComponent {
     if (this.map.idUser === currentUserId) return true;
 
     // Check if user has write permission
-    const userAccess = this.map.sharedWith?.find(user => user.userId === currentUserId);
+    const userAccess = this.map.sharedWith?.find(user => user.userID === currentUserId);
     return userAccess?.permission === 'write';
   }
 

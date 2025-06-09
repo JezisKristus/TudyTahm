@@ -30,14 +30,13 @@ export class ShareMapDialogComponent {
     if (!this.isValid()) return;
 
     const sharedUser = {
-      userId: 0, // This will be set by the backend
-      mapId: this.map.mapID,
+      userID: 0, // This will be set by the backend
       userName: '', // This will be set by the backend
       userEmail: this.userEmail,
       permission: this.selectedPermission
     };
 
-    this.sharingService.addUserToMap(sharedUser).subscribe({
+    this.sharingService.addUserToMap(this.map.mapID, sharedUser).subscribe({
       next: () => {
         this.shareSuccess.emit();
         this.closeDialog();

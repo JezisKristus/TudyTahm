@@ -9,8 +9,7 @@ export interface AppMap {
 }
 
 export interface SharedUser {
-  userId: number;
-  mapId: number;
+  userID: number;
   userName: string;
   userEmail: string;
   permission: 'read' | 'write' | 'owner';

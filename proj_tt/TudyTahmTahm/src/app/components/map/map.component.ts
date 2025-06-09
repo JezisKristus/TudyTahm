@@ -899,14 +899,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       : 'read';
 
     const sharedUser: SharedUser = {
-      userId: 0,
-      mapId: this.currentMap?.mapID || 0,
+      userID: 0,
       userName: shareData.email.split('@')[0],
       userEmail: shareData.email,
       permission: permission
     };
 
-    this.sharingService.addUserToMap(sharedUser)
+    this.sharingService.addUserToMap(this.currentMap?.mapID || 0, sharedUser)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {

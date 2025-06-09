@@ -46,7 +46,17 @@ namespace TT_API.Controllers {
                         m.MapDescription,
                         m.MapPreviewPath,
                         m.IDUser,
-                        Permission = "owner"
+                        Permission = "owner",
+                        SharedWith = context.MapPermissions
+                            .Include(p => p.User)
+                            .Where(p => p.IDMap == m.MapID)
+                            .Select(p => new {
+                                UserID = p.User.UserID,
+                                UserName = p.User.UserName,
+                                UserEmail = p.User.UserEmail,
+                                Permission = p.Permission
+                            })
+                            .ToList()
                     })
                     .ToListAsync();
 
@@ -60,7 +70,17 @@ namespace TT_API.Controllers {
                         r.Map.MapDescription,
                         r.Map.MapPreviewPath,
                         r.Map.IDUser,
-                        r.Permission
+                        r.Permission,
+                        SharedWith = context.MapPermissions
+                            .Include(p => p.User)
+                            .Where(p => p.IDMap == r.Map.MapID)
+                            .Select(p => new {
+                                UserID = p.User.UserID,
+                                UserName = p.User.UserName,
+                                UserEmail = p.User.UserEmail,
+                                Permission = p.Permission
+                            })
+                            .ToList()
                     })
                     .ToListAsync();
 
@@ -70,6 +90,19 @@ namespace TT_API.Controllers {
                     .GroupBy(m => m.MapID)
                     .Select(g => g.First())
                     .ToList();
+
+                // Add owner information to each map
+                foreach (var map in allMaps) {
+                    var owner = await context.Users.FindAsync(map.IDUser);
+                    if (owner != null) {
+                        map.SharedWith.Add(new {
+                            UserID = owner.UserID,
+                            UserName = owner.UserName,
+                            UserEmail = owner.UserEmail,
+                            Permission = "owner"
+                        });
+                    }
+                }
 
                 return Ok(allMaps);
             }
@@ -165,5 +198,7 @@ namespace TT_API.Controllers {
 
 
         //}
+
+        
     }
 }

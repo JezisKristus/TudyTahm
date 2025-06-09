@@ -226,5 +226,57 @@ namespace TT_API.Controllers
 
             return Ok(path);
         }
+
+        [Authorize]
+        [HttpGet("SharedUsers/{userID}")]
+        public async Task<IActionResult> GetSharedUsers(int userID) {
+            try {
+                // First verify the user exists
+                var userExists = await context.Users.AnyAsync(u => u.UserID == userID);
+                if (!userExists) {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                // Get the current user's information
+                var currentUser = await context.Users
+                    .Where(u => u.UserID == userID)
+                    .Select(u => new {
+                        UserID = u.UserID,
+                        UserName = u.UserName,
+                        UserEmail = u.UserEmail,
+                        Permission = "owner"
+                    })
+                    .FirstOrDefaultAsync();
+
+                // Get all users that have shared maps with this user
+                var sharedUsers = await context.MapPermissions
+                    .Include(r => r.User)
+                    .Where(r => r.IDUser == userID)
+                    .Select(r => new {
+                        UserID = r.User.UserID,
+                        UserName = r.User.UserName,
+                        UserEmail = r.User.UserEmail,
+                        Permission = r.Permission
+                    })
+                    .Distinct()
+                    .ToListAsync();
+
+                // Create a list to hold all users
+                var allUsers = new List<object>();
+
+                // Add the current user first
+                if (currentUser != null) {
+                    allUsers.Add(currentUser);
+                }
+
+                // Add other shared users
+                allUsers.AddRange(sharedUsers);
+
+                return Ok(allUsers);
+            }
+            catch (Exception ex) {
+                return BadRequest(new { message = "Error retrieving shared users", error = ex.Message });
+            }
+        }
     }
 }

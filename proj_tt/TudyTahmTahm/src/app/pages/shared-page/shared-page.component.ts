@@ -56,6 +56,7 @@ export class SharedPageComponent implements OnInit {
       .pipe()
       .subscribe({
         next: (maps) => {
+          console.log('Received maps:', JSON.stringify(maps, null, 2));
           this.maps = maps;
           this.applyFilters();
         },
@@ -112,28 +113,51 @@ export class SharedPageComponent implements OnInit {
   }
 
   getOwnerName(userId: number): string {
-    const owner = this.uniqueOwners.find(o => o.userId === userId);
-    if (owner) {
-      return owner.userName;
-    }
+    console.log('Getting owner name for userId:', userId);
+    console.log('Current maps:', JSON.stringify(this.maps, null, 2));
     
-    // If owner not found in uniqueOwners, try to get current user's name
+    // First check if it's the current user
     if (userId === this.currentUserId) {
       const currentUser = this.authService.getUser();
+      console.log('Current user:', currentUser);
       if (currentUser) {
         return currentUser.userName || currentUser.userEmail || `User ${userId}`;
       }
     }
-    
+
+    // Then check in the maps' sharedWith arrays
+    for (const map of this.maps) {
+      console.log('Checking map:', map.mapID, 'for user:', userId);
+      console.log('Map sharedWith:', map.sharedWith);
+      const user = map.sharedWith?.find(u => u.userID === userId);
+      console.log('Found user in map:', user);
+      if (user) {
+        return user.userName;
+      }
+    }
+
+    // If not found, return a default
     return `User ${userId}`;
   }
 
   getAccessLevel(map: AppMap): string {
+    // If user is the owner
     if (map.idUser === this.currentUserId) {
       return 'owner';
     }
-    const userAccess = map.sharedWith?.find(user => user.userId === this.currentUserId);
-    return userAccess?.permission || 'none';
+
+    // Check in sharedWith array
+    const userAccess = map.sharedWith?.find(user => user.userID === this.currentUserId);
+    if (userAccess) {
+      return userAccess.permission;
+    }
+
+    // Check the map's permission property
+    if (map.permission) {
+      return map.permission;
+    }
+
+    return 'none';
   }
 
   getAccessLevelText(map: AppMap): string {
@@ -191,6 +215,6 @@ export class SharedPageComponent implements OnInit {
   }
 
   canShare(map: AppMap): boolean {
-    return this.isOwner(map) || map.sharedWith?.some(user => user.userId === this.currentUserId && user.permission === 'write');
+    return this.isOwner(map) || map.sharedWith?.some(user => user.userID === this.currentUserId && user.permission === 'write');
   }
 }

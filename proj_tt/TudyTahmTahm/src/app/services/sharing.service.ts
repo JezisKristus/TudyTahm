@@ -25,21 +25,29 @@ export class SharingService {
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<any[]>(`${environment.apiUrl}/Map/SharedMaps/${userId}`, { headers });
+    return this.http.get<any[]>(`${environment.apiUrl}/Authentication/SharedUsers/${userId}`, { headers })
+      .pipe(
+        map(users => users.map(user => ({
+          userID: user.userID,
+          userName: user.userName,
+          userEmail: user.userEmail,
+          permission: user.permission
+        })))
+      );
   }
 
-  public addUserToMap(sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/${sharedUser.mapId}`, sharedUser);
+  public addUserToMap(mapId: number, sharedUser: SharedUser): Observable<SharedUser> {
+    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/${mapId}`, sharedUser);
   }
 
-  public editUserPermission(sharedUser: SharedUser): Observable<SharedUser> {
+  public editUserPermission(mapId: number, sharedUser: SharedUser): Observable<SharedUser> {
     return this.http.put<SharedUser>(
-      `${environment.apiUrl}/Share/EditUserPermissionOnMap/${sharedUser.mapId}`,
+      `${environment.apiUrl}/Share/EditUserPermissionOnMap/${mapId}`,
       sharedUser
     );
   }
 
-  public removeUserFromMap(sharedUser: SharedUser): Observable<SharedUser> {
+  public removeUserFromMap(mapId: number, sharedUser: SharedUser): Observable<SharedUser> {
     return this.http.post<SharedUser>(`${environment.apiUrl}/Share/EditUserPermissionOnMap`, sharedUser);
   }
 }

@@ -74,7 +74,7 @@ export class MapService {
           mapPreviewPath: map.mapPreviewPath,
           idUser: map.idUser,
           permission: map.permission,
-          sharedWith: [] // This will be populated separately if needed
+          sharedWith: map.sharedWith || [] // Include the sharedWith array from the backend
         })))
       );
   }
