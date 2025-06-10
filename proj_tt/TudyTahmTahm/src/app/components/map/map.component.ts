@@ -649,7 +649,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.labelManager.loadLabels(this._mapID)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        error: (error) => console.error('Error loading labels:', error)
+        next: (labels) => {
+          if (Array.isArray(labels)) {
+            this.labels = labels;
+            console.log('Labels loaded:', this.labels); // Debugging log
+          } else {
+            console.error('Invalid label data format:', labels);
+          }
+        },
+        error: (error) => {
+          console.error('Error loading labels:', error);
+          alert('Failed to load labels. Please try again.');
+        }
       });
   }
 
