@@ -29,11 +29,17 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private breadcrumbPath: L.LatLng[] = [];
   currentUser: User | null = null;
 
-  ngOnInit(): void {
-    this.currentUser = this.getCurrentUser();
+  getCurrentUser(): User | null {
+    return this.authService.getUser();
   }
 
-  private userIconUrl: string = this.getProfilePictureUrl(this.currentUser?.userIconPath);
+  userIconUrl: string = '';
+
+  ngOnInit(): void {
+    this.currentUser = this.getCurrentUser();
+    this.userIconUrl = this.getProfilePictureUrl(this.currentUser?.userIconPath);
+  }
+
 
   constructor(private http: HttpClient, private authService: AuthenticationService) {
     addIcons({ locateSharp });
@@ -51,12 +57,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
     const cleanPath = path.startsWith('L\\') ? path.substring(2) : path;
     return `${environment.apiUrl}/Image/${encodeURIComponent(cleanPath)}`;
   }
-
   
-
-  getCurrentUser(): User | null {
-    return this.authService.getUser();
-  }
 
   ngOnDestroy(): void {
     if (this.watchId) {
@@ -97,7 +98,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   private async startTracking(): Promise<void> {
-
+    console.log(this.userIconUrl)
     try {
       this.watchId = await Geolocation.watchPosition({}, (position, err) => {
         if (err) {
