@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
@@ -29,13 +29,14 @@ import { SignInDTO } from '../models/sign-in-dto';
 })
 
 
-export class HomePage {
+export class HomePage implements OnDestroy {
 
   form: FormGroup;
   username = '';
   password = '';
   loading = false;
   errorMessage: string = '';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -53,33 +54,45 @@ export class HomePage {
       }
     }
 
-  login() {
-    this.loading = true;
+    login(): void {
     this.errorMessage = '';
+    if (this.form.invalid) {
+      this.errorMessage = 'Please fill in all fields.';
+      return;
+    }
 
-    const body = {
-      username: this.username,
-      password: this.password
+    this.loading = true;
+
+    const credentials: SignInDTO = {
+      username: this.form.value.username,
+      password: this.form.value.password
     };
 
-    this.http.post<{ token: string; user: any }>('http://localhost:5010/api/Authentication/Login', body).subscribe({
-      next: (res) => {
+    this.authentication.login(credentials).pipe(
+      takeUntil(this.destroy$),
+      catchError((error) => {
         this.loading = false;
-
-        console.log('Login successful:', res);
-
+        this.errorMessage = error?.message || 'Login failed. Please try again.';
+        console.error('Login error:', error);
+        throw error;
+      })
+    ).subscribe({
+      next: ({ token, user }) => {
+        this.loading = false;
+        console.log('Login successful:', token, user);
+        this.authentication.setUser(user); // optional if not already saved in service
         this.router.navigate(['/map']);
       },
-      error: (err: HttpErrorResponse) => {
+      error: () => {
         this.loading = false;
-        if (err.status === 401) {
-          this.errorMessage = 'Invalid username or password.';
-        } else {
-          this.errorMessage = 'Login failed. Please try again.';
-        }
       }
     });
   }
+    ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
 }
 
 

@@ -10,6 +10,9 @@ import { addIcons } from 'ionicons';
 import { add, locateSharp, locationSharp } from 'ionicons/icons';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { User } from '../models/user';
+import { AuthenticationService } from '../services/authentication.service';
+import { environment } from '../environments/environment.development';
 
 @Component({
   selector: 'app-map',
@@ -25,9 +28,15 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private breadcrumbEnabled = false;
   private breadcrumbPolyline!: L.Polyline;
   private breadcrumbPath: L.LatLng[] = [];
-  private userIconUrl: string = 'assets/default_user.png'; // fallback or default icon
+  currentUser: User | null = null;
 
-  constructor(private http: HttpClient) {
+  ngOnInit(): void {
+    this.currentUser = this.getCurrentUser();
+  }
+
+  private userIconUrl: string = this.getProfilePictureUrl(this.currentUser?.userIconPath);
+
+  constructor(private http: HttpClient, private authService: AuthenticationService) {
     addIcons({ locateSharp });
   }
 
@@ -36,25 +45,23 @@ export class MapPage implements AfterViewInit, OnDestroy {
     this.startTracking();
   }
 
+  getProfilePictureUrl(path: string | undefined): string {
+    if (!path) return '';
+
+    // Remove the 'L\' prefix if it exists and encode the path
+    const cleanPath = path.startsWith('L\\') ? path.substring(2) : path;
+    return `${environment.apiUrl}/Image/${encodeURIComponent(cleanPath)}`;
+  }
+
+  
+
+  getCurrentUser(): User | null {
+    return this.authService.getUser();
+  }
+
   ngOnDestroy(): void {
     if (this.watchId) {
       Geolocation.clearWatch({ id: this.watchId });
-    }
-  }
-
-  private async fetchProfilePictureUrl(userId: string): Promise<string> {
-    try {
-      const response = await firstValueFrom(
-        this.http.get(`http://localhost:5010/api/Authentication/pfpPath/${userId}`, {
-          responseType: 'text'
-        })
-      );
-
-      const cleanPath = response.startsWith('L\\') ? response.substring(2) : response;
-      return `http://localhost:5010/api/Image/${encodeURIComponent(cleanPath)}`;
-    } catch (error) {
-      console.error('Error fetching profile picture path:', error);
-      return 'assets/default_user.png'; // fallback
     }
   }
 
@@ -91,11 +98,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   private async startTracking(): Promise<void> {
-    // Replace this with your actual user ID fetching logic
-    const userId = 'YOUR_USER_ID';
-
-    // Fetch user icon URL once before tracking begins
-    this.userIconUrl = await this.fetchProfilePictureUrl(userId);
 
     try {
       this.watchId = await Geolocation.watchPosition({}, (position, err) => {
