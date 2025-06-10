@@ -12,6 +12,9 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user';
 import { AuthenticationService } from '../services/authentication.service';
 import { environment } from '../environments/environment.development';
+import { AlertController } from '@ionic/angular';
+import { Journey } from '../models/journey'; // make sure this exists
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -28,6 +31,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private breadcrumbPolyline!: L.Polyline;
   private breadcrumbPath: L.LatLng[] = [];
   currentUser: User | null = null;
+  selectedJourneyID: number | null = null;
 
   getCurrentUser(): User | null {
     return this.authService.getUser();
@@ -41,7 +45,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
 
-  constructor(private http: HttpClient, private authService: AuthenticationService) {
+  constructor(private http: HttpClient, private authService: AuthenticationService, private alertController: AlertController) {
     addIcons({ locateSharp });
   }
 
@@ -98,50 +102,112 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   private async startTracking(): Promise<void> {
-    console.log(this.userIconUrl)
-    try {
-      this.watchId = await Geolocation.watchPosition({}, (position, err) => {
-        if (err) {
-          console.error('Error watching position:', err);
-          return;
+  try {
+    this.watchId = await Geolocation.watchPosition({}, (position, err) => {
+      if (err) {
+        console.error('Error watching position:', err);
+        return;
+      }
+
+      if (position) {
+        const { latitude, longitude } = position.coords;
+        const currentPosition = new L.LatLng(latitude, longitude);
+
+        if (this.userMarker) {
+          this.userMarker.setLatLng([latitude, longitude]);
+        } else {
+          this.userMarker = L.marker([latitude, longitude], {
+            icon: L.icon({
+              iconUrl: this.userIconUrl,
+              iconSize: [32, 32],
+              iconAnchor: [16, 32],
+              popupAnchor: [0, -32]
+            })
+          }).addTo(this.map).bindPopup("You are here").openPopup();
         }
 
-        if (position) {
-          const { latitude, longitude } = position.coords;
-          const currentPosition = new L.LatLng(latitude, longitude);
+        if (this.breadcrumbEnabled) {
+          this.breadcrumbPath.push(currentPosition);
+          this.breadcrumbPolyline.setLatLngs(this.breadcrumbPath);
+          console.log('Breadcrumbs toggled:', this.breadcrumbPath);
 
-          if (this.userMarker) {
-            this.userMarker.setLatLng([latitude, longitude]);
+          // Add new breadcrumb point to backend if journey selected
+          if (this.selectedJourneyID) {
+            this.authService.addPointToJourney(this.selectedJourneyID, {
+              Latitude: latitude,
+              Longitude: longitude
+            }).subscribe({
+              next: (pointID) => console.log(`Point ${pointID} added to journey ${this.selectedJourneyID}`),
+              error: (error) => console.error('Failed to add point to journey:', error)
+            });
           } else {
-            this.userMarker = L.marker([latitude, longitude], {
-              icon: L.icon({
-                iconUrl: this.userIconUrl,
-                iconSize: [32, 32],
-                iconAnchor: [16, 32],
-                popupAnchor: [0, -32]
-              })
-            }).addTo(this.map).bindPopup("You are here").openPopup();
-          }
-
-          if (this.breadcrumbEnabled) {
-            this.breadcrumbPath.push(currentPosition);
-            this.breadcrumbPolyline.setLatLngs(this.breadcrumbPath);
-            console.log('Breadcrumbs toggled:', this.breadcrumbPath);
+            console.warn('No journey selected - cannot add breadcrumb points');
           }
         }
-      });
-    } catch (error) {
-      console.error('Error starting tracking:', error);
-    }
+      }
+    });
+  } catch (error) {
+    console.error('Error starting tracking:', error);
   }
+}
 
-  public toggleBreadcrumbs(): void {
-    console.log('Breadcrumbs toggled:');
+  public async toggleBreadcrumbs(): Promise<void> {
     this.breadcrumbEnabled = !this.breadcrumbEnabled;
 
-    if (!this.breadcrumbEnabled) {
+    if (this.breadcrumbEnabled) {
+      const selectedJourney = await this.selectJourney();
+      if (selectedJourney) {
+        console.log('Selected journey:', selectedJourney);
+        // Optionally do something with the selected journey
+        this.breadcrumbPath = []; // Reset path
+      } else {
+        // If no journey selected, cancel breadcrumb toggle
+        this.breadcrumbEnabled = false;
+      }
+    } else {
       this.breadcrumbPath = [];
       this.breadcrumbPolyline.setLatLngs([]);
     }
+  }
+
+
+
+  private async selectJourney(): Promise<Journey | null> {
+    const user = this.authService.getUser();
+    if (!user) return null;
+
+    const journeys = await this.authService.getJourneysByUserId(user.userID);
+    const unwrapJourney = await firstValueFrom(journeys)
+    if (!unwrapJourney.length) {
+      alert('No journeys found for your account.');
+      return null;
+    }
+
+    const MyAlert = await this.alertController.create({
+      header: 'Select a Journey',
+      inputs: unwrapJourney.map((j, i) => ({
+        name: `journey${i}`,
+        type: 'radio',
+        label: j.name || `Journey ${j.journeyID}`,
+        value: j,
+      })),
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Select',
+          handler: (selected: Journey) => {
+            // This handler runs on selection
+            return selected;
+          },
+        },
+      ],
+    });
+
+    await MyAlert.present();
+    const result = await MyAlert.onDidDismiss();
+    return result.role === 'cancel' ? null : result.data?.values;
   }
 }

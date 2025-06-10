@@ -5,6 +5,8 @@ import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {SignInDTO} from '../models/sign-in-dto';
 import {environment} from '../environments/environment.development';
 import {TokenResult, User} from '../models/user';
+import { Journey } from '../models/journey';
+import { PointDTO } from '../models/point-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -111,6 +113,13 @@ export class AuthenticationService {
     }
   }
 
+  public addPointToJourney(jourID: number, point: PointDTO): Observable<number> {
+    return this.http.put<number>(
+      `${environment.apiUrl}/AddPointToJourney/${jourID}`,
+      point
+    );
+  }
+
   public getUserByID(id: number): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/Authentication/UserInfoByID/${id}`).pipe(
       tap((user) => {
@@ -133,6 +142,11 @@ export class AuthenticationService {
     console.log('User logged out and session data cleared.');
   }
 
+
+  public getJourneysByUserId(userId: number): Observable<Journey[]> {
+  const url = `${environment.apiUrl}/ByUserID/${userId}`;
+  return this.http.get<Journey[]>(url);
+}
 
   public isAuthenticated(): boolean {
     return !!this.getToken();
