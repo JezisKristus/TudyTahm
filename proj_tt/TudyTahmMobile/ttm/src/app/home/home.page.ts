@@ -58,11 +58,11 @@ export class HomePage implements OnDestroy {
       // doesnt work
       //but works without it
 
-    this.errorMessage = '';
-    if (this.form.invalid) {
-      this.errorMessage = 'Please fill in all fields.';
-      return;
-    }
+    // this.errorMessage = '';
+    // if (this.form.invalid) {
+    //   this.errorMessage = 'Please fill in all fields.';
+    //   return;
+    // }
 
     this.loading = true;
 
