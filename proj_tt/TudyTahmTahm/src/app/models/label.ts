@@ -1,5 +1,6 @@
 export interface Label {
   labelID: number
-  labelName: string
-  labelColor: string // Hex color code
+  idMap: number
+  name: string
+  color: string // Hex color code
 }

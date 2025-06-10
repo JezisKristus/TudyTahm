@@ -12,13 +12,11 @@ namespace TT_API {
         public DbSet<Journey> Journeys { get; set; }
         public DbSet<Marker> Markers { get; set; }
         public DbSet<Overlay> Overlays { get; set; }
-        public DbSet<Permission> Permissions { get; set; }
-        public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GPSPoint> GPSPoints { get; set; }
-
         public DbSet<JourneyPoint> JourneyPoints { get; set; }
-        public DbSet<GroupUsers> GroupUsers { get; set; }
+
+        public DbSet<MapPermission> MapPermissions {  get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -30,7 +28,9 @@ namespace TT_API {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<MapLabel>().HasNoKey();
             modelBuilder.Entity<MarkerLabel>().HasNoKey();
-
+            modelBuilder.Entity<User>()
+        .HasIndex(e => e.UserEmail)
+        .IsUnique();
         }
 
     }

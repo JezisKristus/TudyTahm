@@ -1,46 +1,80 @@
-// Color Variables
-:root {
-  --dark-green: #1a2c1a;
-  --gold: #d4af37;
-  --mid-green: #335033;
-  --light-green: #3a5a40;
-  --input-bg: #3a5a40;
-  --input-text: #ffffff;
-}
-
-// Global Styles
+/* Global Styles */
 body {
   background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
-// Map Container Layout
+/* Map Container Layout */
 .map-container {
   height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-// Navbar Styles
+/* Navbar Styles */
 .custom-navbar {
-  background: var(--dark-green);
+  flex: 0 0 auto;
+  background: linear-gradient(150deg,var(--dark-green) 60%,rgb(21, 37, 17) 40%);
   border-bottom: 2px solid #476947;
   color: var(--gold);
   padding: 0.5rem 1rem;
+  z-index: 1000;
+  position: relative;
 }
 
-// Filter Section Styles
-.filter-section {
-  width: 100%;
+.container-fluid {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem;
 }
 
-// Search and Filter Styles
+/* Filter Section Styles */
+.filter-section {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  flex: 1;
+}
+
+/* Map Title Styles */
+.map-title {
+  min-width: 200px;
+
+  .map-title-text {
+    color: var(--gold);
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    padding: 0.2rem 0.5rem;
+    width: 100%;
+    min-width: 200px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+  }
+}
+
+/* Search and Filter Styles */
 .search-wrapper {
-  flex-grow: 1;
+  flex: 1;
+  min-width: 200px;
   max-width: 300px;
 
-  // Style for the search component
   app-search {
     display: flex;
     width: 100%;
@@ -52,46 +86,43 @@ body {
       color: var(--input-text);
       padding: 0.5rem;
       outline: none;
+      border-radius: 4px;
 
       &::placeholder {
         color: rgba(255, 255, 255, 0.7);
       }
     }
+  }
+}
 
-    button {
-      background-color: var(--mid-green);
-      border: none;
-      color: var(--gold);
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+/* Label Filter Dropdown Styles */
+.label-filter {
+  min-width: 180px;
 
-      &:hover {
-        background-color: var(--dark-green);
-      }
+  select {
+    width: 100%;
+    background-color: var(--input-bg);
+    border: none;
+    color: var(--input-text);
+    padding: 0.5rem;
+    outline: none;
+    border-radius: 4px;
+
+    option {
+      background-color: var(--input-bg);
+      color: var(--input-text);
     }
   }
 }
 
-.form-select {
-  background-color: var(--input-bg);
-  color: var(--input-text);
-  border: none;
-  width: 150px;
-}
-
-.filter-actions {
-  display: flex;
-  align-items: center;
-}
-
-// Add Label Button
+/* Add Label Button */
 .add-label-btn {
   background-color: var(--mid-green);
   color: var(--gold);
   border: 1px solid var(--gold);
   padding: 0.5rem 1rem;
-  margin-left: 0.5rem; // Přidán levý okraj
+  border-radius: 4px;
+  white-space: nowrap;
 
   &:hover {
     background-color: var(--dark-green);
@@ -99,32 +130,231 @@ body {
   }
 }
 
-// Map Wrapper Styles
+/* Map Wrapper */
 .map-wrapper {
+  flex: 1 1 auto;
   position: relative;
-  flex-grow: 1;
+  display: flex;
   overflow: hidden;
+}
 
-  .map-area {
+/* Map Area */
+.map-area {
+  flex: 1 1 auto;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Marker Host */
+.marker-host {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 400;
+}
+
+/* Map Details Container */
+.map-details-container {
+  position: absolute;
+  top: 64px;
+  right: 0;
+  width: 230px;
+  height: calc(100% - 64px);
+  pointer-events: none;
+  z-index: 500;
+  overflow: hidden;
+  visibility: hidden; /* Hide by default */
+
+  .details-panel {
+    // Stylování stejně jako marker-details
+    position: relative;
     width: 100%;
     height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    background: #1c2e1c;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    color: #d1b97f;
+    font-family: sans-serif;
+    padding: 20px;
+    border-left: 2px solid var(--gold);
+    overflow-y: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    border-radius: 0; // stejné jako marker-details
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      color: #d1b97f;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      color: #d1d1d1;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #2f4531;
+      margin: 0.5rem 0;
+    }
+
+    .label {
+      font-size: 0.85rem;
+      margin: 0.5rem 0;
+      display: block;
+      color: #d1b97f;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      background: #2a3e2b;
+      color: #d1b97f;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem;
+      font-family: inherit;
+      width: 100%;
+
+      &::placeholder {
+        color: rgba(209, 185, 127, 0.6);
+      }
+
+      &:focus {
+        outline: 1px solid #d4b87c;
+      }
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      margin: 0.5rem 0 1rem;
+      min-height: 100px;
+    }
+
+    select option {
+      background: #2a3e2b;
+      color: #d1b97f;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+      gap: 0.5rem;
+
+      button {
+        flex: 1;
+        padding: 0.4rem 0.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        &:active {
+          transform: scale(0.98);
+        }
+
+        &.close {
+          background: #3d5f3d;
+          color: white;
+        }
+      }
+    }
   }
 }
 
-// Marker Details Overlay
-.marker-details-overlay {
+.map-details-container.visible {
+  visibility: visible;
+}
+
+/* Remove any conflicting styles */
+.marker-details-container .details-panel,
+.map-details-container .details-panel {
+  pointer-events: auto;
+  height: 100%;
+  width: 230px;
+  background-color: var(--dark-green);
+  border-left: 2px solid var(--gold);
+}
+
+/* Ensure the map-details-panel is not affected by the map wrapper */
+app-map-details-panel {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 230px;
+  height: calc(100% - 64px);
+  z-index: 1000;
+  pointer-events: auto;
+  background-color: var(--dark-green);
+  border-left: 2px solid var(--gold);
+  visibility: hidden; /* Hide by default */
+}
+
+app-map-details-panel.visible {
+  visibility: visible;
+}
+
+/* Marker Overlay */
+.marker-list-overlay {
   position: absolute;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   z-index: 1000;
   width: 350px;
   max-width: 90%;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 50vh;
+
+  h5 {
+    margin-bottom: 1rem;
+    color: var(--dark-green);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    label {
+      margin-left: 0.5rem;
+      color: var(--dark-green);
+    }
+  }
 }
 
-// Modal Styles
+/* Modal Styles */
 .modal-content {
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -164,45 +394,63 @@ body {
   }
 }
 
-// Color picker styles
+/* Color Picker */
 .form-control-color {
   width: 100%;
   height: 38px;
 }
 
-// Hover and Active States
+/* Button Styles */
 .btn-outline-light {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: transparent;
+  transition: all 0.3s ease;
+
   &:hover {
-    background-color: var(--mid-green);
-    color: var(--gold);
+    background-color: var(--gold);
+    color: var(--dark-green);
   }
 }
 
-// Responsive Adjustments
+/* Debug Marker */
+.marker-wrapper {
+  display: inline-block;
+  width: 2px;
+  height: 2px;
+  opacity: 0.01;
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
-  .filter-section {
-    flex-direction: column;
-    align-items: stretch;
+  .container-fluid {
+    padding: 0.5rem;
+  }
 
-    .search-wrapper,
-    .label-filter,
-    .filter-actions {
-      margin-bottom: 10px;
-      max-width: 100%;
-    }
+  .map-title {
+    width: 100%;
+    margin-bottom: 0.5rem;
 
-    .form-select,
-    .search-wrapper {
+    .map-title-text {
+      font-size: 1.2rem;
       width: 100%;
     }
+  }
 
-    app-search {
-      flex-direction: column;
+  .filter-section {
+    width: 100%;
+  }
 
-      input, button {
-        width: 100%;
-        margin-bottom: 0.5rem;
-      }
-    }
+  .search-wrapper {
+    width: 100%;
+    max-width: none;
+  }
+
+  .label-filter {
+    width: 100%;
+  }
+
+  .add-label-btn {
+    width: 100%;
   }
 }

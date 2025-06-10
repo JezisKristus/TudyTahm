@@ -1,9 +1,9 @@
-<div class="d-flex">
+<div class="map-page-container">
   <!-- Sidebar -->
-  <app-sidebar class="d-flex flex-column flex-shrink-0"></app-sidebar>
+  <app-sidebar class="sidebar"></app-sidebar>
 
   <!-- Map Component -->
-  <div class="flex-grow-1">
-    <app-map></app-map>
+  <div class="map-container">
+    <app-map *ngIf="mapID !== null" [mapID]="mapID"></app-map>
   </div>
 </div>

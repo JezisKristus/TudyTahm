@@ -1,4 +1,4 @@
-/* memories.component.scss */
+/* memories-page.component.scss */
 :host {
   display: flex;
   width: 100%;
@@ -15,39 +15,91 @@
   flex-grow: 1;
   background-color: var(--primary-green);
   min-height: 100vh;
-  position: relative;
 }
 
-.content-header {
+.header {
   display: flex;
   align-items: center;
   padding: 10px;
   background: linear-gradient(150deg,var(--dark-green) 60%,rgb(21, 37, 17) 40%);
-  border-bottom: 1px solid var(--gold);
+  border-bottom: 2px solid #476947;
   background-color: var(--dark-green);
+  justify-content: space-between;
 
   h1 {
     color: var(--gold);
-    margin: 0;
     font-size: 24px;
   }
 }
 
-.refresh-icon {
-  width: 30px;
-  height: 30px;
-  background-color: var(--gold);
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/></svg>');
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  margin-right: 15px;
+.memory-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--gold);
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 22px;
   color: var(--gold);
   font-weight: 500;
+  margin-right: auto;
+}
+
+.multi-view-btn {
+  background: linear-gradient(135deg, var(--dark-green) 0%, #1a2714 100%);
+  color: var(--gold);
+  border: 1px solid #476947;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &:hover:not(.disabled) {
+    background: linear-gradient(135deg, #1a2714 0%, var(--dark-green) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #2e3c2f 0%, #1a2714 100%);
+  }
+
+  i {
+    font-size: 16px;
+  }
+
+  .journey-count {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.help-button, .notification-button {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 20px;
+  cursor: pointer;
 }
 
 .journeys-grid {
@@ -69,48 +121,315 @@
   }
 }
 
-.journey-card {
+.journey-card, .add-journey-card {
   background-color: var(--white);
   border-radius: 10px;
-  height: 180px;
+  height: 160px;
   cursor: pointer;
   transition: transform 0.2s;
   position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
 
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
+.journey-card:hover, .add-journey-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.journey-content {
+  flex-grow: 1;
+  background-size: cover;
+  background-position: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: var(--light-green);
+}
+
+.journey-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #eee;
 }
 
 .journey-title {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: #555;
+  text-align: left;
+  color: #333;
   font-size: 14px;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.add-button {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 50px;
-  height: 50px;
-  background-color: var(--light-green);
-  border-radius: 50%;
+.journey-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Checkbox styles */
+.checkbox-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+  user-select: none;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: 2px solid #476947;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid #476947;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  input:checked ~ .checkmark {
+    background-color: #476947;
+    border-color: #476947;
+
+    &:after {
+      display: block;
+      border-color: #fff;
+    }
+  }
+
+  &:hover input ~ .checkmark {
+    border-color: #22301e;
+  }
+}
+
+.multi-view-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  background: linear-gradient(150deg, var(--dark-green) 60%, rgb(21, 37, 17) 40%);
+  border-top: 2px solid #476947;
+}
+
+.delete-journey-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--white);
-  font-size: 24px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 10;
 
   &:hover {
-    background-color: var(--dark-green);
+    color: #ff3b30;
+  }
+}
+
+.add-journey-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--white);
+}
+
+.add-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.add-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: #666;
+}
+
+.error-message {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 30px;
+  color: #ff3b30;
+}
+
+.no-journeys {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 30px;
+  text-align: center;
+  color: #666;
+}
+
+/* Dialog styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.add-journey-dialog, .delete-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 101;
+  overflow: hidden;
+}
+
+.dialog-header, .delete-dialog-header {
+  padding: 15px 20px;
+  background-color: var(--dark-green);
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    color: var(--gold);
+    font-size: 18px;
+  }
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.dialog-content {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+}
+
+.dialog-footer, .delete-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+
+  button {
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  color: #333;
+
+  &:hover {
+    background-color: #e5e5e5;
+  }
+}
+
+.create-btn {
+  background-color: var(--dark-green);
+  border: 1px solid var(--dark-green);
+  color: white;
+
+  &:hover {
+    background-color: var(--primary-green);
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+/* Delete confirmation dialog styles */
+.delete-dialog-content {
+  padding: 20px;
+
+  p {
+    margin: 0 0 10px;
+    color: #333;
+  }
+
+  .warning {
+    color: #ff3b30;
+    font-weight: 500;
+  }
+}
+
+.delete-btn {
+  background-color: #ff3b30;
+  border: 1px solid #ff3b30;
+  color: white;
+
+  &:hover {
+    background-color: #e6352b;
   }
 }

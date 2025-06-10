@@ -1,9 +1,11 @@
 <div class="sidebar">
   <!-- Uživatelská sekce -->
   <div>
-    <div class="user-section" (click)="toggleSignOutPopup()" ariaCurrentWhenActive="page">
-        <div class="user-avatar"></div>
-        <span class="username">USERNAME</span>
+    <div (click)="toggleSignOutPopup()" aria-current="page" class="user-section">
+      <div [style.background-image]="currentUser?.userIconPath ? 'url(' + getProfilePictureUrl(currentUser?.userIconPath) + ')' : 'none'"
+           class="user-avatar"></div>
+      <span class="username">{{ currentUser?.userName }}</span>
+      <i class="bi bi-box-arrow-right"></i>
     </div>
 
     <!-- Sign-out popup -->
@@ -51,7 +53,7 @@
 
   <!-- Spodní část -->
   <div class="bottom-section">
-    <img routerLink="" routerLinkActive="active" ngSrc="http://localhost:5010/api/Image/bench.png" height="69" width="69" alt="Tahm" class="logo"/>
+    <img routerLink="" routerLinkActive="active" [ngSrc]="environment.apiUrl + '/Image/bench.png'" height="69" width="69" alt="Tahm" class="logo"/>
     <span class="brand">TUDY <br>TAHM</span>
   </div>
 </div>

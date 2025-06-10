@@ -11,11 +11,11 @@ namespace TT_API.Models
         [Key]
         public int MapID { get; set; }
         public int IDUser { get; set; }
-        public bool IsCustom { get; set; }
         public string MapName { get; set; }
-        public string MapPath { get; set; }
 
         public string MapPreviewPath { get; set; }
+
+        public string MapDescription { get; set; }
 
 
         [ForeignKey("IDUser")]

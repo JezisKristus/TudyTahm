@@ -1,8 +1,16 @@
 export interface AppMap {
   mapID: number;
-  IDUser: number;
-  isCustom: boolean;
+  idUser: number;
   mapName: string;
-  mapPath: string;
   mapPreviewPath: string;
+  description: string;
+  permission?: 'read' | 'write' | 'owner';
+  sharedWith: SharedUser[];
+}
+
+export interface SharedUser {
+  userID: number;
+  userName: string;
+  userEmail: string;
+  permission: 'read' | 'write' | 'owner';
 }

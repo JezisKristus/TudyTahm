@@ -2,21 +2,73 @@
   <app-sidebar></app-sidebar>
 
   <div class="main-content">
-    <div class="content-header">
-      <div class="refresh-icon">
-        <i class="fas fa-sync-alt"></i>
+    <div class="header">
+      <div class="memory-icon">
+        <i class="fas fa-book"></i>
       </div>
       <h1 class="page-title">Memories</h1>
-    </div>
-
-    <div class="journeys-grid">
-      <div class="journey-card" routerLink='/journey' routerLinkActive="true" *ngFor="let journey of journeys">
-        <div class="journey-title">{{journey.name}}</div>
+      <div class="multi-view-container">
+        <button class="multi-view-btn" 
+                [routerLink]="['/journey', 'multi']" 
+                [queryParams]="{multi: 'true'}"
+                [disabled]="selectedJourneys.size === 0"
+                [class.disabled]="selectedJourneys.size === 0">
+          <i class="fas fa-layer-group"></i> Multi-Journey View
+          <span class="journey-count" *ngIf="selectedJourneys.size > 0">({{selectedJourneys.size}} selected)</span>
+        </button>
       </div>
     </div>
 
-    <div class="add-button" (click)="addNewJourney()">
-      <i class="fas fa-plus"></i>
+    <div *ngIf="loading" class="loading-indicator">
+      <i class="fas fa-spinner fa-spin"></i> Loading memories...
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+
+    <div *ngIf="!loading && !error && journeys.length === 0" class="no-journeys">
+      <p>You don't have any memories yet.</p>
+    </div>
+
+    <div class="journeys-grid" *ngIf="!loading && !error">
+      <div class="journey-card" *ngFor="let journey of journeys">
+        <div class="journey-content"
+             (click)="onJourneyClick(journey)"
+             [routerLink]="['/journey', journey.journeyID]"
+             routerLinkActive="active"
+             [style.background-image]="journey.imagePath ? 'url(' + journey.imagePath + ')' : 'none'"></div>
+        <div class="journey-footer">
+          <div class="journey-title">{{ journey.name }}</div>
+          <div class="journey-actions">
+            <label class="checkbox-container">
+              <input type="checkbox" 
+                     [checked]="selectedJourneys.has(journey.journeyID)"
+                     (click)="toggleJourneySelection(journey.journeyID); $event.stopPropagation()">
+              <span class="checkmark"></span>
+            </label>
+            <button class="delete-journey-btn" (click)="openDeleteConfirmation(journey); $event.stopPropagation()">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Dialog -->
+  <div *ngIf="showDeleteDialog" class="dialog-overlay" (click)="closeDeleteConfirmation()"></div>
+  <div *ngIf="showDeleteDialog" class="delete-dialog">
+    <div class="delete-dialog-header">
+      <h3>Delete Journey</h3>
+    </div>
+    <div class="delete-dialog-content">
+      <p>Are you sure you want to delete "{{ journeyToDelete?.name }}"?</p>
+      <p class="warning">This action cannot be undone.</p>
+    </div>
+    <div class="delete-dialog-actions">
+      <button class="cancel-btn" (click)="closeDeleteConfirmation()">Cancel</button>
+      <button class="delete-btn" (click)="confirmDelete()">Delete</button>
     </div>
   </div>
 </div>

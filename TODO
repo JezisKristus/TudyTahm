@@ -1,17 +1,18 @@
 Všici
 Vymyslet uživatele kterej bude na ukazování
-Co mělo bějt Memories? Přejmenovat na Journeys nebo sme zapoměli celou jednu featuru?
-
 
 D
-přidání mapy + groups
-Upravit graficky placeholdery v marker-details
+Dostat data do databáze
 
 ŠVP
-sdílení a groups - propojeno s journey
+úpravy sharingu API
+pomoct deltovi s jeho potebami
+Sharing bude podle emailu - předělat API
+Změnit use API - heslo musíš zadat i starý
 custom mapy API
 obrázky předělat
-Hashovat hesla (hotovo)
 
 JK
-Journey page, chceme teda přejmenovat z memories na journeys?
+Udělat error handeling u settings např. stejný password apod.
+Předělat requesty na API na úpravu účtu aby odpovídaly
+Bude se dát mergnout více cest do jedný aby se jich na mapě dalo ukázat víc - novej objekt v databázi?

@@ -44,7 +44,7 @@ export class JourneyService {
   }
 
   public removePointFromJourney(jourID: number, pointID: number): Observable<any> {
-    return this.http.delete<any>(`${environment.apiUrl}/Journey/PointFromJourney/${jourID}?pointID=${pointID}`)
+    return this.http.request<any>('delete', `${environment.apiUrl}/Journey/PointFromJourney/${jourID}`, { body: pointID })
       .pipe(
         tap((response) => console.log('Removed Point from Journey:', response))
       );
@@ -61,6 +61,20 @@ export class JourneyService {
     return this.http.get<any[]>(`${environment.apiUrl}/Journey/Points/${jourID}`)
       .pipe(
         tap((response) => console.log('Points for Journey:', response))
+      );
+  }
+
+  public updateJourney(journeyID: number, journey: Partial<Journey>): Observable<Journey> {
+    return this.http.put<Journey>(`${environment.apiUrl}/Journey/${journeyID}`, journey)
+      .pipe(
+        tap((response) => console.log('Updated Journey:', response))
+      );
+  }
+
+  mergeJourneys(mergeData: { name: string; description: string; idMap: number; journeyIDs: number[] }): Observable<Journey> {
+    return this.http.post<Journey>(`${environment.apiUrl}/Journey/MergeJourneys`, mergeData)
+      .pipe(
+        tap((response) => console.log('Merged Journeys:', response))
       );
   }
 }

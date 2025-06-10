@@ -1,3 +1,7 @@
+npm i
+npm i leaflet
+npm i bootstrap-icons
+
 npm i bootstrap@5.3.5
 npm i bootstrap-icons
 

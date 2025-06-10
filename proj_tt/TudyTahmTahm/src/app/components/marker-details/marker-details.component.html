@@ -1,30 +1,33 @@
-<form class="marker-options-panel" *ngIf="marker && isVisible" (ngSubmit)="onSave()">
-  <h6>Marker Options</h6>
-  <div class="icon-grid">
-    <div class="icon" *ngFor="let icon of icons; let i = index"
-         [class.selected]="selectedIconIndex === i"
-         (click)="selectIcon(i)">
-      <img ngSrc="http://localhost:5010/api/Image/default-marker.png" alt="icon" fill=""/> <!-- TODO cesta aby byla ze serveru, potřebuju tahat stejně v .ts array obrázků (nebo dělá se to jinak?)  -->
+  <form class="marker-options-panel" *ngIf="marker && isVisible" (ngSubmit)="onSave()">
+    <h3>Marker Details</h3>
+    <p *ngIf="marker"><strong>Location:</strong> {{ getFormattedCoordinates() }}</p>
+
+    <label class="label">Name</label>
+    <input
+      type="text"
+      [(ngModel)]="markerName"
+      name="markerName"
+      required
+      #markerNameModel="ngModel"
+      [class.invalid]="markerNameModel.invalid && markerNameModel.touched"
+    />
+    <div *ngIf="markerNameModel.invalid && markerNameModel.touched" class="error">
+      Name is required.
     </div>
-  </div>
 
-  <h3>Marker Details</h3>
-  <p *ngIf="marker"><strong>Location:</strong> {{ getFormattedCoordinates() }}</p>
 
-  <label class="label">Name</label>
-  <input type="text" [(ngModel)]="marker.markerName" name="markerName" placeholder = 'Add marker name' required>
+    <label class="label">Label</label>
+    <select [(ngModel)]="marker.idLabel" name="label">
+      <option [ngValue]="0">No Label</option>
+      <option *ngFor="let label of labels" [ngValue]="label.labelID">{{ label.name }}</option>
+    </select>
 
-  <label class="label">Description</label>
-  <textarea [(ngModel)]="marker.markerDescription" name="description" placeholder="Add description"></textarea>
+    <label class="label">Description</label>
+    <textarea [(ngModel)]="marker.markerDescription" name="description" placeholder="Add description"></textarea>
 
-  <label class="label">Label</label>
-  <select [(ngModel)]="marker.IDLabel" name="label">
-    <option *ngFor="let label of labels" [value]="label.labelID">{{ label.labelName }}</option>
-  </select>
-
-  <div class="button-row">
-    <button type="button" class="cancel" (click)="onCancel()">Cancel</button>
-    <button type="button" class="delete" (click)="onDelete()">Delete</button>
-    <button type="submit" class="save">Save</button>
-  </div>
-</form>
+    <div class="button-row">
+      <button type="button" class="cancel" (click)="onCancel()">Cancel</button>
+      <button type="button" class="delete" (click)="onDelete()">Delete</button>
+      <button type="submit" class="save">Save</button>
+    </div>
+  </form>

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, finalize, tap , map, switchMap} from 'rxjs/operators';
-import { RegisterDTO } from '../models/register-dto';
-import { SignInDTO } from '../models/sign-in-dto';
-import { environment } from '../../environments/environment.development';
-import { User, TokenResult } from '../models/user';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {RegisterDTO} from '../models/register-dto';
+import {SignInDTO} from '../models/sign-in-dto';
+import {environment} from '../../environments/environment.development';
+import {TokenResult, User} from '../models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -41,33 +41,112 @@ export class AuthenticationService {
 
   public login(credentials: SignInDTO): Observable<{ token: TokenResult, user: User }> {
     this.logout();
-
-    console.log('Sending login requests')
-
-    return this.http.post<TokenResult>(`${environment.apiUrl}/Authentication/Login`, credentials).pipe(
-      switchMap((result: TokenResult) => {
+  
+    return this.http.post<{ token: string, refreshToken: string, user: User }>(`${environment.apiUrl}/Authentication/Login`, credentials).pipe(
+      map((result) => {
         this.setToken(result.token);
         this.setRefreshToken(result.refreshToken);
-
-        if (!result.userID) {
-          console.warn('Login response missing userID. Cannot fetch user.');
-          return throwError(() => new Error('User ID missing from login response.'));
-        }
-
-        // Fetch user and combine with token
-        return this.getUserByID(result.userID).pipe(
-          map((user: User) => {
-            return { token: result, user };
-          })
-        );
+        this.setUser(result.user);
+        return { 
+          token: { 
+            token: result.token, 
+            refreshToken: result.refreshToken,
+            userID: result.user.userID,
+            user: result.user
+          }, 
+          user: result.user 
+        };
       }),
       catchError((error) => {
-        console.error('Login failed:', error);
         return throwError(() => new Error('Login failed. Please check your credentials and try again.'));
       })
     );
   }
+  
 
+  public refreshToken(): Observable<{ token: string, refreshToken: string }> {
+    const userId = this.getCurrentUserID();
+    const refreshToken = this.getRefreshToken();
+
+    if (!userId || !refreshToken) {
+      console.error('Refresh token failed: Missing userId or refreshToken');
+      this.logout(); // Clear invalid state
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<{ token: string, refreshToken: string }>(
+      `${environment.apiUrl}/Authentication/RefreshToken`,
+      { userID: userId, refreshToken }
+    ).pipe(
+      tap(result => {
+        if (!result.token || !result.refreshToken) {
+          throw new Error('Invalid token response');
+        }
+        this.setToken(result.token);
+        this.setRefreshToken(result.refreshToken);
+        console.log('Token refresh successful');
+      }),
+      catchError(error => {
+        console.error('Token refresh failed:', error);
+        this.logout(); // Log out user if refresh fails
+        return throwError(() => new Error('Session expired. Please log in again.'));
+      })
+    );
+  }
+
+  public isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      const isExpired = Date.now() >= expiry;
+      if (isExpired) {
+        console.log('Token is expired');
+      }
+      return isExpired;
+    } catch (error) {
+      console.error('Error checking token expiration:', error);
+      return true;
+    }
+  }
+
+  public shouldRefreshToken(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      const timeUntilExpiry = expiry - Date.now();
+      // Refresh if token expires in less than 5 minutes
+      const shouldRefresh = timeUntilExpiry < 5 * 60 * 1000;
+      if (shouldRefresh) {
+        console.log('Token should be refreshed, expires in:', Math.round(timeUntilExpiry / 1000), 'seconds');
+      }
+      return shouldRefresh;
+    } catch (error) {
+      console.error('Error checking if token should be refreshed:', error);
+      return false;
+    }
+  }
+
+  public getCurrentUserID(): number | null {
+    const user = this.getUser();
+    if (user && typeof user.userID === 'number') {
+      return user.userID;
+    }
+    return null;
+  }
+
+  public getCurrentUser(): Observable<User> {
+    const userId = this.getCurrentUserID();
+    if (!userId) {
+      return throwError(() => new Error('No user ID found'));
+    }
+    return this.getUserByID(userId);
+  }
 
   setUser(user: User): void {
     if (!user) {
@@ -111,12 +190,10 @@ export class AuthenticationService {
   }
 
   public logout(): void {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('userData'); // Also remove this key to avoid conflicts
-    sessionStorage.clear(); // This will remove all keys in sessionStorage
+    sessionStorage.clear();
     console.log('User logged out and session data cleared.');
   }
+
 
   public isAuthenticated(): boolean {
     return !!this.getToken();

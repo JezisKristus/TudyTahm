@@ -1,0 +1,42 @@
+<div class="share-dialog-container">
+  <div class="header">
+    <h2>Share Map</h2>
+    <button class="close-btn" (click)="closeDialog()">×</button>
+  </div>
+
+  <div class="content">
+    <div class="form-group">
+      <label for="userEmail">User Email</label>
+      <input 
+        type="email" 
+        id="userEmail"
+        class="form-control" 
+        [(ngModel)]="userEmail" 
+        placeholder="Enter user's email"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="permission">Permission Level</label>
+      <select 
+        id="permission"
+        class="form-control" 
+        [(ngModel)]="selectedPermission"
+      >
+        <option value="read">Read Only</option>
+        <option value="write">Write Access</option>
+      </select>
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" (click)="shareMap()" [disabled]="!isValid()">
+      Share
+    </button>
+    <button class="btn btn-secondary" (click)="closeDialog()">Cancel</button>
+  </div>
+</div> 

@@ -39,9 +39,7 @@ namespace TT_API.Controllers {
         [HttpPost("CreateNeededDirs")]
         public IActionResult CreateNeededDirs() {
             Directory.CreateDirectory(@"C:\TT_LOCAL\pfp");
-            Directory.CreateDirectory(@"C:\TT_LOCAL\map");
             Directory.CreateDirectory(@"C:\TT_LOCAL\preview");
-            Directory.CreateDirectory(@"C:\TT_LOCAL\marker");
 
             return Ok();
         }

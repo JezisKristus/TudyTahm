@@ -13,8 +13,6 @@ namespace TT_API.Models
         public int IDLabel { get; set; }
         public string MarkerName { get; set; }
         public string MarkerDescription { get; set; }
-        public string MarkerIconPath { get; set; }
-
 
         [ForeignKey("IDPoint")]
         public GPSPoint GPSPoint { get; set; }

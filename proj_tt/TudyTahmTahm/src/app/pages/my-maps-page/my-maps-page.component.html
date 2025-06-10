@@ -7,14 +7,7 @@
         <i class="fas fa-desktop"></i>
       </div>
       <h1 class="page-title">My maps</h1>
-      <div class="header-actions">
-        <button class="help-button" aria-label="Help">
-          <i class="fas fa-question-circle"></i>
-        </button>
-        <button class="notification-button" aria-label="Notifications">
-          <i class="fas fa-bell"></i>
-        </button>
-      </div>
+
     </div>
 
     <div *ngIf="loading" class="loading-indicator">
@@ -33,7 +26,7 @@
       <div class="map-card" *ngFor="let map of maps">
         <div class="map-content"
              (click)="onMapClick(map)"
-             [routerLink]="['', map.mapID]"
+             [routerLink]="['/map', map.mapID]"
              routerLinkActive="active"
              [style.background-image]="'url(' + map.mapPreviewPath + ')'"></div>
         <div class="map-footer">

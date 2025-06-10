@@ -1,0 +1,119 @@
+<!-- Map Details Panel -->
+<div class="details-panel" #panel [class.panel-visible]="isVisible" *ngIf="map">
+  <h3>Map Details</h3>
+
+  <label class="label">Name</label>
+  <input
+    type="text"
+    [value]="map.mapName"
+    readonly
+    class="form-control"
+  />
+
+  <label class="label">Description</label>
+  <div class="description-section">
+    <textarea
+      [(ngModel)]="map.description"
+      class="form-control"
+      rows="3"
+      placeholder="Enter map description..."
+      (blur)="saveDescription()"
+    ></textarea>
+  </div>
+
+  <hr>
+
+  <div class="sharing-section">
+    <div class="section-header">
+      <h4>Shared With</h4>
+      <button class="share-button" (click)="openShareModal()">
+        <i class="fas fa-user-plus"></i> Share
+      </button>
+    </div>
+
+    <div class="shared-users-list">
+      <div *ngIf="!map?.sharedWith || map.sharedWith.length === 0" class="no-shares">
+        <p class="text-muted">This map is not shared with anyone yet.</p>
+      </div>
+
+      <div *ngFor="let user of map?.sharedWith" class="shared-user-item">
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ user.userName }}</span>
+            <span class="user-permission">
+              <i [class]="getPermissionIcon(user.permission)"></i>
+              <span [class]="getPermissionBadgeClass(user.permission)">
+                {{ user.permission | titlecase }}
+              </span>
+            </span>
+          </div>
+        </div>
+        <button
+          *ngIf="canRemoveUser(user)"
+          class="remove-button"
+          (click)="removeUser(user.userID)"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-row">
+    <button class="close" (click)="closeDetails()">Close</button>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-overlay" *ngIf="showShareModal" (click)="closeShareModal()">
+  <div class="share-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h4>Share Map</h4>
+      <button class="close-button" (click)="closeShareModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form (ngSubmit)="onShareSubmit()" #shareForm="ngForm">
+        <div class="form-group">
+          <label class="label">Email Address</label>
+          <input
+            type="email"
+            [(ngModel)]="shareEmail"
+            name="shareEmail"
+            class="form-control"
+            [class.invalid]="emailError"
+            placeholder="Enter email address..."
+            required
+          >
+          <div class="error-message" *ngIf="emailError">
+            {{ emailError }}
+          </div>
+        </div>
+
+        <div class="form-group permission-select">
+          <label class="label">Permission</label>
+          <select
+            [(ngModel)]="sharePermission"
+            class="form-control"
+            name="sharePermission"
+            required
+          >
+            <option value="read">Read</option>
+            <option value="write">Write</option>
+          </select>
+          <i class="bi bi-caret-down-fill select-icon"></i>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="cancel" (click)="closeShareModal()">Cancel</button>
+          <button type="submit" class="save">Share Map</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
