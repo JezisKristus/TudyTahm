@@ -19,6 +19,6 @@
   background: linear-gradient(150deg, var(--dark-green, #14532d) 60%, rgb(21, 37, 17) 40%);
 }
 
-.text-white {
-  color: #fff !important;
+label, p {
+  color: var(--gold);
 }

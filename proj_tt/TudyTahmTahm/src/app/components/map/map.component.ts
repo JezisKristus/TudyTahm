@@ -137,9 +137,38 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   get mapID(): number {
     return this._mapID;
   }
+
   set mapID(value: number) {
     this._mapID = value;
   }
+
+  private mapState: MapState = {
+    mapID: 1,
+    mapName: '',
+    originalMapName: '',
+    currentMap: null,
+    selectedMarker: null,
+    selectedLabelFilter: null,
+    showDetailsPanel: false,
+    showLabelModal: false
+  };
+
+  private markerState: MarkerState = {
+    markers: [],
+    colorMarkerRefs: [],
+    markerDetailsRef: undefined,
+    popupRef: null
+  };
+
+  private labelState: LabelState = {
+    labels: [],
+    newLabel: {
+      idMap: this.mapID,
+      name: '',
+      color: '#3a5a40'
+    }
+  };
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -173,20 +202,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   /**
    * Sets up the map after view initialization
    */
-  async ngAfterViewInit(): Promise<void> {
+  ngAfterViewInit(): void {
     const mapContainer = document.getElementById('map');
     if (!mapContainer) {
       console.error('Map container not found!');
       return;
     }
 
-    try {
-      await this.initializeMap(); // Wait for map to finish initializing
-      await this.loadMarkers();   // Then load markers
-      await this.loadLabels();    // Then load labels
-    } catch (error) {
-      console.error('Initialization error:', error);
-    }
+    this.initializeMap();
+    this.loadMarkers();
+    this.loadLabels();
   }
 
   createLabel(): void {
@@ -206,7 +231,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
           alert('An error occurred while saving the label');
         }
       });
-    this.loadLabels();
   }
 
   /**
@@ -688,24 +712,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   /**
    * Initializes the Leaflet map with default settings
    */
-  private initializeMap(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.mapInitialization.initializeMap('map')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (map) => {
-            this.map = map;
-            this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
-              this.markerManager.showPopup(event.latlng, this.viewContainerRef, this.map);
-            });
-            resolve(); // <-- Signal completion here
-          },
-          error: (error) => {
-            console.error('Error initializing map:', error);
-            reject(error); // <-- Reject on error
-          }
-        });
-    });
+  private initializeMap(): void {
+    this.mapInitialization.initializeMap('map')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (map) => {
+          this.map = map;
+          this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
+            this.markerManager.showPopup(event.latlng, this.viewContainerRef, this.map);
+          });
+        },
+        error: (error) => console.error('Error initializing map:', error)
+      });
   }
 
   private clearSelectedMarker(): void {
