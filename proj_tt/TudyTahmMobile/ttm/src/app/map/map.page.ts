@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { add, locateSharp, locationSharp } from 'ionicons/icons';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 import { User } from '../models/user';
 import { AuthenticationService } from '../services/authentication.service';
 import { environment } from '../environments/environment.development';
