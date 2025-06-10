@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ComponentRef,
   EventEmitter,
@@ -11,8 +12,7 @@ import {
   SimpleChanges,
   ViewChild,
   ViewContainerRef,
-  ViewEncapsulation,
-  ChangeDetectionStrategy
+  ViewEncapsulation
 } from '@angular/core';
 import {CommonModule, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -21,9 +21,6 @@ import 'leaflet-search';
 import {AddMarkerPopupComponent} from './add-marker-popup/add-marker-popup.component';
 import {MarkerDetailsComponent} from '../marker-details/marker-details.component';
 import {SearchComponent} from '../search/search.component';
-import {MarkerService} from '../../services/marker.service';
-import {LabelService} from '../../services/label.service';
-import {MapService} from '../../services/map.service';
 import {AppMap, SharedUser} from '../../models/appMap';
 import {AppMarker} from '../../models/appMarker';
 import {Label} from '../../models/label';
@@ -32,7 +29,7 @@ import {ColorMarkerComponent} from '../color-marker/color-marker.component';
 import {ExtendedMarker} from '../../models/extended-marker';
 import {MapDetailsPanelComponent} from '../map-details-panel/map-details-panel.component';
 import {SharingService} from '../../services/sharing.service';
-import {share, Subject, takeUntil} from 'rxjs';
+import {Subject, takeUntil} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {MarkerManagerService} from '../../services/marker-manager.service';
 import {LabelManagerService} from '../../services/label-manager.service';
@@ -136,41 +133,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   private mapDetailsRef?: ComponentRef<MapDetailsPanelComponent>;
 
   private _mapID: number = 1;
-  @Input() 
+  @Input()
   get mapID(): number {
     return this._mapID;
   }
   set mapID(value: number) {
     this._mapID = value;
   }
-
-  private mapState: MapState = {
-    mapID: 1,
-    mapName: '',
-    originalMapName: '',
-    currentMap: null,
-    selectedMarker: null,
-    selectedLabelFilter: null,
-    showDetailsPanel: false,
-    showLabelModal: false
-  };
-
-  private markerState: MarkerState = {
-    markers: [],
-    colorMarkerRefs: [],
-    markerDetailsRef: undefined,
-    popupRef: null
-  };
-
-  private labelState: LabelState = {
-    labels: [],
-    newLabel: {
-      idMap: this.mapID,
-      name: '',
-      color: '#3a5a40'
-    }
-  };
-
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -204,32 +173,40 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   /**
    * Sets up the map after view initialization
    */
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     const mapContainer = document.getElementById('map');
     if (!mapContainer) {
       console.error('Map container not found!');
       return;
     }
 
-    this.initializeMap();
-    this.loadMarkers();
-    this.loadLabels();
+    try {
+      await this.initializeMap(); // Wait for map to finish initializing
+      await this.loadMarkers();   // Then load markers
+      await this.loadLabels();    // Then load labels
+    } catch (error) {
+      console.error('Initialization error:', error);
+    }
   }
-  /**
-   * Initializes the Leaflet map with default settings
-   */
-  private initializeMap(): void {
-    this.mapInitialization.initializeMap('map')
+
+  createLabel(): void {
+    if (!this.newLabel.name.trim()) {
+      alert('Label name is required');
+      return;
+    }
+
+    this.labelManager.createLabel(this.newLabel)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (map) => {
-          this.map = map;
-          this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
-            this.markerManager.showPopup(event.latlng, this.viewContainerRef, this.map);
-          });
+        next: () => {
+          this.closeLabelModal();
         },
-        error: (error) => console.error('Error initializing map:', error)
+        error: (err) => {
+          console.error('Error saving label:', err);
+          alert('An error occurred while saving the label');
+        }
       });
+    this.loadLabels();
   }
 
   /**
@@ -708,23 +685,27 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       });
   }
 
-  createLabel(): void {
-    if (!this.newLabel.name.trim()) {
-      alert('Label name is required');
-      return;
-    }
-
-    this.labelManager.createLabel(this.newLabel)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.closeLabelModal();
-        },
-        error: (err) => {
-          console.error('Error saving label:', err);
-          alert('An error occurred while saving the label');
-        }
-      });
+  /**
+   * Initializes the Leaflet map with default settings
+   */
+  private initializeMap(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.mapInitialization.initializeMap('map')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (map) => {
+            this.map = map;
+            this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
+              this.markerManager.showPopup(event.latlng, this.viewContainerRef, this.map);
+            });
+            resolve(); // <-- Signal completion here
+          },
+          error: (error) => {
+            console.error('Error initializing map:', error);
+            reject(error); // <-- Reject on error
+          }
+        });
+    });
   }
 
   private clearSelectedMarker(): void {
@@ -783,7 +764,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   private handleError(error: unknown, context: string): void {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     console.error(`Error in ${context}:`, error);
-    
+
     if (error instanceof MapError) {
       // Handle specific map errors
       switch (error.code) {
@@ -960,14 +941,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     try {
       console.log('Creating map details panel with map:', JSON.stringify(this.currentMap, null, 2));
       console.log('Shared users in current map:', JSON.stringify(this.currentMap.sharedWith, null, 2));
-      
+
       this.mapDetailsRef = this.mapDetailsContainer.createComponent(MapDetailsPanelComponent);
       // Create a deep copy of the map data to ensure sharedWith array is preserved
       const mapCopy = JSON.parse(JSON.stringify(this.currentMap));
       this.mapDetailsRef.instance.map = mapCopy;
       console.log('Map data passed to details panel:', JSON.stringify(this.mapDetailsRef.instance.map, null, 2));
       console.log('Shared users in details panel:', JSON.stringify(this.mapDetailsRef.instance.map?.sharedWith, null, 2));
-      
+
       this.mapDetailsRef.instance.isVisible = true;
 
       this.mapDetailsRef.instance.closePanel.subscribe(() => this.clearMapDetails());

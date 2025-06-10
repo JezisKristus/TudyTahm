@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {SharedUser} from '../models/appMap';
 import {AuthenticationService} from './authentication.service';
 
@@ -19,7 +19,7 @@ export class SharingService {
   public getSharedUsers(): Observable<SharedUser[]> {
     const userId = this.authService.getCurrentUserID();
     const token = this.authService.getToken();
-    
+
     if (!userId || !token) {
       return throwError(() => new Error('User is not authenticated'));
     }
@@ -37,8 +37,18 @@ export class SharingService {
   }
 
   public addUserToMap(mapId: number, sharedUser: SharedUser): Observable<SharedUser> {
-    return this.http.post<SharedUser>(`${environment.apiUrl}/Share/AddUserToMap/${mapId}`, sharedUser);
+    const payload = {
+      email: sharedUser.userEmail,
+      permission: sharedUser.permission,
+      mapID: mapId
+    };
+
+    return this.http.post<SharedUser>(
+      `${environment.apiUrl}/Share/AddUserToMap/${mapId}`,
+      payload
+    );
   }
+
 
   public editUserPermission(mapId: number, sharedUser: SharedUser): Observable<SharedUser> {
     return this.http.put<SharedUser>(
