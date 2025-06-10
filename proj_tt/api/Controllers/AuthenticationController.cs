@@ -76,12 +76,21 @@ namespace TT_API.Controllers
         //adduser
         public async Task<IActionResult> Register([FromBody] CreateUpdateUserDTO registerdto)
         {
+            User cU1 = await context.Users.FirstOrDefaultAsync(u => u.UserEmail == registerdto.UserEmail);
+            if (cU1 != null) {
+                return BadRequest("Email already used."); 
+            }
+            User cU2 = await context.Users.FirstOrDefaultAsync(u => u.UserName == registerdto.UserName);
+            if (cU2 != null) {
+                return BadRequest("Username already taken.");
+            }
+
             User user = new User()
             {
                 UserName = registerdto.UserName,
                 UserPassword = HashHelper.Hash(registerdto.UserPassword),
                 UserEmail = registerdto.UserEmail,
-                UserIconPath = @"L\pfp\default.png",
+                UserIconPath = @"pfp\default.png",
             };
 
             context.Users.Add(user);
