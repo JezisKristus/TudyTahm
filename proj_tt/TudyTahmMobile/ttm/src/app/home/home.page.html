@@ -1,25 +1,22 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Login</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-label position="floating">Username</ion-label>
-    <ion-input [(ngModel)]="username"></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">Password</ion-label>
-    <ion-input [(ngModel)]="password" type="password"></ion-input>
-  </ion-item>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <ion-item>
+      <ion-label position="floating">Username</ion-label>
+      <ion-input formControlName="username"></ion-input>
+    </ion-item>
 
-  <ion-button expand="full" (click)="login()" [disabled]="loading">
-    <ion-spinner *ngIf="loading" slot="start"></ion-spinner>
-    Login
-  </ion-button>
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
+    </ion-item>
 
-  <ion-text color="danger" *ngIf="errorMessage">
-    <p class="ion-padding-top">{{ errorMessage }}</p>
-  </ion-text>
+    <ion-button expand="full" type="submit" [disabled]="loading || form.invalid">
+      <ion-spinner *ngIf="loading" name="dots"></ion-spinner>
+      <span *ngIf="!loading">Login</span>
+    </ion-button>
+
+    <ion-text color="danger" *ngIf="errorMessage">
+      <p>{{ errorMessage }}</p>
+    </ion-text>
+  </form>
 </ion-content>

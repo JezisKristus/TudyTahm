@@ -24,7 +24,8 @@ import { SignInDTO } from '../models/sign-in-dto';
     IonHeader, IonToolbar, IonTitle, IonContent,
     IonButton, IonItem, IonLabel, IonInput,
     IonSpinner, IonText,
-    CommonModule, FormsModule, IonicModule
+    CommonModule, FormsModule, ReactiveFormsModule,
+    IonicModule
   ],
 })
 
@@ -32,8 +33,6 @@ import { SignInDTO } from '../models/sign-in-dto';
 export class HomePage implements OnDestroy {
 
   form: FormGroup;
-  username = '';
-  password = '';
   loading = false;
   errorMessage: string = '';
   private destroy$ = new Subject<void>();
@@ -54,15 +53,15 @@ export class HomePage implements OnDestroy {
       }
     }
 
-    login(): void {
+    save(): void {
       // doesnt work
       //but works without it
 
-    // this.errorMessage = '';
-    // if (this.form.invalid) {
-    //   this.errorMessage = 'Please fill in all fields.';
-    //   return;
-    // }
+    this.errorMessage = '';
+    if (this.form.invalid) {
+      this.errorMessage = 'Please fill in all fields.';
+      return;
+    }
 
     this.loading = true;
 
@@ -70,6 +69,8 @@ export class HomePage implements OnDestroy {
       username: this.form.value.username,
       password: this.form.value.password
     };
+
+    console.log(credentials.username, credentials.password)
 
     this.authentication.login(credentials).pipe(
       takeUntil(this.destroy$),
