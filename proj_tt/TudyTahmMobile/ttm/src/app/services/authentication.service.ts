@@ -44,6 +44,10 @@ export class AuthenticationService {
     console.log('Sending login requests')
 
     return this.http.post<TokenResult>(`${environment.apiUrl}/Authentication/Login`, credentials).pipe(
+      tap({
+      next: () => console.log('Request sent with', credentials),
+      error: err => console.error('Login request error:', err)
+      }),
       switchMap((result: TokenResult) => {
         this.setToken(result.token);
         this.setRefreshToken(result.refreshToken);

@@ -70,9 +70,16 @@ export class HomePage implements OnDestroy {
       password: this.form.value.password
     };
 
-    console.log(credentials.username, credentials.password)
+    console.log(credentials)
 
-    this.authentication.login(credentials).pipe(
+    const payload = {
+      username: credentials.username,
+      password: credentials.password
+    };
+
+    console.log(payload)
+
+    this.authentication.login(payload).pipe(
       takeUntil(this.destroy$),
       catchError((error) => {
         this.loading = false;
