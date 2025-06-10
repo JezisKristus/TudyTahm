@@ -7,7 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { add, locateSharp, locationSharp } from 'ionicons/icons'
+import { add, locateSharp, locationSharp } from 'ionicons/icons';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -23,18 +25,36 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private breadcrumbEnabled = false;
   private breadcrumbPolyline!: L.Polyline;
   private breadcrumbPath: L.LatLng[] = [];
-  constructor() {
-    addIcons({ locateSharp })
+  private userIconUrl: string = 'assets/default_user.png'; // fallback or default icon
+
+  constructor(private http: HttpClient) {
+    addIcons({ locateSharp });
   }
+
   ngAfterViewInit(): void {
     this.initMap();
     this.startTracking();
   }
 
   ngOnDestroy(): void {
-    // Stop GPS
     if (this.watchId) {
       Geolocation.clearWatch({ id: this.watchId });
+    }
+  }
+
+  private async fetchProfilePictureUrl(userId: string): Promise<string> {
+    try {
+      const response = await firstValueFrom(
+        this.http.get(`http://localhost:5010/api/Authentication/pfpPath/${userId}`, {
+          responseType: 'text'
+        })
+      );
+
+      const cleanPath = response.startsWith('L\\') ? response.substring(2) : response;
+      return `http://localhost:5010/api/Image/${encodeURIComponent(cleanPath)}`;
+    } catch (error) {
+      console.error('Error fetching profile picture path:', error);
+      return 'assets/default_user.png'; // fallback
     }
   }
 
@@ -51,7 +71,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
     setTimeout(() => this.map.invalidateSize(), 0);
 
-    //breadcrumbs polyline
     this.breadcrumbPolyline = L.polyline([], {
       color: 'blue',
       weight: 4,
@@ -60,7 +79,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
       lineCap: 'round'
     }).addTo(this.map);
   }
-
 
   public async centerMapOnUser(): Promise<void> {
     try {
@@ -73,6 +91,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   private async startTracking(): Promise<void> {
+    // Replace this with your actual user ID fetching logic
+    const userId = 'YOUR_USER_ID';
+
+    // Fetch user icon URL once before tracking begins
+    this.userIconUrl = await this.fetchProfilePictureUrl(userId);
+
     try {
       this.watchId = await Geolocation.watchPosition({}, (position, err) => {
         if (err) {
@@ -84,16 +108,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
           const { latitude, longitude } = position.coords;
           const currentPosition = new L.LatLng(latitude, longitude);
 
-          // Map update
-          //this.map.setView([latitude, longitude], 15);
-
-          // Move user
           if (this.userMarker) {
             this.userMarker.setLatLng([latitude, longitude]);
           } else {
             this.userMarker = L.marker([latitude, longitude], {
               icon: L.icon({
-                iconUrl: 'assets/user_location.png',
+                iconUrl: this.userIconUrl,
                 iconSize: [32, 32],
                 iconAnchor: [16, 32],
                 popupAnchor: [0, -32]
@@ -101,7 +121,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
             }).addTo(this.map).bindPopup("You are here").openPopup();
           }
 
-          // create trail (breadcrumb)
           if (this.breadcrumbEnabled) {
             this.breadcrumbPath.push(currentPosition);
             this.breadcrumbPolyline.setLatLngs(this.breadcrumbPath);
@@ -119,7 +138,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
     this.breadcrumbEnabled = !this.breadcrumbEnabled;
 
     if (!this.breadcrumbEnabled) {
-      // Clear trail
       this.breadcrumbPath = [];
       this.breadcrumbPolyline.setLatLngs([]);
     }
