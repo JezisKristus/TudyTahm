@@ -56,8 +56,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   getProfilePictureUrl(path: string | undefined): string {
     if (!path) return '';
-
-    // Remove the 'L\' prefix if it exists and encode the path
     const cleanPath = path.startsWith('L\\') ? path.substring(2) : path;
     return `${environment.apiUrl}/Image/${encodeURIComponent(cleanPath)}`;
   }
@@ -161,7 +159,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
         // Optionally do something with the selected journey
         this.breadcrumbPath = []; // Reset path
       } else {
-        // If no journey selected, cancel breadcrumb toggle
         this.breadcrumbEnabled = false;
       }
     } else {
@@ -173,6 +170,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
 
   private async selectJourney(): Promise<Journey | null> {
+    console.log('selecthjdnfjsdfbjhsdf')
     const user = this.authService.getUser();
     if (!user) return null;
 
@@ -182,7 +180,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
       alert('No journeys found for your account.');
       return null;
     }
-
+    console.log('thing')
     const MyAlert = await this.alertController.create({
       header: 'Select a Journey',
       inputs: unwrapJourney.map((j, i) => ({
@@ -199,13 +197,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
         {
           text: 'Select',
           handler: (selected: Journey) => {
-            // This handler runs on selection
             return selected;
           },
         },
       ],
     });
-
+    console.log('idk')
     await MyAlert.present();
     const result = await MyAlert.onDidDismiss();
     return result.role === 'cancel' ? null : result.data?.values;

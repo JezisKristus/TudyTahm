@@ -115,7 +115,7 @@ export class AuthenticationService {
 
   public addPointToJourney(jourID: number, point: PointDTO): Observable<number> {
     return this.http.put<number>(
-      `${environment.apiUrl}/AddPointToJourney/${jourID}`,
+      `${environment.apiUrl}/Journey/AddPointToJourney/${jourID}`,
       point
     );
   }
@@ -144,7 +144,7 @@ export class AuthenticationService {
 
 
   public getJourneysByUserId(userId: number): Observable<Journey[]> {
-  const url = `${environment.apiUrl}/ByUserID/${userId}`;
+  const url = `${environment.apiUrl}/Journey/ByUserID/${userId}`;
   return this.http.get<Journey[]>(url);
 }
 
